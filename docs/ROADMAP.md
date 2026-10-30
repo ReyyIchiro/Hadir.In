@@ -225,11 +225,11 @@ Perbarui tabel ini setiap milestone selesai.
 | 2026-10-30 | M3 | Jadwal, hari libur, presensi masuk dan pulang, geofence, selfie, finalisasi otomatis |
 | 2026-10-30 | M4 | Antrean tinjauan, koreksi jam, izin, sakit, cuti, lingkup peninjau |
 | 2026-10-30 | M5 | Laporan bulanan, ekspor CSV, halaman publik, aplikasi anggota, mode gelap |
-| 2026-10-30 | M6 | Seeder demo, 156 tes Pest, Pint, build Vite, CI, runbook operasi |
+| 2026-10-30 | M6 | Seeder demo, 159 tes Pest, Pint, build Vite, CI, runbook operasi |
 
 Catatan M6:
 
-- `php artisan test` lulus 156 tes dengan 333 asersi.
+- `php artisan test` lulus 159 tes dengan 338 asersi.
 - `npm run build` lulus.
 - Seluruh rute pada `ROUTES.md` terdaftar dan diuji.
 - Seluruh tes lulus pada PostgreSQL 16 di dalam kontainer PHP 8.3, jadi
