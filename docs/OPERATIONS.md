@@ -535,36 +535,85 @@ perubahan penting di `DECISIONS.md`.
 - Jangan mengirim data presensi lewat email atau chat.
 - Hapus akses anggota yang berhenti bekerja dengan menonaktifkan keanggotaan.
 
-## 16. Batasan lokal
+## 16. Lingkungan lokal
 
-PHP lokal pada mesin pengembangan proyek ini tidak memiliki `pdo_pgsql`. Karena
-itu:
+Mesin pengembangan proyek ini memakai Arch Linux dengan PHP 8.5 dari paket
+resmi. Ekstensi `pdo_pgsql` tidak ikut dalam paket `php`, melainkan paket
+terpisah `php-pgsql`, sehingga awalnya tidak tersedia. Sekarang ekstensi itu
+sudah dipasang tanpa akses root dengan cara berikut.
 
-- Aplikasi lokal dan pengujian memakai SQLite.
-- Migrasi dirancang portabel.
-- Perbedaan PostgreSQL (konkurensi, tipe JSON, perilaku indeks) belum diuji
-  secara lokal pada mesin ini, tetapi seluruh tes sudah dijalankan pada
-  PostgreSQL 16 lewat kontainer PHP 8.3 dan lulus.
-- Sebelum rilis produksi, jalankan migrasi dan seluruh tes di staging PostgreSQL.
-- Container PostgreSQL lokal tersedia untuk eksperimen, tetapi tidak dipakai
-  oleh aplikasi tanpa ekstensi PHP yang sesuai.
-- Untuk memverifikasi migrasi pada PostgreSQL tanpa memasang ekstensi di mesin
-  lokal, jalankan tes di dalam image PHP yang memuat `pdo_pgsql`:
+### 16.1 Memasang pdo_pgsql tanpa root
 
-  ```bash
-  docker run --rm --network host \
-    -v "$PWD:/app" -w /app \
-    -e DB_CONNECTION=pgsql -e DB_HOST=127.0.0.1 -e DB_PORT=55432 \
-    -e DB_DATABASE=hadir -e DB_USERNAME=postgres -e DB_PASSWORD=secret \
-    hadir-php-pg php artisan test
-  ```
+Paket `php-pgsql` dan `postgresql-libs` diunduh lalu diekstrak ke direktori
+pengguna, tidak ke sistem:
 
-  Image dibangun dari `php:8.3-cli-alpine` dengan ekstensi `pdo_pgsql`, `gd`,
-  `mbstring`, `zip`, dan `intl`. CI memakai jalur yang sama lewat layanan
-  PostgreSQL pada `.github/workflows/ci.yml`.
+```bash
+mkdir -p ~/.local/lib/php-pgsql/{modules,lib}
+cd /tmp
+curl -sSL -O "$(pacman -Sp php-pgsql | head -1)"
+curl -sSL -O "$(pacman -Sp postgresql-libs | head -1)"
+mkdir -p root
+for f in *.pkg.tar.zst; do bsdtar -xf "$f" -C root; done
+cp root/usr/lib/php/modules/pdo_pgsql.so ~/.local/lib/php-pgsql/modules/
+cp -P root/usr/lib/libpq.so* root/usr/lib/libpgtypes.so* ~/.local/lib/php-pgsql/lib/
+printf 'extension=%s/.local/lib/php-pgsql/modules/pdo_pgsql.so\n' "$HOME" \
+  > ~/.local/lib/php-pgsql/pdo_pgsql.ini
+```
 
-Jangan menambahkan ketergantungan pada fitur PostgreSQL yang tidak didukung
-SQLite tanpa memperbarui `DATABASE.md` dan `TESTING.md`.
+`~/.local/bin/php` adalah pembungkus tipis yang menyetel `LD_LIBRARY_PATH` dan
+`PHP_INI_SCAN_DIR` lalu menjalankan `/usr/bin/php`. Direktori itu ada di depan
+`PATH`, jadi `php` otomatis memuat ekstensi tanpa variabel lingkungan manual:
+
+```sh
+#!/bin/sh
+PHP_PGSQL_HOME="$HOME/.local/lib/php-pgsql"
+export LD_LIBRARY_PATH="$PHP_PGSQL_HOME/lib"
+export PHP_INI_SCAN_DIR="$PHP_PGSQL_HOME:/etc/php/conf.d"
+exec /usr/bin/php "$@"
+```
+
+`/etc/php/conf.d` tetap disertakan agar ekstensi bawaan (`gd`, `pdo_sqlite`,
+`mbstring`) tidak hilang. Bila `pdo_pgsql.so` hilang setelah peningkatan PHP,
+PHP hanya mencetak peringatan dan tetap berjalan; perbaiki dengan mengulang
+langkah di atas memakai versi paket yang cocok dengan `php -v`.
+
+### 16.2 Menjalankan aplikasi pada PostgreSQL
+
+```bash
+DB_CONNECTION=pgsql DB_HOST=127.0.0.1 DB_PORT=55432 \
+DB_DATABASE=hadir DB_USERNAME=postgres DB_PASSWORD=secret \
+php artisan migrate:fresh --seed
+```
+
+Tanpa variabel di atas, `.env` memakai SQLite dan aplikasi tetap jalan. Untuk
+memakai PostgreSQL secara permanen, ganti blok `DB_*` di `.env` mengikuti
+contoh yang sudah dikomentari di `.env.example`.
+
+### 16.3 Menjalankan pengujian pada PostgreSQL
+
+`phpunit.xml` menyetel `DB_CONNECTION=sqlite` agar `php artisan test` cepat dan
+tidak butuh server. Variabel lingkungan dari shell menimpa nilai itu, sehingga
+seluruh tes dapat dijalankan pada PostgreSQL:
+
+```bash
+DB_CONNECTION=pgsql DB_HOST=127.0.0.1 DB_PORT=55432 \
+DB_DATABASE=hadir_test DB_USERNAME=postgres DB_PASSWORD=secret \
+php artisan test
+```
+
+Hasil pada mesin ini: 167 tes lulus, 360 asersi, PostgreSQL 16.15. Migrasi,
+seed, login, halaman presensi, dan ekspor CSV juga sudah diverifikasi pada
+PostgreSQL.
+
+Catatan penting: `php artisan test` tanpa variabel di atas **tetap memakai
+SQLite**. Jangan menganggap keluaran hijau membuktikan kompatibilitas
+PostgreSQL. Jalankan perintah dengan `DB_CONNECTION=pgsql` sebelum rilis.
+CI melakukan hal yang sama lewat layanan PostgreSQL di `.github/workflows/ci.yml`.
+
+### 16.4 Hal yang tetap hanya bisa diuji manual
+
+Kamera, GPS, dan izin browser tidak tercakup pengujian otomatis pada platform
+apa pun. Jalankan matriks manual di `TESTING.md` bagian 7 pada perangkat nyata.
 
 ## 17. Runbook insiden
 

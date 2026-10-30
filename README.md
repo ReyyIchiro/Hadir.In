@@ -91,9 +91,20 @@ terowongan HTTPS (misalnya `cloudflared tunnel --url http://localhost:8000`)
 dan buka alamat HTTPS yang diberikan.
 
 Untuk PostgreSQL, ganti blok `DB_*` di `.env` dengan contoh yang sudah
-dikomentari di berkas itu, dan pastikan ekstensi `pdo_pgsql` aktif. PHP lokal
-tanpa `pdo_pgsql` tetap bisa menjalankan aplikasi dan pengujian dengan SQLite.
-Lihat `docs/OPERATIONS.md` untuk detail dan batasannya.
+dikomentari di berkas itu, dan pastikan ekstensi `pdo_pgsql` aktif. Bila
+ekstensi belum ada, `docs/OPERATIONS.md` bagian 16 menjelaskan cara
+memasangnya tanpa akses root.
+
+Perlu diingat: `php artisan test` memakai SQLite dari `phpunit.xml`. Untuk
+menguji kompatibilitas PostgreSQL, jalankan dengan variabel lingkungan:
+
+```bash
+DB_CONNECTION=pgsql DB_HOST=127.0.0.1 DB_PORT=5432 \
+DB_DATABASE=hadir_test DB_USERNAME=hadir DB_PASSWORD=... \
+php artisan test
+```
+
+Tanpa itu, keluaran hijau hanya membuktikan SQLite.
 
 ## Perintah penting
 
