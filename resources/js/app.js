@@ -2,16 +2,14 @@ import './bootstrap';
 
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
-// Vite hashes the image assets, so point Leaflet at the bundled URLs instead of
-// the relative paths it guesses from the stylesheet.
-L.Icon.Default.mergeOptions({
-    iconRetinaUrl: markerIcon2x,
-    iconUrl: markerIcon,
-    shadowUrl: markerShadow,
+// DESIGN.md menetapkan pin stempel, bukan ikon pustaka. Marker digambar sebagai
+// div dengan warna stempel supaya tidak bergantung pada aset gambar Leaflet.
+L.Marker.prototype.options.icon = L.divIcon({
+    className: '',
+    html: '<span class="map-pin"></span>',
+    iconSize: [18, 18],
+    iconAnchor: [9, 9],
 });
 
 window.L = L;

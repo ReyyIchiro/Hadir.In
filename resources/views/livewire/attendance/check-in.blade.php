@@ -36,7 +36,7 @@
                     this.acc = position.coords.accuracy;
                     this.status = 'ready';
                     this.message = 'Lokasi terkunci. Jarak ke lokasi kerja dihitung otomatis.';
-                    this.draw(position.coords.latitude, position.coords.longitude, position.coords.accuracy);
+                    this.$nextTick(() => this.draw(position.coords.latitude, position.coords.longitude, position.coords.accuracy));
                 },
                 (error) => {
                     clearTimeout(timer);
@@ -82,7 +82,12 @@
 >
     <x-panel title="Lokasi Anda" description="Peta hanya dipakai untuk memastikan posisi, bukan pelacakan.">
         <div class="panel-pad">
-            <div wire:ignore x-ref="map" class="h-[280px] w-full rounded-[4px] border border-divider bg-tint" role="img" aria-label="Peta lokasi kerja"></div>
+            <div x-show="status === 'ready'" wire:ignore x-ref="map" class="h-[280px] w-full rounded-[4px] border border-divider bg-tint" role="img" aria-label="Peta lokasi kerja"></div>
+
+            <div x-show="status !== 'ready'" class="flex h-[280px] w-full flex-col items-center justify-center gap-2 rounded-[4px] border border-divider bg-tint px-6 text-center">
+                <x-icon name="map-pin" :size="22" class="text-muted" />
+                <p class="text-[13px] leading-5 text-muted" x-text="status === 'locating' ? 'Menunggu izin dan titik GPS.' : 'Peta muncul setelah lokasi terbaca.'"></p>
+            </div>
 
             <p class="mt-3 text-[13px] leading-5 text-muted" x-text="message"></p>
 

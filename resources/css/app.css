@@ -583,4 +583,20 @@
         left: 1rem;
         top: 1rem;
     }
+
+    /* Pin peta memakai warna stempel, bukan ikon bawaan pustaka peta. */
+    .map-pin {
+        display: block;
+        width: 18px;
+        height: 18px;
+        border-radius: 999px;
+        background: var(--color-stamp);
+        border: 2.5px solid var(--color-surface);
+        box-shadow: 0 0 0 1.5px var(--color-stamp);
+    }
+
+    .leaflet-container {
+        font-family: var(--font-sans);
+        background: var(--color-tint);
+    }
 }
