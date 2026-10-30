@@ -133,7 +133,7 @@
 
             <div class="mt-6 border-t border-divider pt-3">
                 <a href="{{ route('app.profile') }}" class="nav-link">
-                    <x-icon name="users" :size="18" class="shrink-0" />
+                    <x-icon name="user" :size="18" class="shrink-0" />
                     <span>Profil</span>
                 </a>
                 <a href="{{ route('app.appearance') }}" class="nav-link">

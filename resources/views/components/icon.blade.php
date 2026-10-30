@@ -5,6 +5,7 @@
         'clock' => '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 1.8"/>',
         'camera' => '<path d="M4 8.5h3l1.4-2h7.2L17 8.5h3v9H4z"/><circle cx="12" cy="13" r="3.2"/>',
         'calendar' => '<rect x="4" y="5.5" width="16" height="14" rx="1.5"/><path d="M8 3.5v4M16 3.5v4M4 10h16"/>',
+        'user' => '<circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c.5-3.6 3-5.5 7-5.5s6.5 1.9 7 5.5"/>',
         'users' => '<circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c.4-3.2 2.4-5 5.5-5s5.1 1.8 5.5 5"/><path d="M16 5.8a3 3 0 0 1 0 5.4M17.5 14.4c1.8.5 2.8 2 3 4.6"/>',
         'map-pin' => '<path d="M12 21s6.5-6 6.5-11a6.5 6.5 0 0 0-13 0C5.5 15 12 21 12 21z"/><circle cx="12" cy="10" r="2.2"/>',
         'alert-triangle' => '<path d="M12 4 2.8 20h18.4z"/><path d="M12 9.5v4.2M12 17h.01"/>',
