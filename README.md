@@ -6,21 +6,38 @@ tempat. Antarmuka berbahasa Indonesia, tenang, dan dibuat untuk dipakai setiap h
 
 ## Status
 
-Repositori ini sedang dibangun. Dokumentasi produk dan teknis sudah menjadi sumber
-kebenaran. Implementasi aplikasi menyusul bertahap sesuai `docs/ROADMAP.md`.
+Versi 1.0 lengkap untuk alur inti dan siap diuji di staging. Dokumentasi produk
+dan teknis tetap menjadi sumber kebenaran bila kode dan dokumen berbeda.
 
 | Bagian | Status |
 | --- | --- |
 | Dokumen produk, desain, arsitektur, database, rute, operasi | Selesai |
-| Scaffold Laravel, Livewire, Tailwind | Belum |
-| Autentikasi, undangan, tenancy, peran | Belum |
-| Presensi, geofence, selfie, tinjauan, koreksi | Belum |
-| Jadwal, hari libur, izin, cuti | Belum |
-| Laporan bulanan dan ekspor CSV | Belum |
-| Halaman publik dan aplikasi anggota | Belum |
-| Pengujian otomatis dan runbook produksi | Belum |
+| Scaffold Laravel, Livewire, Tailwind | Selesai |
+| Autentikasi, undangan, tenancy, peran | Selesai |
+| Presensi, geofence, selfie, tinjauan, koreksi | Selesai |
+| Jadwal, hari libur, izin, cuti | Selesai |
+| Laporan bulanan dan ekspor CSV | Selesai |
+| Halaman publik dan aplikasi anggota | Selesai |
+| Pengujian otomatis dan runbook produksi | Selesai |
 
-Jangan menganggap fitur yang belum dicentang sebagai fitur yang sudah tersedia.
+124 tes Pest lulus. Sebelum go-live, jalankan matriks manual kamera dan GPS pada
+perangkat nyata (`docs/TESTING.md` bagian 7) dan uji staging PostgreSQL.
+
+## Akun demo
+
+Setelah `php artisan migrate:fresh --seed`, seeder demo membuat organisasi
+"Hadir.In Demo" dengan kata sandi `password123` untuk semua akun:
+
+| Peran | Email |
+| --- | --- |
+| Pemilik | `pemilik@hadir.test` |
+| Admin | `admin@hadir.test` |
+| Peninjau | `peninjau@hadir.test` |
+| Anggota | `anggota@hadir.test` |
+| Platform admin | `platform@hadir.test` |
+
+Seeder demo hanya berjalan di lingkungan `local` dan `testing`, dan aman
+dijalankan berulang.
 
 ## Stack
 

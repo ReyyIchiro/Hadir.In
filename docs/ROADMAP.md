@@ -16,12 +16,12 @@ menghasilkan aplikasi yang dapat dijalankan, bukan hanya kode yang belum diuji.
 | Milestone | Fokus | Status |
 | --- | --- | --- |
 | M0 | Dokumentasi dan keputusan | Selesai |
-| M1 | Fondasi Laravel, desain, autentikasi, tenancy | Belum |
-| M2 | Data operasional: lokasi, divisi, anggota, undangan | Belum |
-| M3 | Jadwal, hari libur, presensi, geofence, selfie | Belum |
-| M4 | Tinjauan, koreksi, izin, cuti | Belum |
-| M5 | Laporan, CSV, halaman publik, aplikasi anggota | Belum |
-| M6 | Pengujian menyeluruh, keamanan, penyebaran | Belum |
+| M1 | Fondasi Laravel, desain, autentikasi, tenancy | Selesai |
+| M2 | Data operasional: lokasi, divisi, anggota, undangan | Selesai |
+| M3 | Jadwal, hari libur, presensi, geofence, selfie | Selesai |
+| M4 | Tinjauan, koreksi, izin, cuti | Selesai |
+| M5 | Laporan, CSV, halaman publik, aplikasi anggota | Selesai |
+| M6 | Pengujian menyeluruh, keamanan, penyebaran | Selesai |
 
 ## 3. M0: Dokumentasi
 
@@ -220,3 +220,19 @@ Perbarui tabel ini setiap milestone selesai.
 | Tanggal | Milestone | Catatan |
 | --- | --- | --- |
 | 2026-10-30 | M0 | Dokumen produk, desain, arsitektur, database, rute, pengujian, operasi, roadmap, keputusan |
+| 2026-10-30 | M1 | Laravel 12, Livewire 3, Tailwind 4, token desain, autentikasi, tenancy, platform admin |
+| 2026-10-30 | M2 | Lokasi, divisi, anggota, undangan, pengaturan organisasi, profil, tema |
+| 2026-10-30 | M3 | Jadwal, hari libur, presensi masuk dan pulang, geofence, selfie, finalisasi otomatis |
+| 2026-10-30 | M4 | Antrean tinjauan, koreksi jam, izin, sakit, cuti, lingkup peninjau |
+| 2026-10-30 | M5 | Laporan bulanan, ekspor CSV, halaman publik, aplikasi anggota, mode gelap |
+| 2026-10-30 | M6 | Seeder demo, 124 tes Pest, Pint, build Vite, runbook operasi |
+
+Catatan M6:
+
+- `php artisan test` lulus 124 tes dengan 267 asersi.
+- `npm run build` lulus.
+- Seluruh rute pada `ROUTES.md` terdaftar dan diuji.
+- Uji staging PostgreSQL belum dijalankan karena ekstensi `pdo_pgsql` tidak
+  tersedia di mesin pengembangan; lihat `OPERATIONS.md` bagian 16.
+- Matriks manual kamera dan GPS pada perangkat nyata masih perlu dijalankan
+  sebelum go-live; lihat `TESTING.md` bagian 7.
