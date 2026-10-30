@@ -2,9 +2,11 @@
 
 namespace App\Policies;
 
+use App\Enums\ReviewStatus;
 use App\Models\AttendanceReview;
 use App\Models\Membership;
 use App\Models\User;
+use App\Support\TenantContext;
 
 class AttendanceReviewPolicy
 {
@@ -35,7 +37,7 @@ class AttendanceReviewPolicy
 
     public function decide(User $user, AttendanceReview $review): bool
     {
-        return $this->view($user, $review) && $review->status === \App\Enums\ReviewStatus::Pending;
+        return $this->view($user, $review) && $review->status === ReviewStatus::Pending;
     }
 
     protected function actor(User $user): ?Membership
@@ -44,6 +46,6 @@ class AttendanceReviewPolicy
             return null;
         }
 
-        return app(\App\Support\TenantContext::class)->membership();
+        return app(TenantContext::class)->membership();
     }
 }

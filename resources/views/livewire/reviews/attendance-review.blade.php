@@ -50,7 +50,7 @@
                     @if($event?->reason)
                         <div class="px-4 py-3 md:px-6">
                             <dt class="text-[13px] text-muted">Alasan sistem</dt>
-                            <dd class="mt-1 text-[13px] leading-6">{{ $event->reason }}</dd>
+                            <dd class="mt-1 text-[13px] leading-6">{{ \App\Support\Reasons::label($event->reason) }}</dd>
                         </div>
                     @endif
                 </dl>

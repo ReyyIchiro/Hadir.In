@@ -7,7 +7,6 @@ use App\Livewire\Concerns\WithTenant;
 use App\Models\Division;
 use App\Models\Location;
 use App\Models\Membership;
-use App\Support\Waktu;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Component;

@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\Invitation;
 use App\Models\Membership;
 use App\Models\User;
+use App\Support\TenantContext;
 
 class InvitationPolicy
 {
@@ -33,6 +34,6 @@ class InvitationPolicy
             return null;
         }
 
-        return app(\App\Support\TenantContext::class)->membership();
+        return app(TenantContext::class)->membership();
     }
 }

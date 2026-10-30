@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Enums\AttendanceEventType;
 use App\Enums\AttendanceStatus;
 use App\Models\AttendanceDay;
 use App\Models\AttendanceEvent;
@@ -17,8 +18,7 @@ class AttendanceResult
         public ?string $reason,
         public string $message,
         public bool $canRequestReview,
-    ) {
-    }
+    ) {}
 
     public static function make(
         bool $accepted,
@@ -38,7 +38,7 @@ class AttendanceResult
             flags: $flags,
             reason: $reason,
             message: $message,
-            canRequestReview: $canRequestReview ?? (! $accepted && $event->type === \App\Enums\AttendanceEventType::CheckIn),
+            canRequestReview: $canRequestReview ?? (! $accepted && $event->type === AttendanceEventType::CheckIn),
         );
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Division;
 use App\Models\Location;
 use App\Services\ReportService;
+use App\Support\Flags;
 use App\Support\TenantContext;
 use App\Support\Waktu;
 use Carbon\CarbonImmutable;
@@ -90,7 +91,7 @@ class ReportExportController extends Controller
                     $row['check_out'] ? Waktu::time($row['check_out']) : '',
                     $row['status_label'],
                     (string) ($row['note'] ?? ''),
-                    implode(', ', array_map(fn (string $flag) => \App\Support\Flags::label($flag), $row['flags'])),
+                    implode(', ', array_map(fn (string $flag) => Flags::label($flag), $row['flags'])),
                 ], ';', '"', '');
             }
 

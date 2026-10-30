@@ -58,10 +58,9 @@
                         <li class="flex items-center gap-2"><span class="inline-block h-1 w-1 rounded-full bg-muted" aria-hidden="true"></span>Selfie tersimpan, akses terbatas</li>
                     </ul>
                 </div>
-                <div class="mt-3 flex items-center justify-between border-t border-divider pt-3 text-[12px] text-muted">
-                    <span>Angka dan jarak adalah contoh, bukan data pelanggan.</span>
-                    <span class="font-mono tabular-nums">07.56</span>
-                </div>
+                <p class="mt-3 border-t border-divider pt-3 text-[12px] text-muted">
+                    Angka dan jarak di atas adalah contoh, bukan data pelanggan.
+                </p>
             </div>
         </div>
     </section>

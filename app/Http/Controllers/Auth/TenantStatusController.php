@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\TenantStatus;
 use App\Http\Controllers\Controller;
 use App\Support\TenantContext;
 use Illuminate\Http\RedirectResponse;
@@ -23,7 +24,7 @@ class TenantStatusController extends Controller
 
         $context->set($membership->tenant, $membership);
 
-        if ($membership->tenant->status === \App\Enums\TenantStatus::Active) {
+        if ($membership->tenant->status === TenantStatus::Active) {
             return redirect()->route('app.home');
         }
 

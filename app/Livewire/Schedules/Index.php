@@ -8,10 +8,8 @@ use App\Models\Division;
 use App\Models\Membership;
 use App\Models\Schedule;
 use App\Services\TenantClock;
-use App\Support\Waktu;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 
 class Index extends Component

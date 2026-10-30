@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Models\AttendanceEvent;
 use App\Models\Tenant;
 use App\Services\SelfieService;
-use App\Support\Flags;
 use Illuminate\Console\Command;
 
 class PurgeSelfies extends Command
@@ -21,7 +21,7 @@ class PurgeSelfies extends Command
             foreach ($tenants as $tenant) {
                 $days = $tenant->settings?->selfie_retention_days ?? 90;
 
-                \App\Models\AttendanceEvent::withoutGlobalScopes()
+                AttendanceEvent::withoutGlobalScopes()
                     ->where('tenant_id', $tenant->id)
                     ->whereNotNull('selfie_path')
                     ->where('occurred_at', '<', now()->subDays($days))

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\MembershipRole;
+use App\Enums\TenantStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Tenant;
 use Illuminate\Http\RedirectResponse;
@@ -17,14 +19,14 @@ class TenantSwitchController extends Controller
             abort(403);
         }
 
-        if ($tenant->status !== \App\Enums\TenantStatus::Active
-            && $membership->role !== \App\Enums\MembershipRole::Owner) {
+        if ($tenant->status !== TenantStatus::Active
+            && $membership->role !== MembershipRole::Owner) {
             abort(403);
         }
 
         $request->session()->put('active_tenant_id', $tenant->id);
 
-        if ($tenant->status !== \App\Enums\TenantStatus::Active) {
+        if ($tenant->status !== TenantStatus::Active) {
             return redirect()->route('tenant.status');
         }
 

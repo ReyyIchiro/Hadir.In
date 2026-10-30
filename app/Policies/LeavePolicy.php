@@ -2,10 +2,12 @@
 
 namespace App\Policies;
 
+use App\Enums\LeaveStatus;
 use App\Enums\MembershipRole;
 use App\Models\LeaveRequest;
 use App\Models\Membership;
 use App\Models\User;
+use App\Support\TenantContext;
 
 class LeavePolicy
 {
@@ -59,10 +61,10 @@ class LeavePolicy
     public function cancel(User $user, LeaveRequest $leave): bool
     {
         if ($leave->user_id === $user->id) {
-            return $leave->status === \App\Enums\LeaveStatus::Pending;
+            return $leave->status === LeaveStatus::Pending;
         }
 
-        return $this->review($user, $leave) && $leave->status === \App\Enums\LeaveStatus::Approved;
+        return $this->review($user, $leave) && $leave->status === LeaveStatus::Approved;
     }
 
     protected function actor(User $user): ?Membership
@@ -71,6 +73,6 @@ class LeavePolicy
             return null;
         }
 
-        return app(\App\Support\TenantContext::class)->membership();
+        return app(TenantContext::class)->membership();
     }
 }

@@ -8,6 +8,7 @@ use App\Models\AttendanceCorrection;
 use App\Services\AttendanceService;
 use App\Services\TenantClock;
 use App\Support\Waktu;
+use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
@@ -95,7 +96,7 @@ class CorrectionReview extends Component
                 return '--:--';
             }
 
-            return Waktu::local(\Carbon\CarbonImmutable::parse($iso), $tenant)->format('H.i');
+            return Waktu::local(CarbonImmutable::parse($iso), $tenant)->format('H.i');
         };
 
         return view('livewire.reviews.correction-review', [

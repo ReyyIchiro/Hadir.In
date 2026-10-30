@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\MembershipRole;
+use App\Enums\TenantStatus;
 use App\Models\Tenant;
 use App\Models\TenantSetting;
 use App\Models\User;
@@ -24,7 +25,7 @@ class TenantService
                 'name' => $organization,
                 'slug' => $this->uniqueSlug($organization),
                 'timezone' => $timezone,
-                'status' => \App\Enums\TenantStatus::Pending,
+                'status' => TenantStatus::Pending,
             ]);
 
             TenantSetting::create([

@@ -12,9 +12,7 @@ use Illuminate\View\View;
 
 class RegisterController extends Controller
 {
-    public function __construct(protected TenantService $tenants)
-    {
-    }
+    public function __construct(protected TenantService $tenants) {}
 
     public function show(): View
     {

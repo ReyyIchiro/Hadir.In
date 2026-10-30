@@ -82,7 +82,7 @@
 >
     <x-panel title="Lokasi Anda" description="Peta hanya dipakai untuk memastikan posisi, bukan pelacakan.">
         <div class="panel-pad">
-            <div x-ref="map" class="h-[280px] w-full rounded-[4px] border border-divider bg-tint" role="img" aria-label="Peta lokasi kerja"></div>
+            <div wire:ignore x-ref="map" class="h-[280px] w-full rounded-[4px] border border-divider bg-tint" role="img" aria-label="Peta lokasi kerja"></div>
 
             <p class="mt-3 text-[13px] leading-5 text-muted" x-text="message"></p>
 

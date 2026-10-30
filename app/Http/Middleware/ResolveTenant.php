@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\MembershipRole;
+use App\Enums\TenantStatus;
 use App\Models\Membership;
 use App\Support\TenantContext;
 use Closure;
@@ -11,9 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ResolveTenant
 {
-    public function __construct(protected TenantContext $context)
-    {
-    }
+    public function __construct(protected TenantContext $context) {}
 
     public function handle(Request $request, Closure $next): Response
     {
@@ -46,8 +46,8 @@ class ResolveTenant
 
         $tenant = $membership->tenant;
 
-        if ($tenant->status === \App\Enums\TenantStatus::Suspended
-            && $membership->role !== \App\Enums\MembershipRole::Owner) {
+        if ($tenant->status === TenantStatus::Suspended
+            && $membership->role !== MembershipRole::Owner) {
             abort(403, 'Organisasi ini sedang ditangguhkan.');
         }
 

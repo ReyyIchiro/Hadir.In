@@ -6,6 +6,7 @@ use App\Enums\MembershipRole;
 use App\Models\AttendanceDay;
 use App\Models\Membership;
 use App\Models\User;
+use App\Support\TenantContext;
 
 class AttendancePolicy
 {
@@ -93,6 +94,6 @@ class AttendancePolicy
             return null;
         }
 
-        return app(\App\Support\TenantContext::class)->membership();
+        return app(TenantContext::class)->membership();
     }
 }

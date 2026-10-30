@@ -7,6 +7,7 @@
     <meta name="robots" content="noindex">
     <title>{{ $title ?? 'Hadir.In' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
     <script>
         (function () {
             var t = localStorage.getItem('hadir-theme');

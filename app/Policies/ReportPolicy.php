@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\Membership;
 use App\Models\User;
+use App\Support\TenantContext;
 
 class ReportPolicy
 {
@@ -23,6 +24,6 @@ class ReportPolicy
             return null;
         }
 
-        return app(\App\Support\TenantContext::class)->membership();
+        return app(TenantContext::class)->membership();
     }
 }

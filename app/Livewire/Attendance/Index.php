@@ -11,9 +11,9 @@ use App\Models\Location;
 use App\Models\Membership;
 use App\Models\Schedule;
 use App\Services\TenantClock;
-use App\Support\Waktu;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Collection;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -157,8 +157,8 @@ class Index extends Component
     }
 
     /**
-     * @param  \Illuminate\Support\Collection<int, Location>  $locations
-     * @param  \Illuminate\Support\Collection<int, Division>  $divisions
+     * @param  Collection<int, Location>  $locations
+     * @param  Collection<int, Division>  $divisions
      * @return array<string, mixed>
      */
     protected function teamData(Membership $membership, $locations, $divisions): array

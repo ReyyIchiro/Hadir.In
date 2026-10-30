@@ -3,18 +3,17 @@
 namespace App\Livewire\Dashboard;
 
 use App\Enums\AttendanceStatus;
+use App\Enums\CorrectionStatus;
 use App\Enums\LeaveStatus;
-use App\Enums\MembershipRole;
+use App\Enums\ReviewStatus;
 use App\Livewire\Concerns\WithTenant;
+use App\Models\AttendanceCorrection;
 use App\Models\AttendanceDay;
+use App\Models\AttendanceReview;
 use App\Models\LeaveRequest;
-use App\Models\Membership;
 use App\Models\Schedule;
 use App\Services\TenantClock;
-use App\Support\Flags;
-use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Collection;
 use Livewire\Component;
 
 class Home extends Component
@@ -54,11 +53,11 @@ class Home extends Component
         $canReview = $membership->role->canReview();
 
         $pendingReviews = $canReview
-            ? \App\Models\AttendanceReview::where('status', \App\Enums\ReviewStatus::Pending)->count()
+            ? AttendanceReview::where('status', ReviewStatus::Pending)->count()
             : 0;
 
         $pendingCorrections = $canReview
-            ? \App\Models\AttendanceCorrection::where('status', \App\Enums\CorrectionStatus::Pending)->count()
+            ? AttendanceCorrection::where('status', CorrectionStatus::Pending)->count()
             : 0;
 
         $pendingLeave = $canReview

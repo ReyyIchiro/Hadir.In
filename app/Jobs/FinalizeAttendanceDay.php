@@ -11,9 +11,7 @@ class FinalizeAttendanceDay implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(public int $attendanceDayId)
-    {
-    }
+    public function __construct(public int $attendanceDayId) {}
 
     public function handle(AttendanceService $attendance): void
     {

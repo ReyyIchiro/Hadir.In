@@ -4,11 +4,9 @@ namespace App\Livewire\Attendance;
 
 use App\Livewire\Concerns\WithTenant;
 use App\Models\AttendanceDay;
-use App\Models\AttendanceEvent;
 use App\Models\Location;
 use App\Services\AttendanceService;
 use App\Services\TenantClock;
-use App\Support\AttendanceResult;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
 use Livewire\Component;

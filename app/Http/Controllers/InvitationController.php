@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\TenantStatus;
+use App\Models\User;
 use App\Services\InvitationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -11,9 +13,7 @@ use Illuminate\View\View;
 
 class InvitationController extends Controller
 {
-    public function __construct(protected InvitationService $invitations)
-    {
-    }
+    public function __construct(protected InvitationService $invitations) {}
 
     public function show(string $token): View
     {
@@ -31,7 +31,7 @@ class InvitationController extends Controller
             return view('invitations.invalid', ['reason' => $reason]);
         }
 
-        $existingUser = \App\Models\User::where('email', $invitation->email)->exists();
+        $existingUser = User::where('email', $invitation->email)->exists();
 
         return view('invitations.show', [
             'token' => $token,
@@ -63,7 +63,7 @@ class InvitationController extends Controller
                 ->with('status', 'Anda bergabung dengan '.$invitation->tenant->name.'.');
         }
 
-        if (\App\Models\User::where('email', $invitation->email)->exists()) {
+        if (User::where('email', $invitation->email)->exists()) {
             return redirect()->route('login')
                 ->withErrors(['email' => 'Email ini sudah terdaftar. Masuk untuk menerima undangan.']);
         }
@@ -81,7 +81,7 @@ class InvitationController extends Controller
         $request->session()->regenerate();
         $request->session()->put('active_tenant_id', $invitation->tenant_id);
 
-        if ($invitation->tenant->status !== \App\Enums\TenantStatus::Active) {
+        if ($invitation->tenant->status !== TenantStatus::Active) {
             return redirect()->route('tenant.status');
         }
 

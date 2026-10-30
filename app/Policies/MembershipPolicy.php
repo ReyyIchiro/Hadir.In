@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Enums\MembershipRole;
 use App\Models\Membership;
 use App\Models\User;
+use App\Support\TenantContext;
 
 class MembershipPolicy
 {
@@ -59,6 +60,6 @@ class MembershipPolicy
             return null;
         }
 
-        return app(\App\Support\TenantContext::class)->membership();
+        return app(TenantContext::class)->membership();
     }
 }

@@ -3,19 +3,20 @@
 namespace App\Services;
 
 use App\Enums\AttendanceStatus;
+use App\Enums\LeaveStatus;
 use App\Models\AttendanceDay;
 use App\Models\Holiday;
+use App\Models\LeaveRequest;
 use App\Models\Schedule;
 use App\Models\Tenant;
 use App\Models\TenantSetting;
+use App\Support\Flags;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 
 class FinalizationService
 {
-    public function __construct(protected TenantClock $clock)
-    {
-    }
+    public function __construct(protected TenantClock $clock) {}
 
     /**
      * @return array{finalized: int, absent: int}
@@ -43,10 +44,10 @@ class FinalizationService
 
             DB::transaction(function () use ($day) {
                 $flags = $day->flags ?? [];
-                $flags[] = \App\Support\Flags::FINAL_OTOMATIS;
+                $flags[] = Flags::FINAL_OTOMATIS;
 
                 if ($day->check_out_at === null) {
-                    $flags[] = \App\Support\Flags::TANPA_PULANG;
+                    $flags[] = Flags::TANPA_PULANG;
                 }
 
                 $day->update([
@@ -108,10 +109,10 @@ class FinalizationService
                 continue;
             }
 
-            $leaveExists = \App\Models\LeaveRequest::withoutGlobalScopes()
+            $leaveExists = LeaveRequest::withoutGlobalScopes()
                 ->where('tenant_id', $tenant->id)
                 ->where('user_id', $schedule->user_id)
-                ->where('status', \App\Enums\LeaveStatus::Approved)
+                ->where('status', LeaveStatus::Approved)
                 ->where('start_date', '<=', $date)
                 ->where('end_date', '>=', $date)
                 ->exists();
@@ -127,7 +128,7 @@ class FinalizationService
                 'schedule_id' => $schedule->id,
                 'status' => AttendanceStatus::Absen,
                 'late_minutes' => 0,
-                'flags' => [\App\Support\Flags::FINAL_OTOMATIS],
+                'flags' => [Flags::FINAL_OTOMATIS],
                 'finalized_at' => now(),
             ]);
 

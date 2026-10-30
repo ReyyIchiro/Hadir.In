@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Models\Tenant;
 use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
 
 class Waktu
 {
@@ -57,12 +58,12 @@ class Waktu
         return self::now($tenant)->startOfDay();
     }
 
-    public static function local(CarbonImmutable|\Carbon\CarbonInterface $value, Tenant $tenant): CarbonImmutable
+    public static function local(CarbonImmutable|CarbonInterface $value, Tenant $tenant): CarbonImmutable
     {
         return CarbonImmutable::instance($value)->setTimezone($tenant->timezone);
     }
 
-    public static function utc(CarbonImmutable|\Carbon\CarbonInterface $value, Tenant $tenant): CarbonImmutable
+    public static function utc(CarbonImmutable|CarbonInterface $value, Tenant $tenant): CarbonImmutable
     {
         return CarbonImmutable::instance($value)->setTimezone('UTC');
     }
@@ -94,7 +95,12 @@ class Waktu
         return self::DAYS[$date->dayOfWeekIso];
     }
 
-    public static function time(\DateTimeInterface|string|null $value, string $fallback = '--:--'): string
+    /**
+     * Timestamps are stored in UTC and rendered in the active tenant timezone.
+     * Every screen goes through this helper so a single conversion applies
+     * everywhere, including CSV export.
+     */
+    public static function time(\DateTimeInterface|string|null $value, string $fallback = '--:--', ?Tenant $tenant = null): string
     {
         if ($value === null) {
             return $fallback;
@@ -103,6 +109,12 @@ class Waktu
         $date = $value instanceof \DateTimeInterface
             ? CarbonImmutable::instance($value)
             : CarbonImmutable::parse($value);
+
+        $tenant ??= app(TenantContext::class)->tenant();
+
+        if ($tenant !== null) {
+            $date = $date->setTimezone($tenant->timezone);
+        }
 
         return $date->format('H.i');
     }
@@ -116,7 +128,7 @@ class Waktu
     {
         return CarbonImmutable::instance($value)->diffForHumans(now(), [
             'locale' => 'id',
-            'syntax' => \Carbon\CarbonInterface::DIFF_RELATIVE_AUTO,
+            'syntax' => CarbonInterface::DIFF_RELATIVE_AUTO,
         ]);
     }
 }

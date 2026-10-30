@@ -2,9 +2,11 @@
 
 namespace App\Policies;
 
+use App\Enums\CorrectionStatus;
 use App\Models\AttendanceCorrection;
 use App\Models\Membership;
 use App\Models\User;
+use App\Support\TenantContext;
 
 class AttendanceCorrectionPolicy
 {
@@ -29,7 +31,7 @@ class AttendanceCorrectionPolicy
 
     public function decide(User $user, AttendanceCorrection $correction): bool
     {
-        return $this->view($user, $correction) && $correction->status === \App\Enums\CorrectionStatus::Pending;
+        return $this->view($user, $correction) && $correction->status === CorrectionStatus::Pending;
     }
 
     protected function actor(User $user): ?Membership
@@ -38,6 +40,6 @@ class AttendanceCorrectionPolicy
             return null;
         }
 
-        return app(\App\Support\TenantContext::class)->membership();
+        return app(TenantContext::class)->membership();
     }
 }

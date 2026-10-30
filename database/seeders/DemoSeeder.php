@@ -36,6 +36,22 @@ class DemoSeeder extends Seeder
             return;
         }
 
+        // Re-running the seeder should replace the demo data instead of failing on
+        // the unique slug. Deleting the tenant cascades to every tenant-scoped row.
+        $existing = Tenant::where('slug', 'hadir-in-demo')->first();
+
+        if ($existing) {
+            $existing->delete();
+        }
+
+        User::whereIn('email', [
+            'pemilik@hadir.test',
+            'admin@hadir.test',
+            'peninjau@hadir.test',
+            'anggota@hadir.test',
+            'platform@hadir.test',
+        ])->delete();
+
         DB::transaction(function () {
             $tenant = Tenant::create([
                 'name' => 'Hadir.In Demo',
@@ -108,7 +124,7 @@ class DemoSeeder extends Seeder
 
             $this->membership($tenant, $owner, MembershipRole::Owner, $office, $finance);
             $this->membership($tenant, $admin, MembershipRole::Admin, $office, $finance);
-            $this->membership($tenant, $reviewer, MembershipRole::Reviewer, $warehouse, $operations);
+            $this->membership($tenant, $reviewer, MembershipRole::Reviewer, $office, $operations);
             $this->membership($tenant, $member, MembershipRole::Member, $office, $operations);
 
             $today = CarbonImmutable::now($tenant->timezone)->startOfDay();
@@ -122,6 +138,7 @@ class DemoSeeder extends Seeder
             ]);
 
             $this->attendanceSamples($tenant, $member, $office, $today);
+            $this->teamAttendanceSamples($tenant, [$owner, $admin, $reviewer], $office, $today);
 
             $this->leaveSamples($tenant, $member, $reviewer, $today);
         });
@@ -271,6 +288,53 @@ class DemoSeeder extends Seeder
         ]);
     }
 
+    /**
+     * Riwayat ringkas untuk anggota lain supaya laporan bulanan tidak terlihat
+     * kosong saat aplikasi pertama kali dibuka.
+     *
+     * @param  array<int, User>  $users
+     */
+    protected function teamAttendanceSamples(Tenant $tenant, array $users, Location $office, CarbonImmutable $today): void
+    {
+        $pattern = [
+            ['07.49', '17.03', AttendanceStatus::Hadir, 0],
+            ['08.07', '17.11', AttendanceStatus::Hadir, 0],
+            ['08.24', '16.58', AttendanceStatus::Terlambat, 24],
+            ['07.55', '17.20', AttendanceStatus::Hadir, 0],
+            ['08.02', '17.05', AttendanceStatus::Hadir, 0],
+        ];
+
+        foreach ($users as $index => $user) {
+            $cursor = 0;
+
+            for ($back = 1; $back <= 9; $back++) {
+                $date = $today->subDays($back);
+
+                if ($date->isWeekend()) {
+                    continue;
+                }
+
+                [$in, $out, $status, $late] = $pattern[($cursor + $index) % count($pattern)];
+                $cursor++;
+
+                $checkIn = $this->localTimestamp($date, $in);
+
+                AttendanceDay::create([
+                    'tenant_id' => $tenant->id,
+                    'user_id' => $user->id,
+                    'work_date' => $date->toDateString(),
+                    'location_id' => $office->id,
+                    'status' => $status,
+                    'check_in_at' => $checkIn,
+                    'check_out_at' => $this->localTimestamp($date, $out),
+                    'late_minutes' => $late,
+                    'flags' => [],
+                    'finalized_at' => $this->localTimestamp($date, '21.00'),
+                ]);
+            }
+        }
+    }
+
     protected function leaveSamples(Tenant $tenant, User $member, User $reviewer, CarbonImmutable $today): void
     {
         LeaveRequest::create([
@@ -293,6 +357,8 @@ class DemoSeeder extends Seeder
             'status' => LeaveStatus::Approved,
             'reviewed_by_id' => $reviewer->id,
             'reviewed_at' => $this->localTimestamp($today->subDays(9), '10.00'),
+            'created_at' => $this->localTimestamp($today->subDays(10), '08.30'),
+            'updated_at' => $this->localTimestamp($today->subDays(9), '10.00'),
         ]);
     }
 

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\TenantStatus;
 use App\Http\Controllers\Controller;
-use App\Models\Tenant;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -51,7 +51,7 @@ class LoginController extends Controller
         $tenant = $memberships->first()->tenant;
         $request->session()->put('active_tenant_id', $tenant->id);
 
-        if ($tenant->status !== \App\Enums\TenantStatus::Active) {
+        if ($tenant->status !== TenantStatus::Active) {
             return redirect()->route('tenant.status');
         }
 

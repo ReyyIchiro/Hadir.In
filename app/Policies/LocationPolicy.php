@@ -3,7 +3,9 @@
 namespace App\Policies;
 
 use App\Models\Location;
+use App\Models\Membership;
 use App\Models\User;
+use App\Support\TenantContext;
 
 class LocationPolicy
 {
@@ -32,12 +34,12 @@ class LocationPolicy
         return $this->viewAny($user);
     }
 
-    protected function actor(User $user): ?\App\Models\Membership
+    protected function actor(User $user): ?Membership
     {
         if ($user->is_platform_admin) {
             return null;
         }
 
-        return app(\App\Support\TenantContext::class)->membership();
+        return app(TenantContext::class)->membership();
     }
 }

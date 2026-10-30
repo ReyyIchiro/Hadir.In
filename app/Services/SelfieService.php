@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\AttendanceEvent;
 use App\Models\Tenant;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -85,9 +86,19 @@ class SelfieService
         }
     }
 
+    /**
+     * Signed URL for an event selfie, or null when the event has no file
+     * (never captured, or already purged by the retention job).
+     */
     public function temporaryUrl(?int $eventId, int $minutes = 5): ?string
     {
         if (! $eventId) {
+            return null;
+        }
+
+        $event = AttendanceEvent::find($eventId);
+
+        if (! $event?->selfie_path || ! Storage::disk('local')->exists($event->selfie_path)) {
             return null;
         }
 

@@ -2,8 +2,10 @@
 
 namespace App\Policies;
 
+use App\Models\Membership;
 use App\Models\Schedule;
 use App\Models\User;
+use App\Support\TenantContext;
 
 class SchedulePolicy
 {
@@ -38,12 +40,12 @@ class SchedulePolicy
         return $this->create($user);
     }
 
-    protected function actor(User $user): ?\App\Models\Membership
+    protected function actor(User $user): ?Membership
     {
         if ($user->is_platform_admin) {
             return null;
         }
 
-        return app(\App\Support\TenantContext::class)->membership();
+        return app(TenantContext::class)->membership();
     }
 }

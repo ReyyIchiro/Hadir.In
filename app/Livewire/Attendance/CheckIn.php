@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Attendance;
 
+use App\Enums\ReviewStatus;
 use App\Livewire\Concerns\WithTenant;
 use App\Models\AttendanceDay;
 use App\Models\AttendanceEvent;
@@ -150,7 +151,7 @@ class CheckIn extends Component
         $event->review()->create([
             'tenant_id' => $event->tenant_id,
             'user_id' => $event->user_id,
-            'status' => \App\Enums\ReviewStatus::Pending,
+            'status' => ReviewStatus::Pending,
             'note' => 'Mohon tinjau absen masuk di luar radius.',
         ]);
 

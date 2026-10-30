@@ -47,7 +47,7 @@
                                         @endif
                                     </td>
                                     <td class="font-mono text-[12px] tabular-nums text-muted">
-                                        {{ number_format((float) $location->latitude, 5, ',', '.') }}, {{ number_format((float) $location->longitude, 5, ',', '.') }}
+                                        {{ number_format((float) $location->latitude, 5, '.', '') }}, {{ number_format((float) $location->longitude, 5, '.', '') }}
                                     </td>
                                     <td class="tabular-nums">{{ $location->radius_meters }} m</td>
                                     <td class="tabular-nums">{{ $location->memberships_count }}</td>
