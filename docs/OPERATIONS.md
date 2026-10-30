@@ -547,6 +547,20 @@ itu:
 - Sebelum rilis produksi, jalankan migrasi dan seluruh tes di staging PostgreSQL.
 - Container PostgreSQL lokal tersedia untuk eksperimen, tetapi tidak dipakai
   oleh aplikasi tanpa ekstensi PHP yang sesuai.
+- Untuk memverifikasi migrasi pada PostgreSQL tanpa memasang ekstensi di mesin
+  lokal, jalankan tes di dalam image PHP yang memuat `pdo_pgsql`:
+
+  ```bash
+  docker run --rm --network host \
+    -v "$PWD:/app" -w /app \
+    -e DB_CONNECTION=pgsql -e DB_HOST=127.0.0.1 -e DB_PORT=55432 \
+    -e DB_DATABASE=hadir -e DB_USERNAME=postgres -e DB_PASSWORD=secret \
+    hadir-php-pg php artisan test
+  ```
+
+  Image dibangun dari `php:8.3-cli-alpine` dengan ekstensi `pdo_pgsql`, `gd`,
+  `mbstring`, `zip`, dan `intl`. CI memakai jalur yang sama lewat layanan
+  PostgreSQL pada `.github/workflows/ci.yml`.
 
 Jangan menambahkan ketergantungan pada fitur PostgreSQL yang tidak didukung
 SQLite tanpa memperbarui `DATABASE.md` dan `TESTING.md`.

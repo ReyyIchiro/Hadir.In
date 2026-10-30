@@ -225,14 +225,16 @@ Perbarui tabel ini setiap milestone selesai.
 | 2026-10-30 | M3 | Jadwal, hari libur, presensi masuk dan pulang, geofence, selfie, finalisasi otomatis |
 | 2026-10-30 | M4 | Antrean tinjauan, koreksi jam, izin, sakit, cuti, lingkup peninjau |
 | 2026-10-30 | M5 | Laporan bulanan, ekspor CSV, halaman publik, aplikasi anggota, mode gelap |
-| 2026-10-30 | M6 | Seeder demo, 124 tes Pest, Pint, build Vite, runbook operasi |
+| 2026-10-30 | M6 | Seeder demo, 126 tes Pest, Pint, build Vite, CI, runbook operasi |
 
 Catatan M6:
 
-- `php artisan test` lulus 124 tes dengan 267 asersi.
+- `php artisan test` lulus 126 tes dengan 274 asersi.
 - `npm run build` lulus.
 - Seluruh rute pada `ROUTES.md` terdaftar dan diuji.
 - Uji staging PostgreSQL belum dijalankan karena ekstensi `pdo_pgsql` tidak
-  tersedia di mesin pengembangan; lihat `OPERATIONS.md` bagian 16.
+  tersedia di mesin pengembangan. CI menyediakan pekerjaan PostgreSQL 16 supaya
+  migrasi tetap teruji pada mesin yang setara produksi; lihat
+  `OPERATIONS.md` bagian 16.
 - Matriks manual kamera dan GPS pada perangkat nyata masih perlu dijalankan
   sebelum go-live; lihat `TESTING.md` bagian 7.

@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Tes dan build
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_PASSWORD: secret
+          POSTGRES_DB: hadir_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Siapkan PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: bcmath, ctype, curl, dom, fileinfo, gd, mbstring, openssl, pdo_pgsql, pdo_sqlite, tokenizer, xml, zip
+          coverage: none
+
+      - name: Siapkan Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: composer-${{ hashFiles('composer.lock') }}
+
+      - name: Pasang dependensi PHP
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Siapkan berkas lingkungan
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Pasang dependensi Node
+        run: npm ci
+
+      - name: Build aset
+        run: npm run build
+
+      - name: Periksa gaya kode
+        run: ./vendor/bin/pint --test
+
+      - name: Jalankan tes
+        run: php artisan test
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: hadir_test
+          DB_USERNAME: postgres
+          DB_PASSWORD: secret

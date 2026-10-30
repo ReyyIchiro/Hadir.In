@@ -396,45 +396,26 @@ Jangan mengaktifkan Debugbar di produksi.
 - Koordinat uji memakai titik di Jakarta, misalnya `-6.200000, 106.816666`.
 - Jangan menyimpan hasil selfie uji di repositori.
 
-## 13. CI yang disarankan
+## 13. Integrasi berkelanjutan
 
-```yaml
-name: tests
-on: [push, pull_request]
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.3'
-          extensions: mbstring, gd, sqlite3, pdo_sqlite, fileinfo
-      - run: composer install --no-interaction --prefer-dist
-      - run: cp .env.example .env
-      - run: php artisan key:generate
-      - run: php artisan test
-      - run: npm ci
-      - run: npm run build
+Berkas `.github/workflows/ci.yml` menjalankan tiga hal pada setiap push ke `main`
+dan setiap pull request:
+
+1. `npm ci` dan `npm run build` untuk memastikan aset dapat dibangun.
+2. `./vendor/bin/pint --test` untuk menjaga gaya kode.
+3. `php artisan test` terhadap layanan PostgreSQL 16.
+
+Langkah tes memakai `DB_CONNECTION=pgsql` sehingga migrasi benar-benar diuji pada
+mesin yang sama dengan produksi. Berkas `phpunit.xml` memakai SQLite di memori
+sebagai nilai bawaan; variabel lingkungan dari CI menimpanya karena PHPUnit hanya
+mengisi variabel yang belum ada. Untuk menjalankan tes terhadap PostgreSQL secara
+lokal:
+
+```bash
+DB_CONNECTION=pgsql DB_HOST=127.0.0.1 DB_PORT=5432 \
+DB_DATABASE=hadir_test DB_USERNAME=postgres DB_PASSWORD=secret \
+php artisan test
 ```
 
-CI memakai SQLite. Pekerjaan terpisah dengan PostgreSQL disarankan sebelum rilis
-produksi:
-
-```yaml
-  postgres:
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_PASSWORD: secret
-          POSTGRES_DB: hadir_test
-        ports: ['5432:5432']
-        options: >-
-          --health-cmd pg_isready --health-interval 10s
-          --health-timeout 5s --health-retries 5
-```
-
-Jalankan `php artisan migrate --force` dan `php artisan test` dengan
-`DB_CONNECTION=pgsql`.
+Mesin pengembangan saat ini belum memuat ekstensi `pdo_pgsql`, jadi jalur ini baru
+terverifikasi lewat kontainer. Lihat `OPERATIONS.md` bagian 16.
