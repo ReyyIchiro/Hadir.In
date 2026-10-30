@@ -285,6 +285,10 @@
         background: var(--color-surface);
         border: 1.5px solid var(--color-divider);
         border-radius: 8px;
+        /* Kolom grid 1fr memakai min-width: auto, sehingga tabel lebar
+           bisa mendorong panel melewati viewport. Panel mengatur sendiri
+           overflow isinya, jadi aman mengecil. */
+        min-width: 0;
     }
 
     .panel-pad {
@@ -493,7 +497,10 @@
         background: var(--color-tint);
     }
 
+    /* position: relative menahan elemen .sr-only yang position: absolute
+       agar tidak lolos dari klip overflow dan melebarkan halaman. */
     .table-scroll {
+        position: relative;
         overflow-x: auto;
     }
 

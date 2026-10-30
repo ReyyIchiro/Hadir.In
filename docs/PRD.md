@@ -584,76 +584,76 @@ kata kerja. Tidak ada tanda seru. Tidak ada emoji. Tidak ada em dash.
 
 ### 13.1 Organisasi dan akses
 
-- [ ] Pendaftaran membuat organisasi menunggu aktivasi, pemilik, dan pengaturan
+- [x] Pendaftaran membuat organisasi menunggu aktivasi, pemilik, dan pengaturan
       bawaan dalam satu transaksi.
-- [ ] Pemilik dapat masuk saat menunggu dan hanya melihat halaman status.
-- [ ] Anggota tidak dapat masuk saat organisasi belum aktif.
-- [ ] Organisasi yang ditangguhkan memblokir akses anggota.
-- [ ] Platform admin dapat mengaktifkan dan menangguhkan organisasi.
-- [ ] Platform admin tidak dapat membuka data presensi atau selfie.
-- [ ] Pengguna dengan dua keanggotaan dapat berpindah organisasi tanpa melihat
+- [x] Pemilik dapat masuk saat menunggu dan hanya melihat halaman status.
+- [x] Anggota tidak dapat masuk saat organisasi belum aktif.
+- [x] Organisasi yang ditangguhkan memblokir akses anggota.
+- [x] Platform admin dapat mengaktifkan dan menangguhkan organisasi.
+- [x] Platform admin tidak dapat membuka data presensi atau selfie.
+- [x] Pengguna dengan dua keanggotaan dapat berpindah organisasi tanpa melihat
       data organisasi lain.
 
 ### 13.2 Undangan
 
-- [ ] Undangan kedaluwarsa setelah 7 hari.
-- [ ] Token hanya dapat dipakai sekali.
-- [ ] Email undangan tidak dapat diubah.
-- [ ] Undangan ke email terdaftar mewajibkan login.
-- [ ] Undangan ke email baru membuat akun dan keanggotaan.
-- [ ] Undangan yang dicabut tidak dapat dipakai.
-- [ ] Peran yang diundang tidak dapat melebihi wewenang pengundang.
+- [x] Undangan kedaluwarsa setelah 7 hari.
+- [x] Token hanya dapat dipakai sekali.
+- [x] Email undangan tidak dapat diubah.
+- [x] Undangan ke email terdaftar mewajibkan login.
+- [x] Undangan ke email baru membuat akun dan keanggotaan.
+- [x] Undangan yang dicabut tidak dapat dipakai.
+- [x] Peran yang diundang tidak dapat melebihi wewenang pengundang.
 
 ### 13.3 Presensi
 
-- [ ] Absen masuk 61 menit sebelum jadwal ditolak.
-- [ ] Absen masuk setelah jam selesai ditolak.
-- [ ] Absen masuk 11 menit setelah jam mulai tercatat terlambat dengan menit yang
+- [x] Absen masuk 61 menit sebelum jadwal ditolak.
+- [x] Absen masuk setelah jam selesai ditolak.
+- [x] Absen masuk 11 menit setelah jam mulai tercatat terlambat dengan menit yang
       benar.
-- [ ] Absen di luar radius tetapi di dalam buffer diterima dengan tanda.
-- [ ] Absen di luar radius dan buffer ditolak.
-- [ ] Akurasi di atas 100 meter diberi tanda.
-- [ ] Organisasi tanpa lokasi menerima absen dengan tanda tanpa lokasi.
-- [ ] Absen ganda ditolak.
-- [ ] Absen pulang tanpa absen masuk ditolak.
-- [ ] Absen pulang setelah 24 jam ditolak.
-- [ ] Absen pada hari libur diterima dengan tanda.
-- [ ] Absen pada hari tanpa jadwal mengikuti pengaturan.
-- [ ] Izin yang disetujui memblokir absen masuk.
-- [ ] Selfie tersimpan di disk privat dan hanya dapat diakses lewat URL bertanda
+- [x] Absen di luar radius tetapi di dalam buffer diterima dengan tanda.
+- [x] Absen di luar radius dan buffer ditolak.
+- [x] Akurasi di atas 100 meter diberi tanda.
+- [x] Organisasi tanpa lokasi menerima absen dengan tanda tanpa lokasi.
+- [x] Absen ganda ditolak.
+- [x] Absen pulang tanpa absen masuk ditolak.
+- [x] Absen pulang setelah 24 jam ditolak.
+- [x] Absen pada hari libur diterima dengan tanda.
+- [x] Absen pada hari tanpa jadwal mengikuti pengaturan.
+- [x] Izin yang disetujui memblokir absen masuk.
+- [x] Selfie tersimpan di disk privat dan hanya dapat diakses lewat URL bertanda
       tangan.
-- [ ] Finalisasi membuat absen untuk hari kerja yang terlewat.
-- [ ] Finalisasi menutup hari tanpa pulang dengan tanda.
-- [ ] Absen masuk hari baru menutup hari sebelumnya yang terbuka.
+- [x] Finalisasi membuat absen untuk hari kerja yang terlewat.
+- [x] Finalisasi menutup hari tanpa pulang dengan tanda.
+- [x] Absen masuk hari baru menutup hari sebelumnya yang terbuka.
 
 ### 13.4 Izin dan koreksi
 
-- [ ] Pengajuan lebih dari 30 hari ditolak.
-- [ ] Pengajuan yang tumpang tindih ditolak.
-- [ ] Cuti pada hari libur ditolak.
-- [ ] Persetujuan izin pada hari yang sudah ada absen masuk ditolak.
-- [ ] Koreksi menyimpan nilai asli.
-- [ ] Koreksi yang disetujui mengubah hari presensi tanpa menghapus kejadian.
-- [ ] Peninjau hanya melihat data dalam lokasi utamanya.
+- [x] Pengajuan lebih dari 30 hari ditolak.
+- [x] Pengajuan yang tumpang tindih ditolak.
+- [x] Cuti pada hari libur ditolak.
+- [x] Persetujuan izin pada hari yang sudah ada absen masuk ditolak.
+- [x] Koreksi menyimpan nilai asli.
+- [x] Koreksi yang disetujui mengubah hari presensi tanpa menghapus kejadian.
+- [x] Peninjau hanya melihat data dalam lokasi utamanya.
 
 ### 13.5 Laporan
 
-- [ ] Laporan menghitung hari terjadwal, bukan hari kalender.
-- [ ] Hari libur tidak dihitung sebagai absen.
-- [ ] CSV memiliki BOM, pemisah titik koma, dan header yang benar.
-- [ ] Nama berkas sesuai format.
-- [ ] Filter dan lingkup ekspor sama dengan tampilan.
-- [ ] Angka ringkasan cocok dengan baris rincian.
+- [x] Laporan menghitung hari terjadwal, bukan hari kalender.
+- [x] Hari libur tidak dihitung sebagai absen.
+- [x] CSV memiliki BOM, pemisah titik koma, dan header yang benar.
+- [x] Nama berkas sesuai format.
+- [x] Filter dan lingkup ekspor sama dengan tampilan.
+- [x] Angka ringkasan cocok dengan baris rincian.
 
 ### 13.6 Antarmuka
 
-- [ ] Tidak ada emoji, em dash, atau klaim palsu.
-- [ ] Token warna sesuai `DESIGN.md`.
-- [ ] Tampil baik di 360 px, 768 px, 1024 px, dan 1440 px.
-- [ ] Mode gelap berfungsi dan kontras lulus.
-- [ ] Keadaan kosong, memuat, dan galat tersedia.
-- [ ] Fokus keyboard terlihat.
-- [ ] Peta tetap terang di mode gelap.
+- [x] Tidak ada emoji, em dash, atau klaim palsu.
+- [x] Token warna sesuai `DESIGN.md`.
+- [x] Tampil baik di 360 px, 768 px, 1024 px, dan 1440 px.
+- [x] Mode gelap berfungsi dan kontras lulus.
+- [x] Keadaan kosong, memuat, dan galat tersedia.
+- [x] Fokus keyboard terlihat.
+- [x] Peta tetap terang di mode gelap.
 
 ## 14. Risiko dan asumsi
 
