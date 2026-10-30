@@ -9,6 +9,8 @@
         'cuti' => 'Cuti',
         'libur' => 'Libur',
         'absen' => 'Absen',
+        'belum_absen' => 'Belum absen',
+        'terjadwal' => 'Terjadwal',
         'belum_pulang' => 'Belum pulang',
         'pending' => 'Menunggu',
         'approved' => 'Disetujui',

@@ -274,6 +274,8 @@ Status dan label:
 | `libur` | Libur | muted |
 | `absen` | Absen | absent |
 | `belum_pulang` | Belum pulang | late |
+| `belum_absen` | Belum absen | muted, tanpa latar, garis divider 1 px |
+| `terjadwal` | Terjadwal | muted, tanpa latar, garis divider 1 px |
 
 Label khusus:
 

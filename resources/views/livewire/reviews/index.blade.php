@@ -43,7 +43,7 @@
                             @foreach($reviews as $review)
                                 <tr>
                                     <td>{{ $review->user?->name ?? '--' }}</td>
-                                    <td class="tabular-nums">{{ \App\Support\Waktu::dateShort($review->created_at) }}</td>
+                                    <td class="tabular-nums">{{ $review->event ? \App\Support\Waktu::dateShort($review->event->work_date) : '--' }}</td>
                                     <td>{{ $review->event?->type->label() ?? '--' }}</td>
                                     <td class="text-muted">{{ $review->event?->location?->name ?? 'Tanpa lokasi' }}</td>
                                     <td class="max-w-[220px] truncate text-muted">{{ $review->note }}</td>

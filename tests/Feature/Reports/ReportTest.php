@@ -162,3 +162,30 @@ it('menolak bulan di luar 24 bulan terakhir', function () {
         ->get('/app/laporan/ekspor?month=2020-01')
         ->assertStatus(422);
 });
+
+it('tidak menandai hari berjalan sebagai absen sebelum finalisasi', function () {
+    $today = now('Asia/Jakarta')->toDateString();
+
+    makeSchedule($this->tenant, $this->member, $today);
+
+    $data = app(ReportService::class)->monthData($this->tenant, now('Asia/Jakarta')->format('Y-m'));
+
+    $row = collect($data['rows'])->firstWhere('date', $today);
+
+    expect($row)->not->toBeNull()
+        ->and($row['status'])->toBe('belum_absen')
+        ->and($row['status_label'])->toBe('Belum absen')
+        ->and($data['summary']['absent'])->toBe(0)
+        ->and($data['summary']['not_finalized'])->toBe(1);
+});
+
+it('tidak menampilkan hari yang belum berjalan di laporan', function () {
+    $future = now('Asia/Jakarta')->addDays(5)->toDateString();
+
+    makeSchedule($this->tenant, $this->member, $future);
+
+    $data = app(ReportService::class)->monthData($this->tenant, now('Asia/Jakarta')->format('Y-m'));
+
+    expect($data['rows'])->toBeEmpty()
+        ->and($data['summary']['scheduled'])->toBe(0);
+});

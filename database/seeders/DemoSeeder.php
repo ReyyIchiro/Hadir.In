@@ -172,8 +172,10 @@ class DemoSeeder extends Seeder
      */
     protected function schedules(Tenant $tenant, array $users, CarbonImmutable $today): void
     {
+        // Dua bulan penuh supaya pengajuan cuti untuk bulan depan tetap bisa
+        // divalidasi terhadap jadwal kerja.
         $start = $today->startOfMonth();
-        $end = $today->endOfMonth();
+        $end = $today->startOfMonth()->addMonthNoOverflow()->endOfMonth();
 
         foreach ($users as $user) {
             for ($date = $start; $date->lte($end); $date = $date->addDay()) {

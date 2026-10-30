@@ -11,6 +11,7 @@ use App\Models\Holiday;
 use App\Models\Membership;
 use App\Models\Schedule;
 use App\Models\Tenant;
+use App\Models\TenantSetting;
 use App\Support\Flags;
 use App\Support\Waktu;
 use Carbon\CarbonImmutable;
@@ -74,6 +75,10 @@ class ReportService
         $rows = [];
         $summary = $this->emptySummary();
 
+        $clock = app(TenantClock::class);
+        $today = $clock->today($tenant)->toDateString();
+        $settings = $tenant->settings ?? new TenantSetting(['tenant_id' => $tenant->id]);
+
         foreach ($memberships as $membership) {
             $user = $membership->user;
             $primaryLocation = $membership->primaryLocation;
@@ -88,9 +93,21 @@ class ReportService
                     continue;
                 }
 
+                // Hari yang belum berjalan belum punya hasil apa pun, jadi tidak
+                // diikutkan sebagai baris laporan.
+                if ($date > $today) {
+                    continue;
+                }
+
                 $day = $days->get($membership->user_id.'|'.$date);
-                $status = $day?->status;
-                $display = $day?->displayStatus() ?? AttendanceStatus::Absen->value;
+
+                if ($day !== null) {
+                    $display = $day->displayStatus();
+                } else {
+                    $endTime = $schedule->end_time ?: $settings->work_end;
+                    $due = $clock->isFinalizable($tenant, $date, $endTime, $settings->checkout_late_minutes);
+                    $display = $due ? AttendanceStatus::Absen->value : 'belum_absen';
+                }
 
                 $flags = $day?->flags ?? [];
 
@@ -125,6 +142,8 @@ class ReportService
                     $summary['present']++;
                 } elseif (in_array($day?->status, [AttendanceStatus::Izin, AttendanceStatus::Sakit, AttendanceStatus::Cuti], true)) {
                     $summary['leave']++;
+                } elseif ($display === 'belum_absen') {
+                    $summary['not_finalized']++;
                 } else {
                     $summary['absent']++;
                 }
@@ -149,6 +168,7 @@ class ReportService
             'sakit' => 'Sakit',
             'cuti' => 'Cuti',
             'absen' => 'Absen',
+            'belum_absen' => 'Belum absen',
             'belum_pulang' => 'Belum pulang',
             'libur' => 'Libur',
             default => ucfirst($status),
@@ -197,6 +217,7 @@ class ReportService
             'late' => 0,
             'leave' => 0,
             'absent' => 0,
+            'not_finalized' => 0,
             'pending_review' => 0,
         ];
     }

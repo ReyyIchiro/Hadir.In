@@ -40,6 +40,13 @@
             <p class="text-[12px] text-muted">{{ count($rows) }} baris</p>
         </div>
 
+        @if(($summary['not_finalized'] ?? 0) > 0)
+            <p class="border-b border-divider px-4 py-2 text-[12px] text-muted md:px-6">
+                {{ $summary['not_finalized'] }} hari terjadwal belum difinalisasi, jadi belum dihitung sebagai absen.
+                Hari berjalan baru difinalisasi empat jam setelah jam pulang.
+            </p>
+        @endif
+
         @if(empty($rows))
             <x-empty-state title="Belum ada data" description="Tidak ada jadwal pada periode dan filter ini. Coba bulan lain atau ubah filter." />
         @else

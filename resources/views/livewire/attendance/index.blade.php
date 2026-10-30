@@ -23,7 +23,7 @@
             <x-field name="date" label="Tanggal" type="date" wire:model.live="date" />
             <x-select name="locationFilter" label="Lokasi" wire:model.live="locationFilter" placeholder="Semua lokasi" :options="$locations->pluck('name', 'id')->all()" />
             <x-select name="divisionFilter" label="Divisi" wire:model.live="divisionFilter" placeholder="Semua divisi" :options="$divisions->pluck('name', 'id')->all()" />
-            <x-select name="statusFilter" label="Status" wire:model.live="statusFilter" placeholder="Semua status" :options="$statuses->all()" />
+            <x-select name="statusFilter" label="Status" wire:model.live="statusFilter" placeholder="Semua status" :options="$statuses" />
         </div>
 
         <x-panel class="mt-4">

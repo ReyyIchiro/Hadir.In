@@ -234,7 +234,9 @@ status penangguhan. Tidak ada penghapusan organisasi sendiri di v1.
 2. Memilih bulan dan filter divisi atau lokasi.
 3. Sistem menampilkan ringkasan: hari dijadwalkan, hadir, terlambat, izin dan
    cuti, absen, serta jumlah yang perlu ditinjau.
-4. Tabel rincian menampilkan satu baris per anggota per tanggal.
+4. Tabel rincian menampilkan satu baris per anggota per tanggal. Hari yang belum
+   berjalan tidak ditampilkan. Hari berjalan yang belum melewati batas finalisasi
+   tampil sebagai "Belum absen" dan dihitung terpisah.
 5. Tombol "Ekspor CSV" mengunduh berkas dengan format yang dijelaskan di bagian 8.
 
 ## 8. Aturan bisnis
@@ -319,14 +321,16 @@ status penangguhan. Tidak ada penghapusan organisasi sendiri di v1.
 ### 8.5 Status dan finalisasi
 
 - BR-36. Status hari presensi: `hadir`, `terlambat`, `izin`, `sakit`, `cuti`,
-  `absen`. Status `libur` dan `belum_pulang` adalah tampilan turunan, bukan nilai
-  yang disimpan untuk alur normal.
+  `absen`. Status `libur`, `belum_pulang`, `belum_absen`, dan `terjadwal` adalah
+  tampilan turunan, bukan nilai yang disimpan untuk alur normal.
 - BR-37. Hari dengan absen masuk tetapi belum absen pulang ditampilkan "Belum
   pulang" selama belum difinalisasi.
 - BR-38. Finalisasi berjalan setiap jam. Hari difinalisasi setelah jam selesai
   ditambah 240 menit.
 - BR-39. Bila tidak ada absen masuk pada hari kerja terjadwal, bukan hari libur,
-  dan tidak ada izin disetujui, sistem membuat hari presensi berstatus `absen`.
+  dan tidak ada izin disetujui, sistem membuat hari presensi berstatus `absen`
+  saat finalisasi. Sebelum batas finalisasi terlewati, hari itu ditampilkan
+  "Belum absen" dan tidak dihitung sebagai absen pada ringkasan mana pun.
 - BR-40. Bila ada absen masuk tetapi tidak ada absen pulang, hari tetap dianggap
   hadir atau terlambat dengan tanda "Final otomatis" dan "Tanpa pulang".
 - BR-41. Saat anggota absen masuk pada hari baru, hari sebelumnya yang masih

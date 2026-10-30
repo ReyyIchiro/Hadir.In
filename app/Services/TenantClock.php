@@ -77,4 +77,19 @@ class TenantClock
     {
         return $lateMinutes > 0 ? AttendanceStatus::Terlambat : AttendanceStatus::Hadir;
     }
+
+    /**
+     * Batas waktu sebuah hari kerja difinalisasi: jam selesai ditambah jendela
+     * absen pulang. Sebelum batas ini, hari terjadwal yang belum punya absen
+     * belum boleh dianggap absen.
+     */
+    public function finalizationDeadline(Tenant $tenant, string $workDate, string $endTime, int $checkoutLateMinutes): CarbonImmutable
+    {
+        return $this->localAt($tenant, $workDate, $endTime)->addMinutes($checkoutLateMinutes);
+    }
+
+    public function isFinalizable(Tenant $tenant, string $workDate, string $endTime, int $checkoutLateMinutes): bool
+    {
+        return $this->now($tenant)->gte($this->finalizationDeadline($tenant, $workDate, $endTime, $checkoutLateMinutes));
+    }
 }

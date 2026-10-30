@@ -10,6 +10,7 @@ use App\Models\Division;
 use App\Models\Location;
 use App\Models\Membership;
 use App\Models\Schedule;
+use App\Models\TenantSetting;
 use App\Services\TenantClock;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
@@ -110,7 +111,10 @@ class Index extends Component
             'canReview' => $canReview,
             'locations' => $locations,
             'divisions' => $divisions,
-            'statuses' => collect(AttendanceStatus::cases())->mapWithKeys(fn (AttendanceStatus $status) => [$status->value => $status->label()]),
+            'statuses' => collect(AttendanceStatus::cases())
+                ->mapWithKeys(fn (AttendanceStatus $status) => [$status->value => $status->label()])
+                ->merge(['belum_absen' => 'Belum absen', 'belum_pulang' => 'Belum pulang', 'libur' => 'Libur'])
+                ->all(),
         ]))->layoutData(['heading' => 'Presensi'])->title('Presensi');
     }
 
@@ -192,16 +196,29 @@ class Index extends Component
             ->get()
             ->keyBy('user_id');
 
+        $clock = app(TenantClock::class);
+        $settings = $tenant->settings ?? new TenantSetting(['tenant_id' => $tenant->id]);
+
         $rows = $memberships
-            ->map(function (Membership $m) use ($days, $schedules) {
+            ->map(function (Membership $m) use ($days, $schedules, $clock, $settings, $tenant, $date) {
                 $day = $days->get($m->user_id);
                 $schedule = $schedules->get($m->user_id);
+
+                if ($day !== null) {
+                    $status = $day->displayStatus();
+                } elseif ($schedule !== null && ! $schedule->is_day_off) {
+                    $endTime = $schedule->end_time ?: $settings->work_end;
+                    $due = $clock->isFinalizable($tenant, $date, $endTime, $settings->checkout_late_minutes);
+                    $status = $due ? 'absen' : 'belum_absen';
+                } else {
+                    $status = 'libur';
+                }
 
                 return [
                     'membership' => $m,
                     'day' => $day,
                     'schedule' => $schedule,
-                    'status' => $day?->displayStatus() ?? (($schedule && ! $schedule->is_day_off) ? 'absen' : 'libur'),
+                    'status' => $status,
                 ];
             })
             ->when($this->statusFilter !== '', fn ($rows) => $rows->filter(fn ($row) => $row['status'] === $this->statusFilter))

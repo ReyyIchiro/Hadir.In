@@ -356,6 +356,7 @@ Status tampilan turunan:
 | Tampilan | Syarat |
 | --- | --- |
 | `belum_pulang` | `check_in_at` ada, `check_out_at` null, `finalized_at` null |
+| `belum_absen` | Ada jadwal kerja, belum ada hari presensi, dan `now` belum melewati `end_time` jadwal + `checkout_late_minutes` |
 | `libur` | Tidak ada jadwal kerja atau jadwal `is_day_off` atau hari libur |
 | `perlu_ditinjau` | Ada tinjauan `pending` untuk kejadian pada hari itu |
 
