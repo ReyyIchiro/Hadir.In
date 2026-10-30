@@ -69,3 +69,45 @@ it('menolak masuk untuk akun tanpa organisasi', function () {
     $response->assertSessionHasErrors('email');
     expect(auth()->check())->toBeFalse();
 });
+
+it('menolak anggota masuk saat organisasi belum aktif', function () {
+    $tenant = makeTenant(['status' => 'pending']);
+    $user = makeUser(['email' => 'anggota@hadir.test']);
+    makeMembership($tenant, $user, 'member');
+
+    $response = $this->from('/masuk')->post('/masuk', [
+        'email' => 'anggota@hadir.test',
+        'password' => 'password123',
+    ]);
+
+    $response->assertRedirect('/masuk')->assertSessionHasErrors('email');
+    expect(auth()->check())->toBeFalse();
+});
+
+it('menolak anggota masuk saat organisasi ditangguhkan', function () {
+    $tenant = makeTenant(['status' => 'suspended']);
+    $user = makeUser(['email' => 'anggota@hadir.test']);
+    makeMembership($tenant, $user, 'member');
+
+    $response = $this->from('/masuk')->post('/masuk', [
+        'email' => 'anggota@hadir.test',
+        'password' => 'password123',
+    ]);
+
+    $response->assertRedirect('/masuk')->assertSessionHasErrors('email');
+    expect(auth()->check())->toBeFalse();
+});
+
+it('mengizinkan pemilik masuk saat organisasi ditangguhkan', function () {
+    $tenant = makeTenant(['status' => 'suspended']);
+    $user = makeUser(['email' => 'pemilik@hadir.test']);
+    makeMembership($tenant, $user, 'owner');
+
+    $response = $this->post('/masuk', [
+        'email' => 'pemilik@hadir.test',
+        'password' => 'password123',
+    ]);
+
+    $response->assertRedirect('/status');
+    expect(auth()->id())->toBe($user->id);
+});

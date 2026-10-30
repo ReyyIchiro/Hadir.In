@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\MembershipRole;
 use App\Enums\TenantStatus;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
@@ -49,6 +50,26 @@ class LoginController extends Controller
         }
 
         $tenant = $memberships->first()->tenant;
+        // Hanya pemilik yang boleh masuk saat organisasi belum aktif. Anggota
+        // dan peninjau baru bisa masuk setelah organisasi diaktifkan platform.
+        if ($tenant->status !== TenantStatus::Active) {
+            $membership = $memberships->firstWhere('tenant_id', $tenant->id);
+
+            if ($membership?->role !== MembershipRole::Owner) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return back()
+                    ->withInput($request->only('email'))
+                    ->withErrors([
+                        'email' => $tenant->status === TenantStatus::Suspended
+                            ? 'Organisasi Anda sedang ditangguhkan. Hubungi pemilik organisasi.'
+                            : 'Organisasi Anda belum aktif. Anda dapat masuk setelah pemilik mengaktifkannya.',
+                    ]);
+            }
+        }
+
         $request->session()->put('active_tenant_id', $tenant->id);
 
         if ($tenant->status !== TenantStatus::Active) {
