@@ -1,0 +1,71 @@
+<?php
+
+it('mengarahkan anggota tenant aktif ke aplikasi', function () {
+    $tenant = makeTenant();
+    $user = makeUser(['email' => 'anggota@hadir.test']);
+    makeMembership($tenant, $user, 'member');
+
+    $response = $this->post('/masuk', [
+        'email' => 'anggota@hadir.test',
+        'password' => 'password123',
+    ]);
+
+    $response->assertRedirect('/app');
+    expect(auth()->id())->toBe($user->id);
+});
+
+it('mengarahkan pemilik tenant pending ke halaman status', function () {
+    $tenant = makeTenant(['status' => 'pending']);
+    $user = makeUser(['email' => 'pemilik@hadir.test']);
+    makeMembership($tenant, $user, 'owner');
+
+    $response = $this->post('/masuk', [
+        'email' => 'pemilik@hadir.test',
+        'password' => 'password123',
+    ]);
+
+    $response->assertRedirect('/status');
+});
+
+it('menolak kata sandi yang salah', function () {
+    $user = makeUser(['email' => 'anggota@hadir.test']);
+
+    $response = $this->from('/masuk')->post('/masuk', [
+        'email' => 'anggota@hadir.test',
+        'password' => 'salah-total',
+    ]);
+
+    $response->assertRedirect('/masuk')->assertSessionHasErrors('email');
+    expect(auth()->check())->toBeFalse();
+});
+
+it('membatasi percobaan masuk menjadi lima per menit', function () {
+    $user = makeUser(['email' => 'anggota@hadir.test']);
+
+    for ($i = 0; $i < 5; $i++) {
+        $this->post('/masuk', ['email' => 'anggota@hadir.test', 'password' => 'salah']);
+    }
+
+    $response = $this->post('/masuk', ['email' => 'anggota@hadir.test', 'password' => 'salah']);
+
+    $response->assertStatus(429);
+});
+
+it('mengeluarkan pengguna dan menghapus sesi', function () {
+    $user = makeUser();
+
+    $this->actingAs($user)->post('/keluar')->assertRedirect('/');
+    expect(auth()->check())->toBeFalse();
+});
+
+it('menolak masuk untuk akun tanpa organisasi', function () {
+    makeUser(['email' => 'tanpa@hadir.test']);
+
+    $response = $this->from('/masuk')->post('/masuk', [
+        'email' => 'tanpa@hadir.test',
+        'password' => 'password123',
+    ]);
+
+    $response->assertSessionHasErrors('email');
+    expect(auth()->check())->toBeFalse();
+});

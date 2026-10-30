@@ -46,7 +46,10 @@ class User extends Authenticatable
 
     public function membershipFor(Tenant $tenant): ?Membership
     {
-        return $this->memberships()
+        // A user can belong to several tenants, so this lookup must ignore the
+        // currently active tenant scope instead of inheriting it.
+        return Membership::withoutGlobalScopes()
+            ->where('user_id', $this->id)
             ->where('tenant_id', $tenant->id)
             ->where('is_active', true)
             ->first();

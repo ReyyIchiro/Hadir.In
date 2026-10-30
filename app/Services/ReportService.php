@@ -47,8 +47,7 @@ class ReportService
             ->whereBetween('work_date', [$startDate, $endDate])
             ->where('is_day_off', false)
             ->orderBy('work_date')
-            ->get()
-            ->groupBy(fn (Schedule $schedule) => $schedule->user_id.'|'.$schedule->work_date->toDateString());
+            ->get();
 
         $holidays = Holiday::withoutGlobalScopes()
             ->where('tenant_id', $tenant->id)

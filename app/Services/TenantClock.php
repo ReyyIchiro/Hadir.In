@@ -66,7 +66,9 @@ class TenantClock
     public function earlyLeaveMinutes(CarbonInterface $checkOutAt, CarbonImmutable $scheduledEnd): int
     {
         $localCheckOut = CarbonImmutable::instance($checkOutAt)->setTimezone($scheduledEnd->getTimezone());
-        $diff = (int) floor($scheduledEnd->diffInMinutes($localCheckOut, false));
+
+        // Positif bila absen pulang terjadi sebelum jam selesai.
+        $diff = (int) floor($localCheckOut->diffInMinutes($scheduledEnd, false));
 
         return $diff > 0 ? $diff : 0;
     }

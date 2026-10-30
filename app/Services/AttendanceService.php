@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Enums\AttendanceEventStatus;
 use App\Enums\AttendanceEventType;
-use App\Enums\AttendanceStatus;
 use App\Enums\LeaveStatus;
 use App\Models\AttendanceDay;
 use App\Models\AttendanceEvent;
@@ -27,8 +26,7 @@ class AttendanceService
         protected TenantClock $clock,
         protected GeofenceService $geofence,
         protected SelfieService $selfies,
-    ) {
-    }
+    ) {}
 
     /**
      * @param  array{latitude?: ?float, longitude?: ?float, accuracy?: ?float, attempt_uuid?: ?string}  $input
@@ -130,7 +128,7 @@ class AttendanceService
 
         $result = DB::transaction(function () use (
             $tenant, $user, $now, $workDate, $schedule, $geo, $flags, $reason, $accepted,
-            $lateMinutes, $status, $selfiePath, $attemptUuid, $settings, $holiday
+            $lateMinutes, $status, $selfiePath, $attemptUuid
         ) {
             if ($accepted) {
                 $this->finalizePreviousOpenDay($user, $workDate);
@@ -144,7 +142,7 @@ class AttendanceService
                     'user_id' => $user->id,
                     'work_date' => $workDate,
                     'schedule_id' => $schedule?->id,
-                    'location_id' => $geo['location']?->id,
+                    'location_id' => ($geo['location'] ?? null)?->id,
                     'status' => $status,
                     'check_in_at' => $now->setTimezone('UTC'),
                     'late_minutes' => $lateMinutes,
@@ -160,7 +158,7 @@ class AttendanceService
                 'status' => $accepted ? AttendanceEventStatus::Accepted : AttendanceEventStatus::Rejected,
                 'work_date' => $workDate,
                 'occurred_at' => $now->setTimezone('UTC'),
-                'location_id' => $geo['location']?->id,
+                'location_id' => ($geo['location'] ?? null)?->id,
                 'latitude' => isset($input['latitude']) ? (float) $input['latitude'] : null,
                 'longitude' => isset($input['longitude']) ? (float) $input['longitude'] : null,
                 'accuracy_meters' => isset($input['accuracy']) ? (float) $input['accuracy'] : null,
@@ -291,7 +289,7 @@ class AttendanceService
                 'status' => $accepted ? AttendanceEventStatus::Accepted : AttendanceEventStatus::Rejected,
                 'work_date' => $day?->work_date->toDateString() ?? $workDate,
                 'occurred_at' => $now->setTimezone('UTC'),
-                'location_id' => $geo['location']?->id,
+                'location_id' => ($geo['location'] ?? null)?->id,
                 'latitude' => isset($input['latitude']) ? (float) $input['latitude'] : null,
                 'longitude' => isset($input['longitude']) ? (float) $input['longitude'] : null,
                 'accuracy_meters' => isset($input['accuracy']) ? (float) $input['accuracy'] : null,
@@ -494,9 +492,10 @@ class AttendanceService
         $today = AttendanceDay::where('user_id', $user->id)
             ->where('work_date', $workDate)
             ->whereNotNull('check_in_at')
-            ->whereNull('check_out_at')
             ->first();
 
+        // Hari ini sudah ada, baik masih terbuka maupun sudah pulang. Pemanggil
+        // yang memutuskan apakah ini absen pulang kedua.
         if ($today) {
             return $today;
         }

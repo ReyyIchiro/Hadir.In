@@ -25,7 +25,7 @@ class Index extends Component
         $this->date = app(TenantClock::class)->today($this->tenant())->toDateString();
     }
 
-    public function add(): void
+    public function save(): void
     {
         Gate::authorize('manage-settings', $this->membership());
 

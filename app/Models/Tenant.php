@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\MembershipRole;
 use App\Enums\TenantStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -62,7 +63,7 @@ class Tenant extends Model
     public function owner(): ?Membership
     {
         return $this->memberships()
-            ->where('role', \App\Enums\MembershipRole::Owner)
+            ->where('role', MembershipRole::Owner)
             ->where('is_active', true)
             ->first();
     }

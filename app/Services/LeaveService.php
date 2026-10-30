@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Enums\AttendanceStatus;
 use App\Enums\LeaveStatus;
 use App\Enums\LeaveType;
 use App\Models\AttendanceDay;
@@ -12,14 +11,13 @@ use App\Models\Schedule;
 use App\Models\Tenant;
 use App\Models\User;
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class LeaveService
 {
-    public function __construct(protected TenantClock $clock)
-    {
-    }
+    public function __construct(protected TenantClock $clock) {}
 
     public function submit(User $user, Tenant $tenant, array $data): LeaveRequest
     {
@@ -29,6 +27,10 @@ class LeaveService
 
         if ($end->lt($start)) {
             throw ValidationException::withMessages(['end_date' => 'Tanggal selesai tidak boleh sebelum tanggal mulai.']);
+        }
+
+        if ($start->lt($this->clock->today($tenant)->startOfDay())) {
+            throw ValidationException::withMessages(['start_date' => 'Tanggal mulai tidak boleh sebelum hari ini.']);
         }
 
         if ($start->diffInDays($end) + 1 > 30) {
@@ -68,6 +70,19 @@ class LeaveService
     {
         if ($leave->status !== LeaveStatus::Pending) {
             throw ValidationException::withMessages(['review' => 'Pengajuan ini sudah diproses.']);
+        }
+
+        $range = [$leave->start_date->toDateString(), $leave->end_date->toDateString()];
+
+        $alreadyCheckedIn = AttendanceDay::withoutGlobalScopes()
+            ->where('tenant_id', $leave->tenant_id)
+            ->where('user_id', $leave->user_id)
+            ->whereBetween('work_date', $range)
+            ->whereNotNull('check_in_at')
+            ->exists();
+
+        if ($alreadyCheckedIn) {
+            throw ValidationException::withMessages(['review' => 'Ada hari dalam rentang ini yang sudah memiliki absen masuk.']);
         }
 
         DB::transaction(function () use ($leave, $reviewer, $note) {
@@ -159,25 +174,28 @@ class LeaveService
         }
 
         DB::transaction(function () use ($leave) {
+            $days = AttendanceDay::where('leave_request_id', $leave->id)->get();
+
+            // Hari yang sudah memiliki kejadian tidak boleh hilang riwayatnya.
+            foreach ($days as $day) {
+                if ($day->events()->exists() || $day->check_in_at !== null) {
+                    throw ValidationException::withMessages(['cancel' => 'Izin ini sudah memiliki kejadian presensi sehingga tidak dapat dibatalkan.']);
+                }
+            }
+
             $leave->update([
                 'status' => LeaveStatus::Cancelled,
                 'cancelled_at' => now(),
             ]);
 
-            $days = AttendanceDay::where('leave_request_id', $leave->id)->get();
-
             foreach ($days as $day) {
-                if ($day->events()->exists() || $day->check_in_at !== null) {
-                    continue;
-                }
-
                 $day->delete();
             }
         });
     }
 
     /**
-     * @return \Illuminate\Support\Collection<int, CarbonImmutable>
+     * @return Collection<int, CarbonImmutable>
      */
     public function workdaysInRange(User $user, CarbonImmutable $start, CarbonImmutable $end)
     {

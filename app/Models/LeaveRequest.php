@@ -2,16 +2,18 @@
 
 namespace App\Models;
 
+use App\Casts\DateOnly;
 use App\Enums\LeaveStatus;
 use App\Enums\LeaveType;
 use App\Models\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class LeaveRequest extends Model
 {
-    use BelongsToTenant;
+    use BelongsToTenant, HasFactory;
 
     protected $fillable = [
         'tenant_id',
@@ -31,8 +33,8 @@ class LeaveRequest extends Model
     {
         return [
             'type' => LeaveType::class,
-            'start_date' => 'date',
-            'end_date' => 'date',
+            'start_date' => DateOnly::class,
+            'end_date' => DateOnly::class,
             'status' => LeaveStatus::class,
             'reviewed_at' => 'datetime',
             'cancelled_at' => 'datetime',

@@ -42,7 +42,7 @@
         </x-panel>
 
         <x-panel title="Tambah hari libur">
-            <form wire:submit="add" class="panel-pad space-y-3">
+            <form wire:submit="save" class="panel-pad space-y-3">
                 <x-field name="date" label="Tanggal" type="date" wire:model="date" required />
                 <x-field name="name" label="Nama" wire:model="name" required placeholder="Contoh: Hari Kemerdekaan" />
                 <button type="submit" class="btn btn-primary btn-sm w-full">Tambah</button>

@@ -2,15 +2,17 @@
 
 namespace App\Models;
 
+use App\Casts\DateOnly;
 use App\Enums\AttendanceStatus;
 use App\Models\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AttendanceDay extends Model
 {
-    use BelongsToTenant;
+    use BelongsToTenant, HasFactory;
 
     protected $fillable = [
         'tenant_id',
@@ -33,7 +35,7 @@ class AttendanceDay extends Model
     protected function casts(): array
     {
         return [
-            'work_date' => 'date',
+            'work_date' => DateOnly::class,
             'status' => AttendanceStatus::class,
             'check_in_at' => 'datetime',
             'check_out_at' => 'datetime',

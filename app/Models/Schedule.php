@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
+use App\Casts\DateOnly;
 use App\Models\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Schedule extends Model
 {
-    use BelongsToTenant;
+    use BelongsToTenant, HasFactory;
 
     protected $fillable = [
         'tenant_id',
@@ -25,7 +27,7 @@ class Schedule extends Model
     protected function casts(): array
     {
         return [
-            'work_date' => 'date',
+            'work_date' => DateOnly::class,
             'is_day_off' => 'boolean',
         ];
     }

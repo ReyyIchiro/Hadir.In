@@ -2,16 +2,18 @@
 
 namespace App\Models;
 
+use App\Casts\DateOnly;
 use App\Enums\AttendanceEventStatus;
 use App\Enums\AttendanceEventType;
 use App\Models\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class AttendanceEvent extends Model
 {
-    use BelongsToTenant;
+    use BelongsToTenant, HasFactory;
 
     protected $fillable = [
         'tenant_id',
@@ -37,7 +39,7 @@ class AttendanceEvent extends Model
         return [
             'type' => AttendanceEventType::class,
             'status' => AttendanceEventStatus::class,
-            'work_date' => 'date',
+            'work_date' => DateOnly::class,
             'occurred_at' => 'datetime',
             'latitude' => 'decimal:7',
             'longitude' => 'decimal:7',

@@ -36,6 +36,16 @@ class Index extends Component
             'name.required' => 'Nama divisi wajib diisi.',
         ]);
 
+        $duplicate = Division::where('name', trim($data['name']))
+            ->when($this->editingId, fn ($query) => $query->whereKeyNot($this->editingId))
+            ->exists();
+
+        if ($duplicate) {
+            $this->addError('name', 'Nama divisi ini sudah dipakai.');
+
+            return;
+        }
+
         if ($this->editingId) {
             Division::findOrFail($this->editingId)->update([
                 'name' => trim($data['name']),
