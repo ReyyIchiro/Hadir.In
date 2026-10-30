@@ -3,45 +3,46 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    @include('partials.theme')
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? 'Hadir.In' }}</title>
-    <meta name="description" content="{{ $description ?? 'Presensi dengan lokasi dan selfie untuk kantor, toko, dan tim lapangan di Indonesia.' }}">
+    <meta name="description" content="{{ $description ?? 'Presensi dengan waktu server, lokasi, dan selfie untuk kantor, toko, dan tim lapangan di Indonesia.' }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script>
-        (function () {
-            var t = localStorage.getItem('hadir-theme');
-            if (t === 'dark' || t === 'light') {
-                document.documentElement.dataset.theme = t;
-            } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                document.documentElement.dataset.theme = 'dark';
-            }
-        })();
-    </script>
 </head>
 <body class="bg-paper text-text antialiased">
     <a href="#konten" class="skip-link">Lewati ke konten</a>
 
     <header class="border-b border-divider">
-        <div class="mx-auto flex h-16 max-w-[1120px] items-center justify-between gap-6 px-6">
-            <a href="{{ route('home') }}" class="flex items-center gap-2 no-underline hover:no-underline">
-                <span class="inline-block h-3.5 w-3.5 rounded-[2px] bg-stamp" aria-hidden="true"></span>
-                <span class="font-display text-[17px] font-semibold tracking-[-0.02em]">Hadir.In</span>
-            </a>
+        <div class="container-page">
+            <div class="flex h-16 items-center justify-between gap-6">
+                <a href="{{ route('home') }}" class="wordmark">
+                    <span class="wordmark-mark" aria-hidden="true"></span>
+                    <span>Hadir.In</span>
+                </a>
 
-            <nav class="hidden items-center gap-6 text-[14px] text-muted md:flex" aria-label="Navigasi utama">
-                <a href="{{ route('public.how') }}" class="hover:text-text">Cara kerja</a>
-                <a href="{{ route('public.who') }}" class="hover:text-text">Untuk siapa</a>
-                <a href="{{ route('public.faq') }}" class="hover:text-text">Pertanyaan</a>
-            </nav>
+                <nav class="hidden items-center gap-7 md:flex" aria-label="Navigasi utama">
+                    <a href="{{ route('public.how') }}" class="nav-public" @if(request()->routeIs('public.how')) aria-current="page" @endif>Cara kerja</a>
+                    <a href="{{ route('public.who') }}" class="nav-public" @if(request()->routeIs('public.who')) aria-current="page" @endif>Untuk siapa</a>
+                    <a href="{{ route('public.faq') }}" class="nav-public" @if(request()->routeIs('public.faq')) aria-current="page" @endif>Pertanyaan</a>
+                </nav>
 
-            <div class="flex items-center gap-2">
-                @auth
-                    <a href="{{ route('app.home') }}" class="btn btn-primary btn-sm">Buka aplikasi</a>
-                @else
-                    <a href="{{ route('login') }}" class="btn btn-ghost btn-sm">Masuk</a>
-                    <a href="{{ route('register') }}" class="btn btn-primary btn-sm">Daftar</a>
-                @endauth
+                <div class="flex items-center gap-2">
+                    <x-theme-toggle />
+                    @auth
+                        <a href="{{ route('app.home') }}" class="btn btn-primary btn-sm">Buka aplikasi</a>
+                    @else
+                        <a href="{{ route('login') }}" class="btn btn-ghost btn-sm">Masuk</a>
+                        <a href="{{ route('register') }}" class="btn btn-primary btn-sm">Daftar</a>
+                    @endauth
+                </div>
             </div>
+
+            {{-- Di ponsel, tiga halaman utama tetap terlihat sebagai baris kedua. --}}
+            <nav class="flex items-center gap-6 border-t border-divider py-2 md:hidden" aria-label="Navigasi halaman">
+                <a href="{{ route('public.how') }}" class="nav-public" @if(request()->routeIs('public.how')) aria-current="page" @endif>Cara kerja</a>
+                <a href="{{ route('public.who') }}" class="nav-public" @if(request()->routeIs('public.who')) aria-current="page" @endif>Untuk siapa</a>
+                <a href="{{ route('public.faq') }}" class="nav-public" @if(request()->routeIs('public.faq')) aria-current="page" @endif>Pertanyaan</a>
+            </nav>
         </div>
     </header>
 
@@ -50,18 +51,40 @@
     </main>
 
     <footer class="border-t border-divider">
-        <div class="mx-auto flex max-w-[1120px] flex-col gap-4 px-6 py-10 text-[13px] text-muted md:flex-row md:items-center md:justify-between">
-            <div class="flex items-center gap-2">
-                <span class="inline-block h-3 w-3 rounded-[2px] bg-stamp" aria-hidden="true"></span>
-                <span class="font-display text-[14px] font-semibold text-text">Hadir.In</span>
+        <div class="container-page grid gap-6 py-10 md:grid-cols-12 md:gap-8">
+            <div class="md:col-span-6">
+                <a href="{{ route('home') }}" class="wordmark">
+                    <span class="wordmark-mark" aria-hidden="true"></span>
+                    <span>Hadir.In</span>
+                </a>
+                <p class="mt-3 max-w-[36ch] text-[13px] leading-6 text-muted">
+                    Buku absen resmi untuk operasi harian di Indonesia.
+                    Waktu server, lokasi, dan selfie dalam satu catatan.
+                </p>
             </div>
-            <p>Dibuat untuk operasi harian di Indonesia.</p>
-            <nav class="flex flex-wrap items-center gap-4" aria-label="Navigasi kaki halaman">
-                <a href="{{ route('login') }}" class="hover:text-text">Masuk</a>
-                <a href="{{ route('register') }}" class="hover:text-text">Daftar</a>
-                <a href="{{ route('public.privacy') }}" class="hover:text-text">Privasi</a>
-                <a href="{{ route('public.terms') }}" class="hover:text-text">Ketentuan</a>
-            </nav>
+
+            <div class="md:col-span-3">
+                <p class="label">Produk</p>
+                <ul class="mt-3 space-y-2 text-[13px]">
+                    <li><a href="{{ route('public.how') }}" class="link">Cara kerja</a></li>
+                    <li><a href="{{ route('public.who') }}" class="link">Untuk siapa</a></li>
+                    <li><a href="{{ route('public.faq') }}" class="link">Pertanyaan</a></li>
+                    <li><a href="{{ route('login') }}" class="link">Masuk</a></li>
+                </ul>
+            </div>
+
+            <div class="md:col-span-3">
+                <p class="label">Legal</p>
+                <ul class="mt-3 space-y-2 text-[13px]">
+                    <li><a href="{{ route('public.privacy') }}" class="link">Privasi</a></li>
+                    <li><a href="{{ route('public.terms') }}" class="link">Ketentuan</a></li>
+                </ul>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-3 border-t border-divider pt-4 md:col-span-12">
+                <p class="folio">HADIR.IN / V2.0</p>
+                <p class="text-[12px] text-muted">Dibuat dan dirawat di Indonesia.</p>
+            </div>
         </div>
     </footer>
 </body>

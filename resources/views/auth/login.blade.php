@@ -1,11 +1,17 @@
 <x-layouts.auth title="Masuk ke Hadir.In">
-    <div class="panel panel-pad">
-        <p class="eyebrow">Masuk</p>
-        <h1 class="mt-1 font-display text-[28px] font-semibold leading-[1.2] tracking-[-0.02em]">Selamat datang kembali</h1>
-        <p class="mt-2 text-[14px] leading-6 text-muted">Masukkan email dan kata sandi akun Anda.</p>
+    <div class="panel p-6 md:p-8">
+        <div class="flex items-center justify-between gap-4">
+            <p class="label">Masuk</p>
+            <span class="folio">01 / 02</span>
+        </div>
+
+        <h1 class="title-lg mt-3">Selamat datang kembali</h1>
+        <p class="mt-2 max-w-[36ch] text-[14px] leading-6 text-muted">
+            Masukkan email dan kata sandi akun Anda.
+        </p>
 
         @if(session('status'))
-            <p class="mt-4 border-l-2 border-present bg-tint px-3 py-2 text-[13px] leading-5">{{ session('status') }}</p>
+            <p class="mt-5 border-l-2 border-present bg-tint px-3 py-2 text-[13px] leading-5">{{ session('status') }}</p>
         @endif
 
         <form method="POST" action="{{ route('login.store') }}" class="mt-6 space-y-4">

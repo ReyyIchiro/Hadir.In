@@ -27,7 +27,7 @@
             </button>
         </div>
 
-        <p class="font-display text-[15px] font-semibold">
+        <p class="font-mono text-[13px] font-medium">
             {{ \App\Support\Waktu::dateShort($weekStart) }} - {{ \App\Support\Waktu::dateShort($dates->last()) }}
         </p>
 

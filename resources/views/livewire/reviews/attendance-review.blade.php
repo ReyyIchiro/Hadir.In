@@ -25,7 +25,7 @@
                 <dl class="divide-y divide-divider">
                     <div class="flex items-center justify-between gap-3 px-4 py-3 md:px-6">
                         <dt class="text-[13px] text-muted">Waktu percobaan</dt>
-                        <dd class="font-display text-[16px] font-semibold tabular-nums">{{ \App\Support\Waktu::time($event?->occurred_at) }}</dd>
+                        <dd class="font-mono text-[16px] tabular-nums">{{ \App\Support\Waktu::time($event?->occurred_at) }}</dd>
                     </div>
                     <div class="flex items-center justify-between gap-3 px-4 py-3 md:px-6">
                         <dt class="text-[13px] text-muted">Status</dt>

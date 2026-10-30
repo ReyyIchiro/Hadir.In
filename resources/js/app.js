@@ -14,35 +14,79 @@ L.Marker.prototype.options.icon = L.divIcon({
 
 window.L = L;
 
-function applyTheme(theme) {
+// Tema punya tiga keadaan: 'system', 'light', dan 'dark'. Pilihan disimpan di
+// localStorage; 'system' berarti tidak ada kunci sama sekali. Bootstrap awal
+// ada di partials/theme.blade.php supaya tidak ada kedipan tema yang salah.
+const themeMedia = window.matchMedia('(prefers-color-scheme: dark)');
+
+function storedTheme() {
+    const value = localStorage.getItem('hadir-theme');
+
+    return value === 'dark' || value === 'light' ? value : 'system';
+}
+
+function resolvedTheme(theme = storedTheme()) {
+    if (theme === 'system') {
+        return themeMedia.matches ? 'dark' : 'light';
+    }
+
+    return theme;
+}
+
+function paintTheme(theme) {
+    const resolved = resolvedTheme(theme);
     const root = document.documentElement;
-    if (theme === 'dark' || theme === 'light') {
-        root.dataset.theme = theme;
+
+    if (resolved === 'dark') {
+        root.dataset.theme = 'dark';
     } else {
         delete root.dataset.theme;
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            root.dataset.theme = 'dark';
-        }
     }
+
+    const meta = document.querySelector('[data-theme-color]');
+    if (meta) {
+        meta.setAttribute('content', resolved === 'dark' ? '#111411' : '#f5f2ea');
+    }
+
+    document.querySelectorAll('[data-theme-toggle]').forEach((button) => {
+        button.setAttribute('aria-pressed', resolved === 'dark' ? 'true' : 'false');
+    });
+
+    window.dispatchEvent(new CustomEvent('hadir-theme-changed', {
+        detail: { theme, resolved },
+    }));
 }
 
 window.setHadirTheme = function (theme) {
     if (theme === 'system') {
         localStorage.removeItem('hadir-theme');
-    } else {
+    } else if (theme === 'dark' || theme === 'light') {
         localStorage.setItem('hadir-theme', theme);
+    } else {
+        return;
     }
-    applyTheme(theme);
-    window.dispatchEvent(new CustomEvent('hadir-theme-changed', { detail: theme }));
+
+    paintTheme(theme);
 };
 
-applyTheme(localStorage.getItem('hadir-theme') || 'system');
+window.getHadirTheme = storedTheme;
 
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-    if (!localStorage.getItem('hadir-theme')) {
-        applyTheme('system');
+// Satu listener untuk semua tombol tema, termasuk yang ditambahkan kemudian
+// oleh Livewire. Tombol tidak perlu Alpine.
+document.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-theme-toggle]');
+    if (!button) return;
+
+    window.setHadirTheme(resolvedTheme() === 'dark' ? 'light' : 'dark');
+});
+
+themeMedia.addEventListener('change', () => {
+    if (storedTheme() === 'system') {
+        paintTheme('system');
     }
 });
+
+paintTheme();
 
 window.copyText = async function (text) {
     try {
@@ -52,3 +96,46 @@ window.copyText = async function (text) {
         return false;
     }
 };
+
+// DESIGN.md meminta petunjuk geser pada tabel lebar di layar kecil. Petunjuk
+// hanya muncul bila tabel benar-benar melebar, bukan pada setiap tabel.
+const tableHints = new WeakMap();
+
+function syncTableHints() {
+    document.querySelectorAll('.table-scroll').forEach((scroller) => {
+        let entry = tableHints.get(scroller);
+
+        if (!entry || !entry.hint.isConnected) {
+            entry?.observer.disconnect();
+
+            const hint = document.createElement('p');
+            hint.className = 'table-scroll-hint';
+            hint.textContent = 'Geser untuk melihat kolom lain.';
+            scroller.before(hint);
+
+            const update = () => {
+                hint.classList.toggle('is-visible', scroller.scrollWidth > scroller.clientWidth + 1);
+            };
+
+            const observer = new ResizeObserver(update);
+            observer.observe(scroller);
+
+            entry = { hint, observer, update };
+            tableHints.set(scroller, entry);
+        }
+
+        entry.update();
+    });
+}
+
+let tableHintFrame = null;
+new MutationObserver(() => {
+    if (tableHintFrame !== null) return;
+
+    tableHintFrame = requestAnimationFrame(() => {
+        tableHintFrame = null;
+        syncTableHints();
+    });
+}).observe(document.body, { childList: true, subtree: true });
+
+syncTableHints();

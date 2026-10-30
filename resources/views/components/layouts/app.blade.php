@@ -3,21 +3,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    @include('partials.theme')
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="robots" content="noindex">
     <title>{{ $title ?? 'Hadir.In' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
-    <script>
-        (function () {
-            var t = localStorage.getItem('hadir-theme');
-            if (t === 'dark' || t === 'light') {
-                document.documentElement.dataset.theme = t;
-            } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                document.documentElement.dataset.theme = 'dark';
-            }
-        })();
-    </script>
 </head>
 <body class="bg-paper text-text antialiased">
     <a href="#konten" class="skip-link">Lewati ke konten</a>
@@ -42,7 +33,7 @@
                 ])),
             ],
             [
-                'label' => 'Organisasi',
+                'label' => 'Kelola',
                 'items' => array_values(array_filter([
                     $canManageMembers ? ['label' => 'Anggota', 'route' => 'app.members.index', 'icon' => 'users'] : null,
                     $canManageSettings ? ['label' => 'Lokasi', 'route' => 'app.locations.index', 'icon' => 'map-pin'] : null,
@@ -59,31 +50,36 @@
             x-cloak
             x-show="navOpen"
             x-transition.opacity
-            class="fixed inset-0 z-30 bg-ink/45 lg:hidden"
+            class="fixed inset-0 z-30 bg-ink/50 lg:hidden"
             @click="navOpen = false"
             aria-hidden="true"
         ></div>
 
         <aside
             id="navigasi"
-            class="fixed inset-y-0 left-0 z-40 w-[248px] overflow-y-auto border-r border-divider bg-paper px-3 py-4 transition-transform duration-150 ease-out lg:static lg:z-auto lg:w-auto lg:translate-x-0"
+            class="fixed inset-y-0 left-0 z-40 flex w-[248px] flex-col overflow-y-auto border-r border-divider bg-paper px-3 py-4 transition-transform duration-150 ease-out lg:static lg:z-auto lg:w-auto lg:translate-x-0"
             :class="navOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
             aria-label="Navigasi aplikasi"
         >
             <div class="flex items-center justify-between px-2 pb-4">
-                <a href="{{ route('app.home') }}" class="flex items-center gap-2 no-underline hover:no-underline">
-                    <span class="inline-block h-3.5 w-3.5 rounded-[2px] bg-stamp" aria-hidden="true"></span>
-                    <span class="font-display text-[16px] font-semibold tracking-[-0.02em]">Hadir.In</span>
+                <a href="{{ route('app.home') }}" class="wordmark">
+                    <span class="wordmark-mark" aria-hidden="true"></span>
+                    <span>Hadir.In</span>
                 </a>
                 <button type="button" class="btn btn-ghost btn-sm px-2 lg:hidden" @click="navOpen = false" aria-label="Tutup navigasi">
                     <x-icon name="x" :size="18" />
                 </button>
             </div>
 
+            {{-- Identitas organisasi: blok bergaris, bukan kartu. --}}
             <div class="mb-4 border-y border-divider px-2 py-3">
-                <p class="text-[11px] uppercase tracking-[0.08em] text-muted">Organisasi</p>
-                <p class="mt-0.5 truncate font-display text-[14px] font-semibold">{{ $currentTenant->name ?? '' }}</p>
-                <p class="text-[12px] text-muted">{{ $role?->label() }}</p>
+                <p class="label">Organisasi</p>
+                <p class="mt-1 truncate text-[14px] font-medium">{{ $currentTenant->name ?? '' }}</p>
+                <p class="mt-0.5 flex items-center gap-2 text-[12px] text-muted">
+                    <span>{{ $role?->label() }}</span>
+                    <span class="h-1 w-1 rounded-full bg-rule-strong" aria-hidden="true"></span>
+                    <span class="data-sm">{{ $currentTenant->timezone ?? '' }}</span>
+                </p>
 
                 @if(($availableMemberships ?? collect())->count() > 1)
                     <details class="mt-2">
@@ -110,7 +106,7 @@
                     @if(count($group['items']))
                         <div>
                             @if($group['label'])
-                                <p class="px-3 pb-1 text-[11px] uppercase tracking-[0.08em] text-muted">{{ $group['label'] }}</p>
+                                <p class="label px-3 pb-1">{{ $group['label'] }}</p>
                             @endif
                             <ul class="space-y-0.5">
                                 @foreach($group['items'] as $item)
@@ -120,7 +116,7 @@
                                             class="nav-link {{ request()->routeIs($item['route']) || request()->routeIs(str_replace('.index', '.*', $item['route'])) ? 'active' : '' }}"
                                             @if(request()->routeIs($item['route'])) aria-current="page" @endif
                                         >
-                                            <x-icon :name="$item['icon']" :size="18" class="shrink-0" />
+                                            <x-icon :name="$item['icon']" :size="17" class="shrink-0" />
                                             <span>{{ $item['label'] }}</span>
                                         </a>
                                     </li>
@@ -131,19 +127,19 @@
                 @endforeach
             </nav>
 
-            <div class="mt-6 border-t border-divider pt-3">
+            <div class="mt-auto border-t border-divider pt-3">
                 <a href="{{ route('app.profile') }}" class="nav-link">
-                    <x-icon name="user" :size="18" class="shrink-0" />
+                    <x-icon name="user" :size="17" class="shrink-0" />
                     <span>Profil</span>
                 </a>
                 <a href="{{ route('app.appearance') }}" class="nav-link">
-                    <x-icon name="sun" :size="18" class="shrink-0" />
+                    <x-icon name="sun" :size="17" class="shrink-0" />
                     <span>Tampilan</span>
                 </a>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="nav-link w-full text-left">
-                        <x-icon name="logout" :size="18" class="shrink-0" />
+                        <x-icon name="logout" :size="17" class="shrink-0" />
                         <span>Keluar</span>
                     </button>
                 </form>
@@ -151,24 +147,26 @@
         </aside>
 
         <div class="flex min-h-screen min-w-0 flex-col">
-            <header class="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-divider bg-paper/95 px-4 backdrop-blur-none md:px-6">
+            <header class="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-divider bg-paper px-4 md:px-6">
                 <button type="button" class="btn btn-ghost btn-sm px-2 lg:hidden" @click="navOpen = true" aria-label="Buka navigasi" aria-controls="navigasi">
                     <x-icon name="menu" :size="20" />
                 </button>
 
-                <p class="min-w-0 flex-1 truncate text-[14px] font-medium">
+                <p class="folio min-w-0 flex-1 truncate uppercase">
                     {{ $heading ?? $title ?? '' }}
                 </p>
 
-                <span class="hidden text-[12px] text-muted sm:block">{{ $currentTenant->timezone ?? '' }}</span>
+                <span class="hidden data-sm text-muted sm:block">{{ $currentTenant->timezone ?? '' }}</span>
 
-                <span class="flex h-8 w-8 items-center justify-center rounded-[2px] border border-divider bg-surface font-display text-[12px] font-semibold" aria-hidden="true">
+                <x-theme-toggle />
+
+                <span class="flex h-8 w-8 items-center justify-center rounded-[2px] border border-rule-strong bg-surface font-mono text-[12px] font-medium" aria-hidden="true">
                     {{ mb_strtoupper(mb_substr(auth()->user()->name ?? '?', 0, 1)) }}
                 </span>
             </header>
 
             <main id="konten" class="flex-1 px-4 py-6 md:px-6 md:py-8">
-                <div class="mx-auto w-full max-w-[1200px]">
+                <div class="mx-auto w-full max-w-[1280px]">
                     {{ $slot }}
                 </div>
             </main>

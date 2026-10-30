@@ -3,20 +3,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    @include('partials.theme')
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="robots" content="noindex">
     <title>{{ $title ?? 'Platform Hadir.In' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script>
-        (function () {
-            var t = localStorage.getItem('hadir-theme');
-            if (t === 'dark' || t === 'light') {
-                document.documentElement.dataset.theme = t;
-            } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                document.documentElement.dataset.theme = 'dark';
-            }
-        })();
-    </script>
 </head>
 <body class="bg-paper text-text antialiased">
     <a href="#konten" class="skip-link">Lewati ke konten</a>
@@ -34,10 +25,13 @@
                 <a href="{{ route('platform.tenants.index') }}" class="hover:text-text {{ request()->routeIs('platform.tenants.*') ? 'text-text' : '' }}">Organisasi</a>
             </nav>
 
-            <form method="POST" action="{{ route('logout') }}" class="ml-auto">
-                @csrf
-                <button type="submit" class="btn btn-ghost btn-sm">Keluar</button>
-            </form>
+            <div class="ml-auto flex items-center gap-1">
+                <x-theme-toggle />
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-ghost btn-sm">Keluar</button>
+                </form>
+            </div>
         </div>
     </header>
 

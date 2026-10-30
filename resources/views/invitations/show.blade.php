@@ -1,7 +1,7 @@
 <x-layouts.auth title="Undangan bergabung">
     <div class="mx-auto w-full max-w-[440px]">
         <p class="eyebrow">Undangan</p>
-        <h1 class="mt-2 font-display text-[28px] font-semibold leading-tight tracking-[-0.02em]">
+        <h1 class="mt-2 title-lg">
             Bergabung dengan {{ $invitation->tenant->name }}
         </h1>
         <p class="mt-2 text-[14px] leading-6 text-muted">

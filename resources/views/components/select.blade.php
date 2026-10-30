@@ -16,8 +16,7 @@
         name="{{ $name }}"
         @if($required) required @endif
         @if($error) aria-invalid="true" aria-describedby="{{ $id }}-error" @endif
-        {{ $attributes->merge(['class' => 'field-input appearance-none pr-9']) }}
-        style="background-image: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2216%22 height=%2216%22 fill=%22none%22 stroke=%22%236B6459%22 stroke-width=%221.5%22><path d=%22m4 6 4 4 4-4%22/></svg>'); background-repeat: no-repeat; background-position: right 10px center;"
+        {{ $attributes->merge(['class' => 'field-input select-field']) }}
     >
         @if($placeholder)
             <option value="">{{ $placeholder }}</option>

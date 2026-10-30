@@ -30,7 +30,7 @@
             ] as $key => $label)
                 <div class="border-b border-divider px-4 py-3 sm:border-b-0 sm:border-r sm:last:border-r-0 md:px-6">
                     <p class="text-[11px] uppercase tracking-[0.08em] text-muted">{{ $label }}</p>
-                    <p class="mt-1 font-display text-[22px] font-semibold tabular-nums">{{ $summary[$key] }}</p>
+                    <p class="mt-1 font-mono text-[22px] tabular-nums">{{ $summary[$key] }}</p>
                 </div>
             @endforeach
         </div>
