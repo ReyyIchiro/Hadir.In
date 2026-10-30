@@ -63,15 +63,37 @@ cp .env.example .env
 php artisan key:generate
 touch database/database.sqlite
 php artisan migrate --seed
-npm run dev
+npm run build
 php artisan serve
 ```
 
-Buka `http://127.0.0.1:8000`.
+Buka `http://127.0.0.1:8000`, lalu masuk dengan salah satu akun demo di atas.
+`.env.example` sudah memakai SQLite, jadi tidak perlu memasang PostgreSQL.
 
-Untuk PostgreSQL, isi `DB_*` di `.env` dan pastikan ekstensi `pdo_pgsql` tersedia.
-PHP lokal tanpa `pdo_pgsql` tetap bisa menjalankan aplikasi dan pengujian dengan
-SQLite. Lihat `docs/OPERATIONS.md` untuk detail dan batasannya.
+Aset harus dibangun sebelum halaman dibuka. Tanpa `npm run build` atau
+`npm run dev`, Laravel gagal memuat manifest Vite dan setiap halaman
+mengembalikan galat 500.
+
+Saat mengembangkan tampilan, jalankan dua proses di dua terminal:
+
+```bash
+npm run dev        # terminal 1, biarkan berjalan
+php artisan serve  # terminal 2
+```
+
+`npm run dev` berjalan terus dan tidak selesai sendiri, jadi jangan
+menjalankannya dalam satu blok berurutan dengan `php artisan serve`.
+
+Menguji kamera dan GPS dari ponsel: browser hanya memberi izin kamera dan
+lokasi pada konteks aman. `http://127.0.0.1` dihitung aman, tetapi alamat IP
+LAN seperti `http://192.168.1.10:8000` tidak. Untuk uji di ponsel, pakai
+terowongan HTTPS (misalnya `cloudflared tunnel --url http://localhost:8000`)
+dan buka alamat HTTPS yang diberikan.
+
+Untuk PostgreSQL, ganti blok `DB_*` di `.env` dengan contoh yang sudah
+dikomentari di berkas itu, dan pastikan ekstensi `pdo_pgsql` aktif. PHP lokal
+tanpa `pdo_pgsql` tetap bisa menjalankan aplikasi dan pengujian dengan SQLite.
+Lihat `docs/OPERATIONS.md` untuk detail dan batasannya.
 
 ## Perintah penting
 
