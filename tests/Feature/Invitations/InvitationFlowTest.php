@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\MembershipRole;
+use App\Models\Invitation;
 use App\Models\User;
 use App\Services\InvitationService;
 use Illuminate\Validation\ValidationException;
@@ -172,4 +174,32 @@ it('mewajibkan login bila email undangan sudah terdaftar', function () {
         'password' => 'rahasia123',
         'password_confirmation' => 'rahasia123',
     ])->assertRedirect('/masuk');
+});
+
+it('menghapus undangan yang kedaluwarsa lebih dari 30 hari lewat prune', function () {
+    $tenant = makeTenant();
+    $owner = actingAsAdmin($tenant);
+
+    $old = Invitation::create([
+        'tenant_id' => $tenant->id,
+        'email' => 'lama@hadir.test',
+        'role' => MembershipRole::Member,
+        'token_hash' => hash('sha256', 'lama'),
+        'invited_by_id' => $owner->id,
+        'expires_at' => now()->subDays(45),
+    ]);
+
+    $recent = Invitation::create([
+        'tenant_id' => $tenant->id,
+        'email' => 'baru@hadir.test',
+        'role' => MembershipRole::Member,
+        'token_hash' => hash('sha256', 'baru'),
+        'invited_by_id' => $owner->id,
+        'expires_at' => now()->subDays(5),
+    ]);
+
+    $this->artisan('model:prune', ['--model' => [Invitation::class]])->assertSuccessful();
+
+    expect(Invitation::withoutGlobalScopes()->find($old->id))->toBeNull();
+    expect(Invitation::withoutGlobalScopes()->find($recent->id))->not->toBeNull();
 });

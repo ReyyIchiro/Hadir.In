@@ -4,13 +4,15 @@ namespace App\Models;
 
 use App\Enums\MembershipRole;
 use App\Models\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Invitation extends Model
 {
-    use BelongsToTenant, HasFactory;
+    use BelongsToTenant, HasFactory, Prunable;
 
     protected $fillable = [
         'tenant_id',
@@ -56,6 +58,16 @@ class Invitation extends Model
     public function division(): BelongsTo
     {
         return $this->belongsTo(Division::class);
+    }
+
+    /**
+     * Undangan disimpan 30 hari setelah kedaluwarsa sebagai jejak, lalu
+     * dibersihkan oleh model:prune sesuai docs/DATABASE.md.
+     */
+    public function prunable(): Builder
+    {
+        return static::withoutGlobalScopes()
+            ->where('expires_at', '<', now()->subDays(30));
     }
 
     public function isPending(): bool
