@@ -386,6 +386,12 @@ status penangguhan. Tidak ada penghapusan organisasi sendiri di v1.
   lokasi utama peninjau, atau anggota yang lokasi utamanya sama dengan lokasi
   utama peninjau. Izin mengikuti lokasi utama anggota. Laporan memakai lingkup
   yang sama.
+
+  Untuk laporan, lingkup diterapkan pada anggota, bukan pada tiap hari, karena
+  baris laporan adalah ringkasan per anggota. Peninjau melihat seluruh hari
+  anggota yang lokasi utamanya sama dengan lokasi utamanya, termasuk hari ketika
+  anggota tersebut absen di lokasi lain. Menyaring per hari akan memecah satu
+  anggota menjadi beberapa baris dan membuat angka ringkasan menyesatkan.
 - BR-63. Platform admin tidak boleh memiliki keanggotaan di organisasi mana pun.
 - BR-64. Satu pengguna dapat memiliki beberapa keanggotaan. Sesi menyimpan
   organisasi aktif. Perpindahan organisasi hanya ke organisasi tempat pengguna
