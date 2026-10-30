@@ -20,7 +20,7 @@ dan teknis tetap menjadi sumber kebenaran bila kode dan dokumen berbeda.
 | Halaman publik dan aplikasi anggota | Selesai |
 | Pengujian otomatis dan runbook produksi | Selesai |
 
-131 tes Pest lulus. Sebelum go-live, jalankan matriks manual kamera dan GPS pada
+156 tes Pest lulus. Sebelum go-live, jalankan matriks manual kamera dan GPS pada
 perangkat nyata (`docs/TESTING.md` bagian 7) dan uji staging PostgreSQL.
 
 ## Akun demo
