@@ -543,7 +543,8 @@ itu:
 - Aplikasi lokal dan pengujian memakai SQLite.
 - Migrasi dirancang portabel.
 - Perbedaan PostgreSQL (konkurensi, tipe JSON, perilaku indeks) belum diuji
-  secara lokal.
+  secara lokal pada mesin ini, tetapi seluruh tes sudah dijalankan pada
+  PostgreSQL 16 lewat kontainer PHP 8.3 dan lulus.
 - Sebelum rilis produksi, jalankan migrasi dan seluruh tes di staging PostgreSQL.
 - Container PostgreSQL lokal tersedia untuk eksperimen, tetapi tidak dipakai
   oleh aplikasi tanpa ekstensi PHP yang sesuai.

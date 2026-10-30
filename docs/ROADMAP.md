@@ -232,9 +232,8 @@ Catatan M6:
 - `php artisan test` lulus 126 tes dengan 274 asersi.
 - `npm run build` lulus.
 - Seluruh rute pada `ROUTES.md` terdaftar dan diuji.
-- Uji staging PostgreSQL belum dijalankan karena ekstensi `pdo_pgsql` tidak
-  tersedia di mesin pengembangan. CI menyediakan pekerjaan PostgreSQL 16 supaya
-  migrasi tetap teruji pada mesin yang setara produksi; lihat
-  `OPERATIONS.md` bagian 16.
+- Seluruh 126 tes lulus pada PostgreSQL 16 di dalam kontainer PHP 8.3, jadi
+  migrasi dan kueri sudah teruji pada mesin yang setara produksi. CI mengulang
+  pengujian ini pada setiap push.
 - Matriks manual kamera dan GPS pada perangkat nyata masih perlu dijalankan
   sebelum go-live; lihat `TESTING.md` bagian 7.
