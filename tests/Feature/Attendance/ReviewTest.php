@@ -177,3 +177,44 @@ it('menolak akses selfie bagi anggota lain', function () {
 
     $this->actingAs($other)->get($url)->assertForbidden();
 });
+
+it('menampilkan kejadian di lokasi peninjau walau anggota berlokasi utama lain', function () {
+    // Anggota ini lokasi utamanya bukan lokasi peninjau, tetapi ia absen di
+    // lokasi peninjau. BR-62 menyatakan kejadian seperti ini tetap masuk
+    // lingkup peninjauan.
+    $otherLocation = makeLocation($this->tenant, ['name' => 'Cabang']);
+    $outsider = makeUser();
+    makeMembership($this->tenant, $outsider, 'member', ['primary_location_id' => $otherLocation->id]);
+
+    makeSchedule($this->tenant, $outsider, '2026-10-30');
+    freezeAt('2026-10-30 00:55:00');
+
+    $result = app(AttendanceService::class)->checkIn($outsider, $this->tenant, [
+        'latitude' => (float) $this->location->latitude,
+        'longitude' => (float) $this->location->longitude,
+        'accuracy' => 10,
+    ], selfieFile());
+
+    // Paksa kejadian tercatat sebagai ditolak pada lokasi peninjau.
+    $event = $result->event;
+    $event->forceFill([
+        'status' => 'rejected',
+        'reason' => 'di_luar_radius',
+        'location_id' => $this->location->id,
+    ])->save();
+
+    $review = AttendanceReview::create([
+        'tenant_id' => $this->tenant->id,
+        'attendance_event_id' => $event->id,
+        'user_id' => $outsider->id,
+        'status' => ReviewStatus::Pending,
+        'note' => 'Minta ditinjau.',
+    ]);
+
+    $this->actingAs($this->reviewer)
+        ->get('/app/tinjauan')
+        ->assertOk()
+        ->assertSee($outsider->name);
+
+    expect($review->refresh()->status)->toBe(ReviewStatus::Pending);
+});

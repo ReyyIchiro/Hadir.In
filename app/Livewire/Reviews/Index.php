@@ -43,15 +43,36 @@ class Index extends Component
         $membership = $this->membership();
         $scopedUserIds = $this->scopedUserIds($membership);
 
+        $scopeLocation = $this->scopeLocationId($membership);
+
+        // BR-62: peninjau melihat kejadian yang lokasinya sama dengan lokasi
+        // utamanya, atau yang pemiliknya berlokasi utama sama. Dua cabang itu
+        // harus muncul di antrean, bukan hanya salah satunya.
         $reviews = AttendanceReview::with(['user', 'event.location'])
             ->where('status', ReviewStatus::Pending)
-            ->when($scopedUserIds !== null, fn ($q) => $q->whereIn('user_id', $scopedUserIds))
+            ->when($scopedUserIds !== null, function ($q) use ($scopedUserIds, $scopeLocation) {
+                $q->where(function ($inner) use ($scopedUserIds, $scopeLocation) {
+                    $inner->whereIn('user_id', $scopedUserIds);
+
+                    if ($scopeLocation !== null) {
+                        $inner->orWhereHas('event', fn ($e) => $e->where('location_id', $scopeLocation));
+                    }
+                });
+            })
             ->orderBy('created_at')
             ->get();
 
         $corrections = AttendanceCorrection::with(['user', 'attendanceDay'])
             ->where('status', CorrectionStatus::Pending)
-            ->when($scopedUserIds !== null, fn ($q) => $q->whereIn('user_id', $scopedUserIds))
+            ->when($scopedUserIds !== null, function ($q) use ($scopedUserIds, $scopeLocation) {
+                $q->where(function ($inner) use ($scopedUserIds, $scopeLocation) {
+                    $inner->whereIn('user_id', $scopedUserIds);
+
+                    if ($scopeLocation !== null) {
+                        $inner->orWhereHas('attendanceDay', fn ($d) => $d->where('location_id', $scopeLocation));
+                    }
+                });
+            })
             ->orderBy('created_at')
             ->get();
 
@@ -71,6 +92,18 @@ class Index extends Component
                 'izin' => $leaves->count(),
             ],
         ])->layoutData(['heading' => 'Tinjauan'])->title('Tinjauan');
+    }
+
+    /**
+     * Lokasi utama peninjau, atau null bila tidak dibatasi.
+     */
+    protected function scopeLocationId(Membership $membership): ?int
+    {
+        if ($membership->role !== MembershipRole::Reviewer) {
+            return null;
+        }
+
+        return $membership->primary_location_id ? (int) $membership->primary_location_id : null;
     }
 
     /**
