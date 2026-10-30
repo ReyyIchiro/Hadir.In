@@ -140,11 +140,17 @@ class DemoSeeder extends Seeder
                 'name' => 'Cuti bersama perusahaan',
             ]);
 
+            $memberAbsences = [];
+
             foreach ([$owner, $admin, $reviewer, $member] as $index => $person) {
-                $this->attendanceHistory($tenant, $person, $office, $today, $index * 2);
+                $absences = $this->attendanceHistory($tenant, $person, $office, $today, $index * 2);
+
+                if ($person->is($member)) {
+                    $memberAbsences = $absences;
+                }
             }
 
-            $this->rejectedSample($tenant, $member, $today);
+            $this->rejectedSample($tenant, $member, $today, $memberAbsences);
 
             $this->leaveSamples($tenant, $member, $reviewer, $today);
         });
@@ -209,7 +215,7 @@ class DemoSeeder extends Seeder
      * terakhir. Pola berulang membuat laporan punya campuran hadir, terlambat,
      * absen, dan satu hari tanpa absen pulang.
      */
-    protected function attendanceHistory(Tenant $tenant, User $user, Location $office, CarbonImmutable $today, int $offset = 0): void
+    protected function attendanceHistory(Tenant $tenant, User $user, Location $office, CarbonImmutable $today, int $offset = 0): array
     {
         $patterns = [
             ['07.52', '17.04', AttendanceStatus::Hadir, 0],
@@ -225,6 +231,7 @@ class DemoSeeder extends Seeder
 
         $cursor = $offset;
         $start = $today->subWeeks(3)->startOfWeek();
+        $absentDates = [];
 
         for ($date = $start; $date->lt($today); $date = $date->addDay()) {
             if ($date->isWeekend()) {
@@ -257,6 +264,8 @@ class DemoSeeder extends Seeder
             ]);
 
             if ($checkIn === null) {
+                $absentDates[] = $date;
+
                 continue;
             }
 
@@ -296,22 +305,29 @@ class DemoSeeder extends Seeder
                 ]);
             }
         }
+
+        return $absentDates;
     }
 
     /**
      * Satu percobaan absen yang ditolak karena di luar radius, plus pengajuan
-     * tinjauan yang masih menunggu keputusan.
+     * tinjauan yang masih menunggu keputusan. Ditempel ke hari yang tercatat
+     * absen supaya ceritanya utuh: absen ditolak, hari difinalisasi absen,
+     * anggota meminta peninjauan.
+     *
+     * @param  array<int, CarbonImmutable>  $absentDates
      */
-    protected function rejectedSample(Tenant $tenant, User $member, CarbonImmutable $today): void
+    protected function rejectedSample(Tenant $tenant, User $member, CarbonImmutable $today, array $absentDates): void
     {
-        $rejectedAt = $this->localTimestamp($today->subDays(4), '08.02');
+        $rejectedDate = $absentDates ? end($absentDates) : $today->subDays(4);
+        $rejectedAt = $this->localTimestamp($rejectedDate, '08.02');
 
         $rejected = AttendanceEvent::create([
             'tenant_id' => $tenant->id,
             'user_id' => $member->id,
             'type' => 'check_in',
             'status' => 'rejected',
-            'work_date' => $today->subDays(4)->toDateString(),
+            'work_date' => $rejectedDate->toDateString(),
             'occurred_at' => $rejectedAt,
             'location_id' => null,
             'latitude' => -6.2291000,
