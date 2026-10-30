@@ -129,6 +129,9 @@ class DemoSeeder extends Seeder
 
             $today = CarbonImmutable::now($tenant->timezone)->startOfDay();
 
+            // Jadwal dibuat mundur tiga minggu plus sisa bulan berjalan dan satu
+            // bulan ke depan. Hari sebelum aplikasi dipakai tidak diberi jadwal
+            // supaya laporan tidak menampilkan absen palsu.
             $this->schedules($tenant, [$owner, $admin, $reviewer, $member], $today);
 
             Holiday::create([
@@ -137,8 +140,11 @@ class DemoSeeder extends Seeder
                 'name' => 'Cuti bersama perusahaan',
             ]);
 
-            $this->attendanceSamples($tenant, $member, $office, $today);
-            $this->teamAttendanceSamples($tenant, [$owner, $admin, $reviewer], $office, $today);
+            foreach ([$owner, $admin, $reviewer, $member] as $index => $person) {
+                $this->attendanceHistory($tenant, $person, $office, $today, $index * 2);
+            }
+
+            $this->rejectedSample($tenant, $member, $today);
 
             $this->leaveSamples($tenant, $member, $reviewer, $today);
         });
@@ -172,9 +178,10 @@ class DemoSeeder extends Seeder
      */
     protected function schedules(Tenant $tenant, array $users, CarbonImmutable $today): void
     {
-        // Dua bulan penuh supaya pengajuan cuti untuk bulan depan tetap bisa
-        // divalidasi terhadap jadwal kerja.
-        $start = $today->startOfMonth();
+        // Tiga minggu ke belakang supaya laporan bulan berjalan punya isi, lalu
+        // sisa bulan ini dan satu bulan penuh ke depan supaya pengajuan cuti
+        // tetap bisa divalidasi terhadap jadwal kerja.
+        $start = $today->subWeeks(3)->startOfWeek();
         $end = $today->startOfMonth()->addMonthNoOverflow()->endOfMonth();
 
         foreach ($users as $user) {
@@ -197,37 +204,65 @@ class DemoSeeder extends Seeder
         }
     }
 
-    protected function attendanceSamples(Tenant $tenant, User $member, Location $office, CarbonImmutable $today): void
+    /**
+     * Riwayat presensi untuk satu anggota pada setiap hari kerja tiga minggu
+     * terakhir. Pola berulang membuat laporan punya campuran hadir, terlambat,
+     * absen, dan satu hari tanpa absen pulang.
+     */
+    protected function attendanceHistory(Tenant $tenant, User $user, Location $office, CarbonImmutable $today, int $offset = 0): void
     {
-        $samples = [
-            [$today->subDays(1), '07.54', '17.06', AttendanceStatus::Hadir, 0],
-            [$today->subDays(2), '08.18', '17.02', AttendanceStatus::Terlambat, 18],
-            [$today->subDays(3), '07.58', null, AttendanceStatus::Hadir, 0],
+        $patterns = [
+            ['07.52', '17.04', AttendanceStatus::Hadir, 0],
+            ['08.06', '17.12', AttendanceStatus::Hadir, 0],
+            ['08.23', '16.59', AttendanceStatus::Terlambat, 23],
+            ['07.48', '17.21', AttendanceStatus::Hadir, 0],
+            ['08.01', '17.02', AttendanceStatus::Hadir, 0],
+            ['08.11', '17.07', AttendanceStatus::Terlambat, 11],
+            [null, null, AttendanceStatus::Absen, 0],
+            ['07.57', '17.00', AttendanceStatus::Hadir, 0],
+            ['08.04', '17.15', AttendanceStatus::Hadir, 0],
         ];
 
-        foreach ($samples as [$date, $in, $out, $status, $late]) {
+        $cursor = $offset;
+        $start = $today->subWeeks(3)->startOfWeek();
+
+        for ($date = $start; $date->lt($today); $date = $date->addDay()) {
             if ($date->isWeekend()) {
                 continue;
             }
 
-            $checkIn = $this->localTimestamp($date, $in);
+            [$in, $out, $status, $late] = $patterns[$cursor % count($patterns)];
+            $cursor++;
+
+            $checkIn = $in ? $this->localTimestamp($date, $in) : null;
+            $checkOut = $out ? $this->localTimestamp($date, $out) : null;
+
+            $flags = match (true) {
+                $status === AttendanceStatus::Absen => ['final_otomatis'],
+                $checkIn !== null && $checkOut === null => ['final_otomatis', 'tanpa_pulang'],
+                default => [],
+            };
 
             $day = AttendanceDay::create([
                 'tenant_id' => $tenant->id,
-                'user_id' => $member->id,
+                'user_id' => $user->id,
                 'work_date' => $date->toDateString(),
-                'location_id' => $office->id,
+                'location_id' => $status === AttendanceStatus::Absen ? null : $office->id,
                 'status' => $status,
                 'check_in_at' => $checkIn,
-                'check_out_at' => $out ? $this->localTimestamp($date, $out) : null,
+                'check_out_at' => $checkOut,
                 'late_minutes' => $late,
-                'flags' => $out ? [] : ['final_otomatis', 'tanpa_pulang'],
-                'finalized_at' => $date->lt($today) ? $this->localTimestamp($date, '21.00') : null,
+                'flags' => $flags,
+                'finalized_at' => $this->localTimestamp($date, '21.00'),
             ]);
+
+            if ($checkIn === null) {
+                continue;
+            }
 
             AttendanceEvent::create([
                 'tenant_id' => $tenant->id,
-                'user_id' => $member->id,
+                'user_id' => $user->id,
                 'attendance_day_id' => $day->id,
                 'type' => 'check_in',
                 'status' => 'accepted',
@@ -242,15 +277,15 @@ class DemoSeeder extends Seeder
                 'attempt_uuid' => (string) Str::uuid(),
             ]);
 
-            if ($out) {
+            if ($checkOut !== null) {
                 AttendanceEvent::create([
                     'tenant_id' => $tenant->id,
-                    'user_id' => $member->id,
+                    'user_id' => $user->id,
                     'attendance_day_id' => $day->id,
                     'type' => 'check_out',
                     'status' => 'accepted',
                     'work_date' => $date->toDateString(),
-                    'occurred_at' => $this->localTimestamp($date, $out),
+                    'occurred_at' => $checkOut,
                     'location_id' => $office->id,
                     'latitude' => $office->latitude,
                     'longitude' => $office->longitude,
@@ -261,7 +296,14 @@ class DemoSeeder extends Seeder
                 ]);
             }
         }
+    }
 
+    /**
+     * Satu percobaan absen yang ditolak karena di luar radius, plus pengajuan
+     * tinjauan yang masih menunggu keputusan.
+     */
+    protected function rejectedSample(Tenant $tenant, User $member, CarbonImmutable $today): void
+    {
         $rejectedAt = $this->localTimestamp($today->subDays(4), '08.02');
 
         $rejected = AttendanceEvent::create([
@@ -290,53 +332,6 @@ class DemoSeeder extends Seeder
         ]);
     }
 
-    /**
-     * Riwayat ringkas untuk anggota lain supaya laporan bulanan tidak terlihat
-     * kosong saat aplikasi pertama kali dibuka.
-     *
-     * @param  array<int, User>  $users
-     */
-    protected function teamAttendanceSamples(Tenant $tenant, array $users, Location $office, CarbonImmutable $today): void
-    {
-        $pattern = [
-            ['07.49', '17.03', AttendanceStatus::Hadir, 0],
-            ['08.07', '17.11', AttendanceStatus::Hadir, 0],
-            ['08.24', '16.58', AttendanceStatus::Terlambat, 24],
-            ['07.55', '17.20', AttendanceStatus::Hadir, 0],
-            ['08.02', '17.05', AttendanceStatus::Hadir, 0],
-        ];
-
-        foreach ($users as $index => $user) {
-            $cursor = 0;
-
-            for ($back = 1; $back <= 9; $back++) {
-                $date = $today->subDays($back);
-
-                if ($date->isWeekend()) {
-                    continue;
-                }
-
-                [$in, $out, $status, $late] = $pattern[($cursor + $index) % count($pattern)];
-                $cursor++;
-
-                $checkIn = $this->localTimestamp($date, $in);
-
-                AttendanceDay::create([
-                    'tenant_id' => $tenant->id,
-                    'user_id' => $user->id,
-                    'work_date' => $date->toDateString(),
-                    'location_id' => $office->id,
-                    'status' => $status,
-                    'check_in_at' => $checkIn,
-                    'check_out_at' => $this->localTimestamp($date, $out),
-                    'late_minutes' => $late,
-                    'flags' => [],
-                    'finalized_at' => $this->localTimestamp($date, '21.00'),
-                ]);
-            }
-        }
-    }
-
     protected function leaveSamples(Tenant $tenant, User $member, User $reviewer, CarbonImmutable $today): void
     {
         LeaveRequest::create([
@@ -349,19 +344,39 @@ class DemoSeeder extends Seeder
             'status' => LeaveStatus::Pending,
         ]);
 
-        LeaveRequest::create([
+        $sickDate = $today->subDays(8);
+
+        while ($sickDate->isWeekend()) {
+            $sickDate = $sickDate->subDay();
+        }
+
+        $approved = LeaveRequest::create([
             'tenant_id' => $tenant->id,
             'user_id' => $member->id,
             'type' => LeaveType::Sakit,
-            'start_date' => $today->subDays(8)->toDateString(),
-            'end_date' => $today->subDays(8)->toDateString(),
+            'start_date' => $sickDate->toDateString(),
+            'end_date' => $sickDate->toDateString(),
             'reason' => 'Demam, surat dokter menyusul.',
             'status' => LeaveStatus::Approved,
             'reviewed_by_id' => $reviewer->id,
-            'reviewed_at' => $this->localTimestamp($today->subDays(9), '10.00'),
-            'created_at' => $this->localTimestamp($today->subDays(10), '08.30'),
-            'updated_at' => $this->localTimestamp($today->subDays(9), '10.00'),
+            'reviewed_at' => $this->localTimestamp($sickDate->subDay(), '10.00'),
+            'created_at' => $this->localTimestamp($sickDate->subDays(2), '08.30'),
+            'updated_at' => $this->localTimestamp($sickDate->subDay(), '10.00'),
         ]);
+
+        // Persetujuan izin membuat hari presensi bertipe izin. Seeder menulis
+        // langsung supaya tidak bergantung pada layanan dan pengguna peninjau.
+        AttendanceDay::updateOrCreate(
+            ['user_id' => $member->id, 'work_date' => $sickDate->toDateString()],
+            [
+                'tenant_id' => $tenant->id,
+                'leave_request_id' => $approved->id,
+                'status' => AttendanceStatus::Sakit,
+                'late_minutes' => 0,
+                'flags' => [],
+                'finalized_at' => $this->localTimestamp($sickDate, '21.00'),
+            ],
+        );
     }
 
     protected function localTimestamp(CarbonImmutable $date, string $time): CarbonImmutable
