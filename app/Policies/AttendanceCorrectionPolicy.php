@@ -26,7 +26,10 @@ class AttendanceCorrectionPolicy
             return false;
         }
 
-        return $correction->user?->membershipFor($correction->tenant)?->primary_location_id === $actor->primary_location_id;
+        // BR-62: lokasi hari presensi yang dikoreksi, atau lokasi utama
+        // pemilik hari tersebut.
+        return $correction->attendanceDay?->location_id === $actor->primary_location_id
+            || $correction->user?->membershipFor($correction->tenant)?->primary_location_id === $actor->primary_location_id;
     }
 
     public function decide(User $user, AttendanceCorrection $correction): bool

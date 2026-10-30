@@ -147,7 +147,21 @@ function setTenant(?Tenant $tenant): void
         return;
     }
 
-    $membership = Membership::withoutGlobalScopes()
+    // Utamakan keanggotaan milik pengguna yang sedang login. Tanpa ini,
+    // setTenant() bisa memilih keanggotaan orang lain dan uji kebijakan
+    // lolos atau gagal karena alasan yang salah.
+    $membership = null;
+    $currentId = auth()->id();
+
+    if ($currentId !== null) {
+        $membership = Membership::withoutGlobalScopes()
+            ->where('tenant_id', $tenant->id)
+            ->where('user_id', $currentId)
+            ->where('is_active', true)
+            ->first();
+    }
+
+    $membership ??= Membership::withoutGlobalScopes()
         ->where('tenant_id', $tenant->id)
         ->where('is_active', true)
         ->first();

@@ -1,6 +1,8 @@
 <?php
 
+use App\Enums\CorrectionStatus;
 use App\Enums\ReviewStatus;
+use App\Models\AttendanceCorrection;
 use App\Models\AttendanceDay;
 use App\Models\AttendanceEvent;
 use App\Models\AttendanceReview;
@@ -217,4 +219,66 @@ it('menampilkan kejadian di lokasi peninjau walau anggota berlokasi utama lain',
         ->assertSee($outsider->name);
 
     expect($review->refresh()->status)->toBe(ReviewStatus::Pending);
+});
+
+it('mengizinkan peninjau memutuskan koreksi pada hari di lokasi peninjau', function () {
+    $otherLocation = makeLocation($this->tenant, ['name' => 'Cabang']);
+    $outsider = makeUser();
+    makeMembership($this->tenant, $outsider, 'member', ['primary_location_id' => $otherLocation->id]);
+
+    $day = AttendanceDay::create([
+        'tenant_id' => $this->tenant->id,
+        'user_id' => $outsider->id,
+        'work_date' => '2026-10-29',
+        'status' => 'hadir',
+        'location_id' => $this->location->id,
+        'check_in_at' => '2026-10-29 00:55:00',
+    ]);
+
+    $correction = AttendanceCorrection::create([
+        'tenant_id' => $this->tenant->id,
+        'attendance_day_id' => $day->id,
+        'user_id' => $outsider->id,
+        'requested_by_id' => $outsider->id,
+        'status' => CorrectionStatus::Pending,
+        'original_values' => ['check_in_at' => '2026-10-29 00:55:00'],
+        'requested_values' => ['check_in_at' => '2026-10-29 01:00:00'],
+        'reason' => 'Salah tekan.',
+    ]);
+
+    $this->actingAs($this->reviewer);
+    setTenant($this->tenant);
+
+    expect($this->reviewer->can('decide', $correction))->toBeTrue();
+});
+
+it('menolak peninjau memutuskan koreksi di luar lokasinya', function () {
+    $otherLocation = makeLocation($this->tenant, ['name' => 'Cabang']);
+    $outsider = makeUser();
+    makeMembership($this->tenant, $outsider, 'member', ['primary_location_id' => $otherLocation->id]);
+
+    $day = AttendanceDay::create([
+        'tenant_id' => $this->tenant->id,
+        'user_id' => $outsider->id,
+        'work_date' => '2026-10-29',
+        'status' => 'hadir',
+        'location_id' => $otherLocation->id,
+        'check_in_at' => '2026-10-29 00:55:00',
+    ]);
+
+    $correction = AttendanceCorrection::create([
+        'tenant_id' => $this->tenant->id,
+        'attendance_day_id' => $day->id,
+        'user_id' => $outsider->id,
+        'requested_by_id' => $outsider->id,
+        'status' => CorrectionStatus::Pending,
+        'original_values' => ['check_in_at' => '2026-10-29 00:55:00'],
+        'requested_values' => ['check_in_at' => '2026-10-29 01:00:00'],
+        'reason' => 'Salah tekan.',
+    ]);
+
+    $this->actingAs($this->reviewer);
+    setTenant($this->tenant);
+
+    expect($this->reviewer->can('decide', $correction))->toBeFalse();
 });
