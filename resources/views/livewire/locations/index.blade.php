@@ -16,11 +16,13 @@
     <div class="mt-5">
         @if($locations->isEmpty())
             <x-panel>
-                <x-empty-state title="Belum ada lokasi" description="Tambahkan lokasi kerja pertama agar anggota bisa absen dengan titik yang jelas.">
-                    <x-slot:action>
-                        <a href="{{ route('app.locations.create') }}" class="btn btn-primary btn-sm">Tambah lokasi</a>
-                    </x-slot:action>
-                </x-empty-state>
+                <div class="panel-pad">
+                    <x-empty-state title="Belum ada lokasi" description="Tambahkan lokasi kerja pertama agar anggota bisa absen dengan titik yang jelas.">
+                        <x-slot:action>
+                            <a href="{{ route('app.locations.create') }}" class="btn btn-primary btn-sm">Tambah lokasi</a>
+                        </x-slot:action>
+                    </x-empty-state>
+                </div>
             </x-panel>
         @else
             <x-panel title="Daftar lokasi" description="Radius dalam meter. Buffer menambah toleransi di tepi radius.">

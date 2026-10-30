@@ -3,9 +3,9 @@
 <section {{ $attributes->merge(['class' => 'panel '.$class]) }}>
     @if($title || isset($actions))
         <header class="panel-head flex flex-wrap items-start justify-between gap-3">
-            <div>
+            <div class="min-w-0">
                 @if($title)
-                    <h2 class="font-display text-[17px] font-semibold leading-6">{{ $title }}</h2>
+                    <h2 class="text-[15px] font-medium leading-6">{{ $title }}</h2>
                 @endif
                 @if($description)
                     <p class="mt-0.5 text-[13px] leading-5 text-muted">{{ $description }}</p>
@@ -17,7 +17,5 @@
         </header>
     @endif
 
-    <div class="{{ $title || isset($actions) ? '' : 'panel-pad' }}">
-        {{ $slot }}
-    </div>
+    {{ $slot }}
 </section>

@@ -1,7 +1,7 @@
 <x-layouts.auth title="Daftar organisasi di Hadir.In">
     <div class="panel panel-pad">
         <p class="eyebrow">Daftar</p>
-        <h1 class="mt-1 font-display text-[28px] font-semibold leading-[1.2] tracking-[-0.02em]">Mulai dengan organisasi</h1>
+        <h1 class="mt-1 title-lg">Mulai dengan organisasi</h1>
         <p class="mt-2 text-[14px] leading-6 text-muted">
             Anda menjadi pemilik organisasi. Undang anggota setelah organisasi aktif.
         </p>

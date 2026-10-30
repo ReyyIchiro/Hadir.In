@@ -7,9 +7,9 @@
             </p>
         </div>
 
-        <div class="flex flex-wrap gap-2">
+        <div class="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap">
             @if($canReview)
-                <button type="button" wire:click="$set('view', '{{ $view === 'team' ? 'mine' : 'team' }}')" class="btn btn-secondary btn-sm">
+                <button type="button" wire:click="$set('view', '{{ $view === 'team' ? 'mine' : 'team' }}')" class="btn btn-secondary btn-sm col-span-2 sm:col-span-1">
                     {{ $view === 'team' ? 'Lihat presensi saya' : 'Lihat tim' }}
                 </button>
             @endif
@@ -20,7 +20,7 @@
 
     @if($canReview && $view === 'team')
         <div class="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <x-field name="date" label="Tanggal" type="date" wire:model.live="date" />
+            <x-field name="date" label="Tanggal" type="date" wire:model.live="date" :help="$date ? \App\Support\Waktu::dateLong($date) : null" />
             <x-select name="locationFilter" label="Lokasi" wire:model.live="locationFilter" placeholder="Semua lokasi" :options="$locations->pluck('name', 'id')->all()" />
             <x-select name="divisionFilter" label="Divisi" wire:model.live="divisionFilter" placeholder="Semua divisi" :options="$divisions->pluck('name', 'id')->all()" />
             <x-select name="statusFilter" label="Status" wire:model.live="statusFilter" placeholder="Semua status" :options="$statuses" />
@@ -80,7 +80,7 @@
                 <x-icon name="chevron-left" :size="16" />
                 <span>Sebelumnya</span>
             </button>
-            <p class="font-display text-[15px] font-semibold">
+            <p class="font-mono text-[13px] font-medium">
                 {{ \App\Support\Waktu::monthLabel((int) substr($month, 5, 2)) }} {{ substr($month, 0, 4) }}
             </p>
             <button type="button" wire:click="nextMonth" class="btn btn-ghost btn-sm">

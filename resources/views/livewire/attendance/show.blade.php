@@ -36,11 +36,11 @@
                     </div>
                     <div class="flex items-center justify-between gap-3 px-4 py-3 md:px-6">
                         <dt class="text-[13px] text-muted">Absen masuk</dt>
-                        <dd class="font-display text-[18px] font-semibold tabular-nums">{{ \App\Support\Waktu::time($day->check_in_at) }}</dd>
+                        <dd class="font-mono text-[18px] tabular-nums">{{ \App\Support\Waktu::time($day->check_in_at) }}</dd>
                     </div>
                     <div class="flex items-center justify-between gap-3 px-4 py-3 md:px-6">
                         <dt class="text-[13px] text-muted">Absen pulang</dt>
-                        <dd class="font-display text-[18px] font-semibold tabular-nums">{{ \App\Support\Waktu::time($day->check_out_at) }}</dd>
+                        <dd class="font-mono text-[18px] tabular-nums">{{ \App\Support\Waktu::time($day->check_out_at) }}</dd>
                     </div>
                     <div class="flex items-center justify-between gap-3 px-4 py-3 md:px-6">
                         <dt class="text-[13px] text-muted">Terlambat</dt>

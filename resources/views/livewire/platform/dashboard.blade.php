@@ -16,7 +16,7 @@
         ] as $key => $label)
             <div class="border-b border-divider px-4 py-4 sm:border-b-0 sm:border-r sm:last:border-r-0 md:px-5">
                 <p class="text-[11px] uppercase tracking-[0.08em] text-muted">{{ $label }}</p>
-                <p class="mt-1 font-display text-[28px] font-semibold tabular-nums leading-none">{{ $counts[$key] }}</p>
+                <p class="mt-1 font-mono text-[28px] tabular-nums leading-none">{{ $counts[$key] }}</p>
             </div>
         @endforeach
     </div>

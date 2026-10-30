@@ -4,7 +4,7 @@
             {{ $tenant->status->label() }}
         </span>
 
-        <h1 class="mt-5 font-display text-[28px] font-semibold leading-[1.2] tracking-[-0.02em]">
+        <h1 class="mt-5 title-lg">
             {{ $tenant->name }}
         </h1>
 

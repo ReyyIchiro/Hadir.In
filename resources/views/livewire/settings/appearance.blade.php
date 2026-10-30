@@ -9,18 +9,12 @@
             class="panel-pad"
             x-data="{
                 theme: localStorage.getItem('hadir-theme') || 'system',
-                apply(value) {
+                choose(value) {
+                    window.setHadirTheme(value);
                     this.theme = value;
-                    if (value === 'system') {
-                        localStorage.removeItem('hadir-theme');
-                        const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-                    } else {
-                        localStorage.setItem('hadir-theme', value);
-                        document.documentElement.dataset.theme = value;
-                    }
                 }
             }"
+            @hadir-theme-changed.window="theme = window.getHadirTheme()"
         >
             <div class="grid gap-3 sm:grid-cols-3" role="radiogroup" aria-label="Pilihan tema">
                 <template x-for="option in [
@@ -30,7 +24,7 @@
                 ]" :key="option.value">
                     <button
                         type="button"
-                        @click="apply(option.value)"
+                        @click="choose(option.value)"
                         role="radio"
                         :aria-checked="theme === option.value ? 'true' : 'false'"
                         class="rounded-[4px] border p-4 text-left transition-colors"

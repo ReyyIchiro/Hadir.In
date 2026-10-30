@@ -164,6 +164,7 @@ it('menolak bulan di luar 24 bulan terakhir', function () {
 });
 
 it('tidak menandai hari berjalan sebagai absen sebelum finalisasi', function () {
+    freezeAt('2026-10-30 01:00:00');
     $today = now('Asia/Jakarta')->toDateString();
 
     makeSchedule($this->tenant, $this->member, $today);

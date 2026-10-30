@@ -1,7 +1,7 @@
 <x-layouts.auth title="Undangan tidak berlaku">
     <div class="mx-auto w-full max-w-[440px]">
         <p class="eyebrow">Undangan</p>
-        <h1 class="mt-2 font-display text-[28px] font-semibold leading-tight tracking-[-0.02em]">Undangan tidak berlaku</h1>
+        <h1 class="mt-2 title-lg">Undangan tidak berlaku</h1>
         <p class="mt-2 text-[14px] leading-6 text-muted">{{ $reason }}</p>
         <p class="mt-4 text-[14px] leading-6 text-muted">
             Minta admin organisasi mengirim undangan baru. Tautan lama tidak dapat dipakai ulang.

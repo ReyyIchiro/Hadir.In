@@ -81,9 +81,9 @@
                 <div class="panel-pad">
                     @if($preview)
                         <dl class="space-y-2 text-[13px]">
-                            <div class="flex items-center justify-between"><dt class="text-muted">Dibuat</dt><dd class="font-display text-[20px] font-semibold tabular-nums">{{ $preview['created'] }}</dd></div>
-                            <div class="flex items-center justify-between"><dt class="text-muted">Diperbarui</dt><dd class="font-display text-[20px] font-semibold tabular-nums">{{ $preview['updated'] }}</dd></div>
-                            <div class="flex items-center justify-between"><dt class="text-muted">Dilewati</dt><dd class="font-display text-[20px] font-semibold tabular-nums">{{ $preview['skipped'] }}</dd></div>
+                            <div class="flex items-center justify-between"><dt class="text-muted">Dibuat</dt><dd class="font-mono text-[20px] tabular-nums">{{ $preview['created'] }}</dd></div>
+                            <div class="flex items-center justify-between"><dt class="text-muted">Diperbarui</dt><dd class="font-mono text-[20px] tabular-nums">{{ $preview['updated'] }}</dd></div>
+                            <div class="flex items-center justify-between"><dt class="text-muted">Dilewati</dt><dd class="font-mono text-[20px] tabular-nums">{{ $preview['skipped'] }}</dd></div>
                         </dl>
                         <p class="mt-3 border-t border-divider pt-3 text-[12px] leading-5 text-muted">
                             Perkiraan dihitung dari pilihan saat ini. Angka akhir muncul setelah diterapkan.

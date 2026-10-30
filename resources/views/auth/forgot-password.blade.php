@@ -1,7 +1,7 @@
 <x-layouts.auth title="Lupa kata sandi">
     <div class="panel panel-pad">
         <p class="eyebrow">Atur ulang</p>
-        <h1 class="mt-1 font-display text-[28px] font-semibold leading-[1.2] tracking-[-0.02em]">Lupa kata sandi</h1>
+        <h1 class="mt-1 title-lg">Lupa kata sandi</h1>
         <p class="mt-2 text-[14px] leading-6 text-muted">
             Masukkan email akun Anda. Kami kirim tautan untuk membuat kata sandi baru.
         </p>
