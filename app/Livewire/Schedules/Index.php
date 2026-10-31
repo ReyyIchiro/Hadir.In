@@ -80,6 +80,7 @@ class Index extends Component
 
         return view('livewire.schedules.index', [
             'dates' => $dates,
+            'today' => app(TenantClock::class)->today($tenant),
             'memberships' => $memberships,
             'schedules' => $schedules,
             'canManage' => $canManage,

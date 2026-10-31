@@ -1066,6 +1066,247 @@
     }
 
     /* ---------------------------------------------------------------
+       Kisi jadwal mingguan
+       --------------------------------------------------------------- */
+
+    .schedule-grid {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 0.875rem;
+        /* Bingkai luar tipis: kisi ini memang satu benda, bukan kumpulan sel. */
+        border: 1px solid var(--color-divider);
+        border-radius: var(--radius-panel);
+        overflow: hidden;
+    }
+
+    .schedule-grid caption {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+
+    .schedule-grid thead th {
+        background: var(--color-paper-deep);
+        border-bottom: 1px solid var(--color-rule-strong);
+        border-left: 1px solid var(--color-divider);
+        padding: 0.5rem 0.5rem 0.625rem;
+        text-align: center;
+        vertical-align: bottom;
+        white-space: nowrap;
+    }
+
+    .schedule-grid thead th:first-child {
+        border-left: 0;
+    }
+
+    .schedule-grid__corner {
+        text-align: left;
+        min-width: 168px;
+        padding-inline: 0.875rem;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--color-muted);
+    }
+
+    .schedule-grid__day-name {
+        display: block;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--color-muted);
+    }
+
+    .schedule-grid__day-date {
+        display: block;
+        margin-top: 0.125rem;
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        font-variant-numeric: tabular-nums;
+        color: var(--color-text);
+    }
+
+    /* Hari ini ditandai garis atas tebal, bukan latar penuh, supaya kolomnya
+       tetap tenang dan angka jam tetap jadi fokus. */
+    .schedule-grid thead th.is-today {
+        background: var(--color-stamp-tint);
+        box-shadow: inset 0 2px 0 0 var(--color-stamp);
+    }
+
+    .schedule-grid thead th.is-today .schedule-grid__day-name,
+    .schedule-grid thead th.is-today .schedule-grid__day-date {
+        color: var(--color-stamp);
+    }
+
+    .schedule-grid thead th.is-weekend {
+        background: color-mix(in srgb, var(--color-tint) 70%, var(--color-paper-deep));
+    }
+
+    .schedule-grid tbody th,
+    .schedule-grid tbody td {
+        border-top: 1px solid var(--color-divider);
+        border-left: 1px solid var(--color-divider);
+        vertical-align: middle;
+    }
+
+    .schedule-grid tbody th:first-child,
+    .schedule-grid tbody td:first-child {
+        border-left: 0;
+    }
+
+    .schedule-grid__person {
+        text-align: left;
+        padding: 0.625rem 0.875rem;
+        background: var(--color-surface);
+        position: sticky;
+        left: 0;
+        z-index: 2;
+        min-width: 168px;
+    }
+
+    .schedule-grid__person-name {
+        display: block;
+        font-weight: 500;
+        line-height: 1.3;
+    }
+
+    .schedule-grid__person-role {
+        display: block;
+        margin-top: 0.0625rem;
+        font-size: 0.6875rem;
+        font-weight: 400;
+        color: var(--color-muted);
+    }
+
+    .schedule-grid__cell {
+        position: relative;
+        padding: 0.375rem 0.375rem 0.4375rem;
+        text-align: center;
+        background: var(--color-surface);
+        height: 4.25rem;
+    }
+
+    .schedule-grid__cell.is-weekend {
+        background: color-mix(in srgb, var(--color-tint) 45%, var(--color-surface));
+    }
+
+    .schedule-grid__cell.is-today {
+        background: color-mix(in srgb, var(--color-stamp-tint) 45%, var(--color-surface));
+        box-shadow: inset 2px 0 0 0 var(--color-stamp), inset -2px 0 0 0 var(--color-stamp);
+    }
+
+    .schedule-grid__shift {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.25rem;
+        font-family: var(--font-mono);
+        font-variant-numeric: tabular-nums;
+        font-size: 0.75rem;
+        line-height: 1.2;
+    }
+
+    .schedule-grid__time {
+        color: var(--color-text);
+    }
+
+    .schedule-grid__time--end {
+        color: var(--color-muted);
+    }
+
+    .schedule-grid__dash {
+        width: 0.5rem;
+        height: 1px;
+        background: var(--color-rule-strong);
+        flex: none;
+    }
+
+    .schedule-grid__off {
+        font-size: 0.75rem;
+        color: var(--color-muted);
+    }
+
+    .schedule-grid__empty {
+        display: block;
+        width: 1.25rem;
+        height: 1px;
+        margin: 0.5rem auto 0;
+        background: var(--color-divider);
+    }
+
+    .schedule-grid__action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.125rem;
+        margin-top: 0.25rem;
+        font-size: 0.6875rem;
+        line-height: 1;
+        color: var(--color-muted);
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+    }
+
+    .schedule-grid__action:hover {
+        color: var(--color-stamp);
+        border-bottom-color: currentColor;
+    }
+
+    .schedule-grid__action--add {
+        color: var(--color-stamp);
+    }
+
+    .schedule-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        font-size: 0.75rem;
+        color: var(--color-muted);
+    }
+
+    .schedule-legend__item {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+    }
+
+    .schedule-legend__swatch {
+        width: 0.75rem;
+        height: 0.75rem;
+        border-radius: 2px;
+        border: 1px solid var(--color-divider);
+        background: var(--color-surface);
+    }
+
+    .schedule-legend__swatch.is-today {
+        background: var(--color-stamp-tint);
+        border-color: var(--color-stamp);
+    }
+
+    .schedule-legend__swatch.is-weekend {
+        background: var(--color-tint);
+    }
+
+    .schedule-legend__swatch.is-empty {
+        background: repeating-linear-gradient(
+            -45deg,
+            var(--color-surface),
+            var(--color-surface) 2px,
+            var(--color-divider) 2px,
+            var(--color-divider) 3px
+        );
+    }
+
+    /* ---------------------------------------------------------------
        Komponen khas
        --------------------------------------------------------------- */
 
