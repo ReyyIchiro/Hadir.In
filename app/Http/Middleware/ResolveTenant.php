@@ -23,8 +23,12 @@ class ResolveTenant
             abort(403);
         }
 
+        // Hanya tenant yang dibutuhkan untuk mengisi konteks. Lokasi dan divisi
+        // sengaja tidak dimuat di sini: komponen yang memakainya sudah memuat
+        // relasi itu sendiri, sehingga memuatnya di sini berarti dua query
+        // tambahan pada setiap permintaan.
         $memberships = $user->activeMemberships()
-            ->with(['tenant', 'primaryLocation', 'division'])
+            ->with('tenant')
             ->get()
             ->filter(fn (Membership $membership) => $membership->tenant !== null);
 

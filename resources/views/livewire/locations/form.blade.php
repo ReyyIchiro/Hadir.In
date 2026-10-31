@@ -53,8 +53,10 @@
                         init() {
                             this.$nextTick(() => this.boot());
                         },
-                        boot() {
-                            if (! window.L || this.map) return;
+                        async boot() {
+                            await window.hadirLoadMap();
+
+                            if (this.map) return;
                             const start = [parseFloat(this.lat) || -6.2088, parseFloat(this.lng) || 106.8456];
                             this.map = window.L.map(this.$refs.peta, { scrollWheelZoom: false }).setView(start, 15);
                             window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {

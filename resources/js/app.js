@@ -1,18 +1,16 @@
 import './bootstrap';
 
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+// Leaflet hanya dibutuhkan di tiga layar: presensi masuk, presensi pulang, dan
+// form lokasi. Memuatnya di sini membuat setiap halaman, termasuk halaman masuk
+// dan halaman publik, mengunduh sekitar 150 KB JavaScript dan CSS peta.
+// Halaman yang memakai peta menunggu hadirLoadMap() sebelum menggambar peta.
+let mapPromise = null;
 
-// DESIGN.md menetapkan pin stempel, bukan ikon pustaka. Marker digambar sebagai
-// div dengan warna stempel supaya tidak bergantung pada aset gambar Leaflet.
-L.Marker.prototype.options.icon = L.divIcon({
-    className: '',
-    html: '<span class="map-pin"></span>',
-    iconSize: [18, 18],
-    iconAnchor: [9, 9],
-});
+window.hadirLoadMap = function () {
+    mapPromise ??= import('./map.js');
 
-window.L = L;
+    return mapPromise;
+};
 
 // Tema punya tiga keadaan: 'system', 'light', dan 'dark'. Pilihan disimpan di
 // localStorage; 'system' berarti tidak ada kunci sama sekali. Bootstrap awal

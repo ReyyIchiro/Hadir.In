@@ -417,6 +417,41 @@ Konsekuensi:
 - Perhitungan sederhana.
 - Tim shift malam memerlukan perubahan model dan ADR baru.
 - Koreksi dapat memperbaiki pasangan yang salah tanpa menambah kejadian baru.
+
+## ADR-025: Leaflet dimuat sesuai kebutuhan
+Status: diterima.
+
+Konteks: Leaflet diimpor langsung di `resources/js/app.js` sehingga setiap
+halaman, termasuk halaman masuk dan halaman publik, mengunduh JavaScript dan CSS
+peta. Hasil build sebelumnya menunjukkan bundel utama 213 KB, sedangkan peta
+hanya dipakai di tiga layar.
+
+Keputusan: Leaflet dipindahkan ke `resources/js/map.js` dan dimuat lewat
+`import()` dinamis melalui `window.hadirLoadMap()`. Halaman presensi masuk,
+presensi pulang, dan form lokasi menunggu fungsi itu sebelum menggambar peta.
+
+Konsekuensi:
+- Bundel utama turun menjadi sekitar 64 KB.
+- Aset peta (sekitar 150 KB JS dan 11 KB CSS) hanya diunduh pada tiga layar.
+- Peta muncul setelah panggilan asinkron, bukan seketika. Status pemuatan tetap
+  ditangani `x-show` yang sudah ada.
+
+## ADR-026: Cache HTTP halaman publik
+Status: diterima.
+
+Konteks: halaman publik adalah konten statis, tetapi responsnya dikirim dengan
+`no-cache, private` sehingga peramban selalu memuat ulang penuh.
+
+Keputusan: enam rute publik memakai `cache.headers:private;max_age=300;etag`.
+`Cache-Control` sengaja `private`, bukan `public`, karena navigasi pada halaman
+ini menampilkan keadaan masuk dan respons membawa cookie sesi. CDN tidak dipakai
+untuk jalur ini.
+
+Konsekuensi:
+- Kunjungan ulang menerima `304` tanpa mengunduh ulang halaman.
+- Cache bersama tidak pernah menyajikan halaman berisi cookie satu pengguna.
+- Bila nanti ada CDN, rute publik harus dipisahkan dari sesi lebih dulu.
+
 ## ADR-027: Header keamanan global
 Status: diterima.
 

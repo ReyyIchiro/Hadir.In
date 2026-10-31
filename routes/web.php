@@ -32,12 +32,12 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', [PublicPageController::class, 'home'])->name('home');
-Route::get('/cara-kerja', [PublicPageController::class, 'how'])->name('public.how');
-Route::get('/untuk-siapa', [PublicPageController::class, 'who'])->name('public.who');
-Route::get('/pertanyaan', [PublicPageController::class, 'faq'])->name('public.faq');
-Route::get('/privasi', [PublicPageController::class, 'privacy'])->name('public.privacy');
-Route::get('/ketentuan', [PublicPageController::class, 'terms'])->name('public.terms');
+Route::get('/', [PublicPageController::class, 'home'])->name('home')->middleware('cache.headers:private;max_age=300;etag');
+Route::get('/cara-kerja', [PublicPageController::class, 'how'])->name('public.how')->middleware('cache.headers:private;max_age=300;etag');
+Route::get('/untuk-siapa', [PublicPageController::class, 'who'])->name('public.who')->middleware('cache.headers:private;max_age=300;etag');
+Route::get('/pertanyaan', [PublicPageController::class, 'faq'])->name('public.faq')->middleware('cache.headers:private;max_age=300;etag');
+Route::get('/privasi', [PublicPageController::class, 'privacy'])->name('public.privacy')->middleware('cache.headers:private;max_age=300;etag');
+Route::get('/ketentuan', [PublicPageController::class, 'terms'])->name('public.terms')->middleware('cache.headers:private;max_age=300;etag');
 
 Route::get('/health', [HealthController::class, 'show'])->name('health');
 Route::get('/robots.txt', [SeoController::class, 'robots'])->name('robots');

@@ -218,6 +218,11 @@ inline. CSP berfungsi menutup frame, plugin, dan asal sumber daya asing. Bila
 skrip inline diganti nonce, `'unsafe-inline'` dapat dihapus.
 
 ### 6.1 Halaman publik
+Enam halaman publik memakai `cache.headers:private;max_age=300;etag`. Peramban
+dapat memakai ulang halaman dan menerima `304` bila isinya belum berubah. Cache
+bersama (CDN) tidak dipakai karena respons masih membawa cookie sesi untuk
+keadaan masuk pada navigasi. `/robots.txt` dan `/sitemap.xml` dihasilkan
+`SeoController`.
 
 `Route` -> controller atau komponen Livewire -> Blade -> Vite. Tanpa middleware
 tenant. Contoh: beranda, masuk, daftar, undangan, privasi.

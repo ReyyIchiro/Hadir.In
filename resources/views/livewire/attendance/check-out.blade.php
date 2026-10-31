@@ -47,8 +47,8 @@
                 { enableHighAccuracy: true, timeout: this.timeout, maximumAge: 0 }
             );
         },
-        draw(lat, lng, accuracy) {
-            if (! window.L) return;
+        async draw(lat, lng, accuracy) {
+            await window.hadirLoadMap();
 
             if (! this.map) {
                 this.map = window.L.map(this.$refs.map).setView([lat, lng], 16);

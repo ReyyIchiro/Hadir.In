@@ -13,11 +13,17 @@ class Dashboard extends Component
 {
     public function render(): View
     {
+        // Satu query agregat menggantikan lima query hitung terpisah.
+        $byStatus = Tenant::toBase()
+            ->selectRaw('status, count(*) as aggregate')
+            ->groupBy('status')
+            ->pluck('aggregate', 'status');
+
         $counts = [
-            'total' => Tenant::count(),
-            'pending' => Tenant::where('status', TenantStatus::Pending)->count(),
-            'active' => Tenant::where('status', TenantStatus::Active)->count(),
-            'suspended' => Tenant::where('status', TenantStatus::Suspended)->count(),
+            'total' => (int) $byStatus->sum(),
+            'pending' => (int) $byStatus->get(TenantStatus::Pending->value, 0),
+            'active' => (int) $byStatus->get(TenantStatus::Active->value, 0),
+            'suspended' => (int) $byStatus->get(TenantStatus::Suspended->value, 0),
         ];
 
         return view('livewire.platform.dashboard', [
