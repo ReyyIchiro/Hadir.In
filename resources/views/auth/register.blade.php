@@ -22,8 +22,8 @@
                 help="Dipakai untuk jadwal dan laporan. Dapat diubah nanti di pengaturan."
             />
 
-            <x-field name="password" label="Kata sandi" type="password" required autocomplete="new-password" help="Minimal 8 karakter, mengandung huruf dan angka." />
-            <x-field name="password_confirmation" label="Ulangi kata sandi" type="password" required autocomplete="new-password" />
+            <x-password-field name="password" label="Kata sandi" required autocomplete="new-password" help="Minimal 8 karakter, mengandung huruf dan angka." />
+            <x-password-field name="password_confirmation" label="Ulangi kata sandi" required autocomplete="new-password" />
 
             <button type="submit" class="btn btn-primary w-full">Buat organisasi</button>
         </form>

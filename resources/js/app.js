@@ -95,6 +95,36 @@ window.copyText = async function (text) {
     }
 };
 
+// Tombol mata pada kolom kata sandi. State disimpan di checkbox asli supaya
+// CSS bisa mengganti ikon tanpa JavaScript; di sini hanya tipe input yang
+// diubah. Nilai sandi tidak pernah disalin ke mana pun.
+function syncPasswordField(field) {
+    const checkbox = field.querySelector('[data-password-checkbox]');
+    const input = field.querySelector('input[type="password"], input[data-password-visible]');
+
+    if (!checkbox || !input) return;
+
+    if (checkbox.checked) {
+        input.type = 'text';
+        input.dataset.passwordVisible = 'true';
+        input.setAttribute('aria-label', 'Kata sandi terlihat');
+    } else {
+        input.type = 'password';
+        delete input.dataset.passwordVisible;
+        input.setAttribute('aria-label', 'Kata sandi tersembunyi');
+    }
+}
+
+document.addEventListener('change', (event) => {
+    const checkbox = event.target.closest('[data-password-checkbox]');
+    if (!checkbox) return;
+
+    syncPasswordField(checkbox.closest('[data-password-field]'));
+});
+
+document.querySelectorAll('[data-password-field]').forEach(syncPasswordField);
+
+
 // DESIGN.md meminta petunjuk geser pada tabel lebar di layar kecil. Petunjuk
 // hanya muncul bila tabel benar-benar melebar, bukan pada setiap tabel.
 const tableHints = new WeakMap();

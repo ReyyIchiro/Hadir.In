@@ -511,6 +511,67 @@
         border-color: var(--color-absent);
     }
 
+    /* ---------------------------------------------------------------
+       Kolom kata sandi
+       --------------------------------------------------------------- */
+
+    .password-field {
+        position: relative;
+    }
+
+    /* Ruang untuk tombol mata supaya teks panjang tidak menabraknya. */
+    .password-field-input {
+        padding-right: 2.75rem;
+    }
+
+    .password-field-toggle {
+        position: absolute;
+        inset-block: 0;
+        right: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        margin: 1.5px 1.5px 1.5px 0;
+        border-radius: 2px;
+        color: var(--color-muted);
+        cursor: pointer;
+    }
+
+    /* Bidang klik menutupi tombol penuh. Ikon di dalamnya tidak menangkap
+       klik sendiri supaya target sentuh tetap satu, bukan dua ikon kecil
+       yang saling menimpa di tengah. */
+    .password-field-hit {
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+    }
+
+    .password-field-hit ~ .password-field-eye,
+    .password-field-hit ~ .password-field-eye-off {
+        pointer-events: none;
+    }
+
+    .password-field-toggle:hover {
+        color: var(--color-text);
+    }
+
+    .password-field-toggle:focus-within {
+        color: var(--color-text);
+        outline: 2px solid var(--color-focus);
+        outline-offset: -2px;
+    }
+
+    /* Ikon mata berganti sesuai state checkbox, tanpa JavaScript. */
+    .password-field-eye-off,
+    .password-field-toggle input:checked ~ .password-field-eye {
+        display: none;
+    }
+
+    .password-field-toggle input:checked ~ .password-field-eye-off {
+        display: block;
+    }
+
     .select-field {
         appearance: none;
         padding-right: 2.25rem;
@@ -538,6 +599,17 @@
         font-size: 0.75rem;
         line-height: 1.4;
         color: var(--color-absent);
+    }
+
+    .field-error-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.125rem;
+        margin-top: 0.25rem;
+    }
+
+    .field-error-list .field-error {
+        margin-top: 0;
     }
 
     /* ---------------------------------------------------------------

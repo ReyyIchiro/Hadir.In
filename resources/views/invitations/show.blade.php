@@ -50,19 +50,8 @@
                     @enderror
                 </div>
 
-                <div>
-                    <label for="password" class="field-label">Kata sandi</label>
-                    <input id="password" name="password" type="password" required autocomplete="new-password" class="field-input" aria-describedby="password-help" @error('password') aria-invalid="true" @enderror>
-                    <p id="password-help" class="field-help">Minimal 8 karakter, berisi huruf dan angka.</p>
-                    @error('password')
-                        <p class="field-error">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div>
-                    <label for="password_confirmation" class="field-label">Ulangi kata sandi</label>
-                    <input id="password_confirmation" name="password_confirmation" type="password" required autocomplete="new-password" class="field-input">
-                </div>
+                <x-password-field name="password" label="Kata sandi" required autocomplete="new-password" help="Minimal 8 karakter, berisi huruf dan angka." />
+                <x-password-field name="password_confirmation" label="Ulangi kata sandi" required autocomplete="new-password" />
 
                 <button type="submit" class="btn btn-primary btn-lg w-full">Terima undangan</button>
             </form>

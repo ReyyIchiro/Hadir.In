@@ -9,8 +9,8 @@
             <input type="hidden" name="token" value="{{ $token }}">
 
             <x-field name="email" label="Email" type="email" :value="old('email')" required autocomplete="email" />
-            <x-field name="password" label="Kata sandi baru" type="password" required autocomplete="new-password" help="Minimal 8 karakter, mengandung huruf dan angka." />
-            <x-field name="password_confirmation" label="Ulangi kata sandi baru" type="password" required autocomplete="new-password" />
+            <x-password-field name="password" label="Kata sandi baru" required autocomplete="new-password" help="Minimal 8 karakter, mengandung huruf dan angka." />
+            <x-password-field name="password_confirmation" label="Ulangi kata sandi baru" required autocomplete="new-password" />
 
             <button type="submit" class="btn btn-primary w-full">Simpan kata sandi</button>
         </form>

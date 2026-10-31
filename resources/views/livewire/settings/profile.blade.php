@@ -33,10 +33,10 @@
                 @endif
                 <form wire:submit="updatePassword" class="panel-pad grid gap-4 sm:grid-cols-2">
                     <div class="sm:col-span-2">
-                        <x-field name="current_password" label="Kata sandi saat ini" type="password" wire:model="current_password" required />
+                        <x-password-field name="current_password" label="Kata sandi saat ini" wire:model="current_password" required autocomplete="current-password" />
                     </div>
-                    <x-field name="password" label="Kata sandi baru" type="password" wire:model="password" required />
-                    <x-field name="password_confirmation" label="Ulangi kata sandi baru" type="password" wire:model="password_confirmation" required />
+                    <x-password-field name="password" label="Kata sandi baru" wire:model="password" required autocomplete="new-password" />
+                    <x-password-field name="password_confirmation" label="Ulangi kata sandi baru" wire:model="password_confirmation" required autocomplete="new-password" />
                     <div class="sm:col-span-2">
                         <button type="submit" class="btn btn-secondary" wire:loading.attr="disabled" wire:target="updatePassword">
                             <span wire:loading.remove wire:target="updatePassword">Ubah kata sandi</span>

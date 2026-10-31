@@ -18,7 +18,7 @@
             @csrf
 
             <x-field name="email" label="Email" type="email" :value="old('email')" required autocomplete="email" autofocus />
-            <x-field name="password" label="Kata sandi" type="password" required autocomplete="current-password" />
+            <x-password-field name="password" label="Kata sandi" required autocomplete="current-password" />
 
             <div class="flex items-center justify-between gap-3">
                 <label class="choice">
