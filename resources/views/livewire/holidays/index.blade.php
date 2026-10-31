@@ -19,19 +19,19 @@
                         <thead>
                             <tr>
                                 <th scope="col">Tanggal</th>
-                                <th scope="col">Hari</th>
-                                <th scope="col">Nama</th>
-                                <th scope="col"><span class="sr-only">Tindakan</span></th>
+                                <th scope="col" class="cell-fit">Hari</th>
+                                <th scope="col" class="cell-grow">Nama</th>
+                                <th scope="col" class="cell-action"><span class="sr-only">Tindakan</span></th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($holidays as $holiday)
                                 <tr>
-                                    <td class="tabular-nums">{{ \App\Support\Waktu::dateShort($holiday->date) }}</td>
-                                    <td class="text-muted">{{ \App\Support\Waktu::dayName($holiday->date) }}</td>
-                                    <td>{{ $holiday->name }}</td>
-                                    <td class="text-right">
-                                        <button type="button" wire:click="delete({{ $holiday->id }})" wire:confirm="Hapus hari libur ini?" class="link text-[12px]">Hapus</button>
+                                    <td class="cell-date cell-fit">{{ \App\Support\Waktu::dateShort($holiday->date) }}</td>
+                                    <td class="cell-fit text-muted">{{ \App\Support\Waktu::dayName($holiday->date) }}</td>
+                                    <td class="cell-grow">{{ $holiday->name }}</td>
+                                    <td class="cell-action">
+                                        <button type="button" wire:click="delete({{ $holiday->id }})" data-confirm="Hapus hari libur ini?" data-confirm-detail="Tanggal ini kembali dihitung sebagai hari kerja. Presensi yang sudah tercatat tidak berubah." data-confirm-action="Hapus" class="link text-[12px]">Hapus</button>
                                     </td>
                                 </tr>
                             @endforeach

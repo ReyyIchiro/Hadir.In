@@ -637,9 +637,37 @@ memenuhi ambang aksesibilitas.
 
 Kelas: `ledger`.
 
-- Header tabel: latar paper-deep, teks 11 px kapital, muted, bobot 600, tracking 0.08em.
-- Baris: border bawah 1 px rule, tinggi minimal 48 px.
-- Angka rata kanan, teks rata kiri. Tanggal dan jam memakai mono dan tabular.
+Tabel memakai tata bahasa kolom, bukan perataan ad hoc per sel. Setiap tabel
+punya satu kolom utama yang mengambil 30% lebar, kolom teks sekunder yang
+berbagi sisa ruang, kolom pendek yang tidak membungkus, dan perataan yang
+ditentukan oleh jenis datanya.
+
+| Peran | Kelas | Perilaku |
+| --- | --- | --- |
+| Kolom utama | `cell-grow` | Satu per tabel. Lebar 30%; sisa lebar dibagi ke kolom teks sekunder. |
+| Kolom pendek | `cell-fit` | Lebar 1%, tidak membungkus. |
+| Tanggal | `cell-date` | Rata kiri, mono, tabular. |
+| Jam | `cell-time` | Rata kanan, mono, tabular. |
+| Angka | `cell-num` | Rata kanan, mono, tabular. |
+| Status | `cell-status` | Lebar 1%. Pil status membawa `nowrap` sendiri. |
+| Tindakan | `cell-action` | Lebar 1%, rata kanan, tidak membungkus. |
+| Metadata | `cell-meta` | 12 px, muted. Boleh digabung dengan `cell-date`. |
+
+- Header tabel: latar paper-deep, teks 11 px kapital, muted, bobot 600,
+  tracking 0.08em, padding 10 px 16 px.
+- Baris: border bawah 1 px rule, tinggi 48 px, padding sel 12 px 16 px.
+  Padding kiri kolom pertama dan padding kanan kolom terakhir 16 px di ponsel,
+  24 px di desktop.
+- Tanggal rata kiri karena dibaca sebagai identitas baris. Jam dan angka rata
+  kanan karena dibandingkan sebagai besaran. Jangan membalik ini.
+- Header kolom selalu sejajar dengan datanya. Header jam dan angka memakai
+  `num-head`. Header tanggal tidak memakai `num-head`.
+- `tabular-nums` hanya fitur angka, bukan perataan. Jangan mengandalkannya
+  untuk membuat kolom rapi; pakai kelas peran di atas.
+- Mono dan ukuran 13 px hanya untuk isi sel data. Header tetap memakai aturan
+  header tabel.
+- Jangan memakai `text-right` lepas pada sel tabel; gunakan `cell-action` atau
+  `cell-num` supaya lebar kolom ikut benar.
 - Kolom pertama boleh memakai nomor baris mono 11 px muted. Ini memperkuat rasa
   buku besar, bukan dekorasi.
 - Hover baris: latar `color-mix(tint 60%, transparent)`.
@@ -787,6 +815,32 @@ Pita tipis di atas tabel atau laporan yang menyatakan periode yang sedang
 dibaca, misalnya `OKTOBER 2026` di kiri dan `31 hari kerja` di kanan. Latar
 paper-deep, teks mono 11 px, border atas dan bawah 1 px. Pita ini menggantikan
 judul bagian yang bertele-tele.
+
+### Komponen khas: Tombol Bantuan
+
+Satu tombol bundar 48 px di kanan bawah halaman publik dan autentikasi. Saat
+disentuh atau difokus, tombol melebar menjadi pil dan memunculkan label "Butuh
+bantuan?" tanpa memindahkan posisi ikon. Bentuk bundar adalah pengecualian yang
+disengaja: ia meniru stempel bulat yang ditempel di sudut kertas, bukan kartu.
+
+Aturan:
+
+- Hanya di layout publik dan autentikasi. Di dalam aplikasi, jalur bantuan
+  pertama adalah admin organisasi; tombol ini tidak dipasang di sana.
+- Isinya ikon WhatsApp 20 px dan label 13 px. Warna memakai teks dan surface,
+  bukan warna cap, supaya tidak bersaing dengan satu tindakan utama halaman.
+- Membuka `wa.me` di tab baru dengan pesan yang sudah berisi nama, organisasi,
+  dan kendala. Jangan membuka dialog chat di dalam aplikasi.
+- Nomor diambil dari `SUPPORT_WHATSAPP`. Bila kosong, komponen tidak merender
+  apa pun. Jangan menulis nomor langsung di view.
+- Posisi `1rem` dari kanan dan bawah, ditambah `env(safe-area-inset-bottom)`.
+  Z-index di bawah modal dan dialog konfirmasi.
+- Di layar sentuh tombol tetap bundar dan hanya ikon yang tampil; label muncul
+  saat hover atau fokus keyboard saja. Jangan memaksa label terbuka di ponsel,
+  karena ia menutupi isi halaman. Halaman yang memakai tombol ini menyisakan
+  ruang bawah setidaknya 6rem agar tombol tidak menimpa teks terakhir.
+- Gerak memakai transisi `max-width` 180 ms dan dimatikan saat pengguna meminta
+  gerak dikurangi.
 
 ## Do's and Don'ts
 

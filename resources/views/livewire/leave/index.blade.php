@@ -37,30 +37,44 @@
                     <caption>Daftar pengajuan izin dan cuti</caption>
                     <thead>
                         <tr>
-                            @if($isTeam)<th scope="col">Anggota</th>@endif
-                            <th scope="col">Jenis</th>
-                            <th scope="col">Tanggal</th>
-                            <th scope="col">Hari</th>
+                            @if($isTeam)
+                                <th scope="col" class="cell-grow">Anggota</th>
+                                <th scope="col" class="cell-fit">Jenis</th>
+                                <th scope="col" class="cell-fit">Tanggal</th>
+                            @else
+                                <th scope="col" class="cell-fit">Jenis</th>
+                                <th scope="col" class="cell-grow">Tanggal</th>
+                            @endif
+                            <th scope="col" class="num-head cell-fit">Hari</th>
                             <th scope="col">Diajukan</th>
-                            <th scope="col">Status</th>
-                            <th scope="col"><span class="sr-only">Tindakan</span></th>
+                            <th scope="col" class="cell-status">Status</th>
+                            <th scope="col" class="cell-action"><span class="sr-only">Tindakan</span></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($leaves as $leave)
                             <tr>
-                                @if($isTeam)<td>{{ $leave->user?->name ?? '--' }}</td>@endif
-                                <td>{{ $leave->type->label() }}</td>
-                                <td class="tabular-nums">
-                                    {{ \App\Support\Waktu::dateShort($leave->start_date) }}
-                                    @if(! $leave->start_date->equalTo($leave->end_date))
-                                        <span class="block text-[12px] text-muted">sampai {{ \App\Support\Waktu::dateShort($leave->end_date) }}</span>
-                                    @endif
-                                </td>
-                                <td class="tabular-nums">{{ $leave->durationInDays() }}</td>
-                                <td class="text-[12px] text-muted">{{ \App\Support\Waktu::dateShort($leave->created_at) }}</td>
-                                <td><x-status :status="$leave->status" /></td>
-                                <td class="text-right">
+                                @if($isTeam)<td class="cell-grow">{{ $leave->user?->name ?? '--' }}</td>@endif
+                                <td class="cell-fit">{{ $leave->type->label() }}</td>
+                                @if($isTeam)
+                                    <td class="cell-date cell-fit">
+                                        {{ \App\Support\Waktu::dateShort($leave->start_date) }}
+                                        @if(! $leave->start_date->equalTo($leave->end_date))
+                                            <span class="block text-[12px] text-muted">sampai {{ \App\Support\Waktu::dateShort($leave->end_date) }}</span>
+                                        @endif
+                                    </td>
+                                @else
+                                    <td class="cell-grow cell-date">
+                                        {{ \App\Support\Waktu::dateShort($leave->start_date) }}
+                                        @if(! $leave->start_date->equalTo($leave->end_date))
+                                            <span class="block text-[12px] text-muted">sampai {{ \App\Support\Waktu::dateShort($leave->end_date) }}</span>
+                                        @endif
+                                    </td>
+                                @endif
+                                <td class="cell-num cell-fit">{{ $leave->durationInDays() }}</td>
+                                <td class="cell-date cell-fit cell-meta">{{ \App\Support\Waktu::dateShort($leave->created_at) }}</td>
+                                <td class="cell-status"><x-status :status="$leave->status" /></td>
+                                <td class="cell-action">
                                     <a href="{{ route('app.leave.show', $leave) }}" class="link text-[12px]">Lihat</a>
                                 </td>
                             </tr>

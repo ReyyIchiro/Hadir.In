@@ -33,26 +33,26 @@
                     <caption>Anggota aktif</caption>
                     <thead>
                         <tr>
-                            <th scope="col">Nama</th>
-                            <th scope="col">Peran</th>
+                            <th scope="col" class="cell-grow">Nama</th>
+                            <th scope="col" class="cell-fit">Peran</th>
                             <th scope="col">Lokasi utama</th>
                             <th scope="col">Divisi</th>
-                            <th scope="col">Bergabung</th>
-                            <th scope="col"><span class="sr-only">Tindakan</span></th>
+                            <th scope="col" class="cell-fit">Bergabung</th>
+                            <th scope="col" class="cell-action"><span class="sr-only">Tindakan</span></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($members as $member)
                             <tr>
-                                <td>
+                                <td class="cell-grow">
                                     <span class="font-medium">{{ $member->user?->name }}</span>
                                     <p class="mt-0.5 text-[12px] text-muted">{{ $member->user?->email }}</p>
                                 </td>
-                                <td>{{ $member->role->label() }}</td>
+                                <td class="cell-fit">{{ $member->role->label() }}</td>
                                 <td class="text-muted">{{ $member->primaryLocation?->name ?? 'Belum diatur' }}</td>
                                 <td class="text-muted">{{ $member->division?->name ?? 'Tanpa divisi' }}</td>
-                                <td class="tabular-nums text-muted">{{ $member->joined_at ? \App\Support\Waktu::dateShort($member->joined_at) : '--' }}</td>
-                                <td class="text-right">
+                                <td class="cell-date cell-fit cell-meta">{{ $member->joined_at ? \App\Support\Waktu::dateShort($member->joined_at) : '--' }}</td>
+                                <td class="cell-action">
                                     @if($member->role !== \App\Enums\MembershipRole::Owner)
                                         <a href="{{ route('app.members.edit', $member) }}" class="link text-[12px]">Ubah</a>
                                     @else

@@ -35,19 +35,19 @@
                         <caption>Daftar presensi anggota</caption>
                         <thead>
                             <tr>
-                                <th scope="col">Anggota</th>
+                                <th scope="col" class="cell-grow">Anggota</th>
                                 <th scope="col">Divisi</th>
                                 <th scope="col">Lokasi</th>
-                                <th scope="col">Jadwal</th>
-                                <th scope="col">Masuk</th>
-                                <th scope="col">Pulang</th>
-                                <th scope="col">Status</th>
+                                <th scope="col" class="num-head cell-fit">Jadwal</th>
+                                <th scope="col" class="num-head cell-fit">Masuk</th>
+                                <th scope="col" class="num-head cell-fit">Pulang</th>
+                                <th scope="col" class="cell-status">Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($rows as $row)
                                 <tr>
-                                    <td>
+                                    <td class="cell-grow">
                                         @if($row['day'])
                                             <a href="{{ route('app.attendance.show', $row['day']) }}" class="link">{{ $row['membership']->user->name }}</a>
                                         @else
@@ -56,16 +56,16 @@
                                     </td>
                                     <td class="text-muted">{{ $row['membership']->division?->name ?? '--' }}</td>
                                     <td class="text-muted">{{ $row['membership']->primaryLocation?->name ?? '--' }}</td>
-                                    <td class="tabular-nums text-muted">
+                                    <td class="cell-time cell-fit text-muted">
                                         @if($row['schedule'] && ! $row['schedule']->is_day_off)
                                             {{ substr((string) $row['schedule']->start_time, 0, 5) }}-{{ substr((string) $row['schedule']->end_time, 0, 5) }}
                                         @else
                                             --
                                         @endif
                                     </td>
-                                    <td class="tabular-nums">{{ \App\Support\Waktu::time($row['day']?->check_in_at) }}</td>
-                                    <td class="tabular-nums">{{ \App\Support\Waktu::time($row['day']?->check_out_at) }}</td>
-                                    <td><x-status :status="$row['status']" /></td>
+                                    <td class="cell-time cell-fit">{{ \App\Support\Waktu::time($row['day']?->check_in_at) }}</td>
+                                    <td class="cell-time cell-fit">{{ \App\Support\Waktu::time($row['day']?->check_out_at) }}</td>
+                                    <td class="cell-status"><x-status :status="$row['status']" /></td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -99,32 +99,32 @@
                             <caption>Riwayat presensi {{ \App\Support\Waktu::monthLabel((int) substr($month, 5, 2)) }} {{ substr($month, 0, 4) }}</caption>
                             <thead>
                                 <tr>
-                                    <th scope="col">Tanggal</th>
-                                    <th scope="col">Jadwal</th>
-                                    <th scope="col">Masuk</th>
-                                    <th scope="col">Pulang</th>
-                                    <th scope="col">Status</th>
+                                    <th scope="col" class="cell-grow">Tanggal</th>
+                                    <th scope="col" class="num-head cell-fit">Jadwal</th>
+                                    <th scope="col" class="num-head cell-fit">Masuk</th>
+                                    <th scope="col" class="num-head cell-fit">Pulang</th>
+                                    <th scope="col" class="cell-status">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($rows as $row)
                                     <tr>
-                                        <td>
+                                        <td class="cell-grow">
                                             <a href="{{ route('app.attendance.show', $row['day']) }}" class="link">
                                                 {{ \App\Support\Waktu::dateShort($row['date']) }}
                                             </a>
                                             <span class="block text-[12px] text-muted">{{ \App\Support\Waktu::dayName($row['date']) }}</span>
                                         </td>
-                                        <td class="tabular-nums text-muted">
+                                        <td class="cell-time cell-fit text-muted">
                                             @if($row['schedule'])
                                                 {{ substr((string) $row['schedule']->start_time, 0, 5) }}-{{ substr((string) $row['schedule']->end_time, 0, 5) }}
                                             @else
                                                 --
                                             @endif
                                         </td>
-                                        <td class="tabular-nums">{{ \App\Support\Waktu::time($row['day']->check_in_at) }}</td>
-                                        <td class="tabular-nums">{{ \App\Support\Waktu::time($row['day']->check_out_at) }}</td>
-                                        <td><x-status :status="$row['day']->displayStatus()" /></td>
+                                        <td class="cell-time cell-fit">{{ \App\Support\Waktu::time($row['day']->check_in_at) }}</td>
+                                        <td class="cell-time cell-fit">{{ \App\Support\Waktu::time($row['day']->check_out_at) }}</td>
+                                        <td class="cell-status"><x-status :status="$row['day']->displayStatus()" /></td>
                                     </tr>
                                 @endforeach
                             </tbody>

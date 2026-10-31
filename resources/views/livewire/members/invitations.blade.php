@@ -25,22 +25,22 @@
                     <caption>Undangan organisasi</caption>
                     <thead>
                         <tr>
-                            <th scope="col">Email</th>
-                            <th scope="col">Peran</th>
+                            <th scope="col" class="cell-grow">Email</th>
+                            <th scope="col" class="cell-fit">Peran</th>
                             <th scope="col">Lokasi</th>
-                            <th scope="col">Berlaku sampai</th>
-                            <th scope="col">Status</th>
-                            <th scope="col"><span class="sr-only">Tindakan</span></th>
+                            <th scope="col" class="cell-fit">Berlaku sampai</th>
+                            <th scope="col" class="cell-status">Status</th>
+                            <th scope="col" class="cell-action"><span class="sr-only">Tindakan</span></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($invitations as $invitation)
                             <tr>
-                                <td>{{ $invitation->email }}</td>
-                                <td>{{ $invitation->role->label() }}</td>
+                                <td class="cell-grow">{{ $invitation->email }}</td>
+                                <td class="cell-fit">{{ $invitation->role->label() }}</td>
                                 <td class="text-muted">{{ $invitation->primaryLocation?->name ?? '--' }}</td>
-                                <td class="tabular-nums text-muted">{{ \App\Support\Waktu::dateShort($invitation->expires_at) }}</td>
-                                <td>
+                                <td class="cell-date cell-fit cell-meta">{{ \App\Support\Waktu::dateShort($invitation->expires_at) }}</td>
+                                <td class="cell-status">
                                     @if($invitation->accepted_at)
                                         <span class="status-pill status-approved">Diterima</span>
                                     @elseif($invitation->revoked_at)
@@ -51,9 +51,9 @@
                                         <span class="status-pill status-pending">Menunggu</span>
                                     @endif
                                 </td>
-                                <td class="text-right">
+                                <td class="cell-action">
                                     @if($invitation->isPending())
-                                        <button type="button" wire:click="revoke({{ $invitation->id }})" wire:confirm="Cabut undangan ini?" class="link text-[12px]">Cabut</button>
+                                        <button type="button" wire:click="revoke({{ $invitation->id }})" data-confirm="Cabut undangan ini?" data-confirm-detail="Tautan undangan langsung tidak berlaku. Orang yang dituju tidak dapat lagi memakainya untuk bergabung." data-confirm-action="Cabut undangan" class="link text-[12px]">Cabut</button>
                                     @endif
                                 </td>
                             </tr>

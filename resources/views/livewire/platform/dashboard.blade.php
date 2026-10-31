@@ -31,22 +31,22 @@
                         <caption>Organisasi terbaru</caption>
                         <thead>
                             <tr>
-                                <th scope="col">Nama</th>
-                                <th scope="col">Status</th>
-                                <th scope="col">Dibuat</th>
-                                <th scope="col"><span class="sr-only">Tindakan</span></th>
+                                <th scope="col" class="cell-grow">Nama</th>
+                                <th scope="col" class="cell-status">Status</th>
+                                <th scope="col" class="cell-fit">Dibuat</th>
+                                <th scope="col" class="cell-action"><span class="sr-only">Tindakan</span></th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($recent as $tenant)
                                 <tr>
-                                    <td>
+                                    <td class="cell-grow">
                                         <a href="{{ route('platform.tenants.show', $tenant) }}" class="link">{{ $tenant->name }}</a>
                                         <p class="text-[11px] text-muted">{{ $tenant->slug }}</p>
                                     </td>
-                                    <td><x-status :status="$tenant->status->value" :label="$tenant->status->label()" /></td>
-                                    <td class="tabular-nums text-muted">{{ \App\Support\Waktu::dateShort($tenant->created_at) }}</td>
-                                    <td class="text-right">
+                                    <td class="cell-status"><x-status :status="$tenant->status->value" :label="$tenant->status->label()" /></td>
+                                    <td class="cell-date cell-fit cell-meta">{{ \App\Support\Waktu::dateShort($tenant->created_at) }}</td>
+                                    <td class="cell-action">
                                         <a href="{{ route('platform.tenants.show', $tenant) }}" class="link text-[12px]">Detail</a>
                                     </td>
                                 </tr>

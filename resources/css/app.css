@@ -606,15 +606,38 @@
         letter-spacing: 0.08em;
         text-transform: uppercase;
         text-align: left;
-        padding: 0.625rem 0.75rem;
+        padding: 0.625rem 1rem;
         border-bottom: 1px solid var(--color-divider);
         white-space: nowrap;
     }
 
     .ledger tbody td {
-        padding: 0.75rem;
+        height: 3rem;
+        padding: 0.75rem 1rem;
         border-bottom: 1px solid var(--color-divider);
         vertical-align: middle;
+    }
+
+    .ledger thead th:first-child,
+    .ledger tbody td:first-child {
+        padding-left: 1rem;
+    }
+
+    .ledger thead th:last-child,
+    .ledger tbody td:last-child {
+        padding-right: 1rem;
+    }
+
+    @media (min-width: 768px) {
+        .ledger thead th:first-child,
+        .ledger tbody td:first-child {
+            padding-left: 1.5rem;
+        }
+
+        .ledger thead th:last-child,
+        .ledger tbody td:last-child {
+            padding-right: 1.5rem;
+        }
     }
 
     .ledger tbody tr {
@@ -629,12 +652,75 @@
         background: color-mix(in srgb, var(--color-tint) 60%, transparent);
     }
 
-    .ledger .num,
-    .ledger .tabular-nums {
+    /* ---------------------------------------------------------------
+       Tata bahasa kolom tabel
+       ---------------------------------------------------------------
+       Satu tabel punya satu kolom utama (cell-grow) yang mengambil 30%
+       lebar; kolom teks sekunder berbagi sisanya. Tanpa batas ini kolom
+       utama bisa menelan lebih dari separuh tabel dan memeras kolom lain
+       ke lebar minimum. Kolom pendek memakai cell-fit supaya tidak
+       membungkus dan tidak ikut meregang. Tanggal rata kiri karena
+       dibaca sebagai identitas baris; jam dan angka rata kanan karena
+       dibandingkan sebagai besaran. */
+    .ledger .cell-grow {
+        width: 30%;
+    }
+
+    .ledger .cell-fit {
+        width: 1%;
+        white-space: nowrap;
+    }
+
+    /* Kolom teks sekunder tidak boleh diperas sampai satu kata per baris
+       hanya karena kolom utama mendominasi lebar. 8,5rem cukup untuk nama
+       lokasi dua kata seperti "Kantor Pusat". Kolom fit, status, dan tindakan
+       dikecualikan karena memang harus sekecil isinya. */
+    .ledger thead th:not(.cell-fit):not(.cell-status):not(.cell-action) {
+        min-width: 8.5rem;
+    }
+
+    .ledger .cell-date,
+    .ledger .cell-time,
+    .ledger .cell-num {
+        white-space: nowrap;
+    }
+
+    .ledger .cell-date {
+        text-align: left;
+    }
+
+    .ledger .cell-time,
+    .ledger .cell-num {
         text-align: right;
+    }
+
+    .ledger thead th.num-head {
+        text-align: right;
+    }
+
+    /* Mono dan ukuran data hanya untuk isi tabel. Header tetap memakai
+       huruf kapital 11 px dari aturan thead. */
+    .ledger tbody .cell-date,
+    .ledger tbody .cell-time,
+    .ledger tbody .cell-num {
         font-family: var(--font-mono);
         font-variant-numeric: tabular-nums;
         font-size: 0.8125rem;
+    }
+
+    .ledger tbody .cell-meta {
+        font-size: 0.75rem;
+        color: var(--color-muted);
+    }
+
+    .ledger .cell-status {
+        width: 1%;
+    }
+
+    .ledger .cell-action {
+        width: 1%;
+        white-space: nowrap;
+        text-align: right;
     }
 
     .ledger .row-num {
@@ -643,11 +729,6 @@
         font-family: var(--font-mono);
         font-size: 0.6875rem;
         text-align: right;
-    }
-
-    .ledger .status-cell {
-        width: 1%;
-        white-space: nowrap;
     }
 
     /* ---------------------------------------------------------------

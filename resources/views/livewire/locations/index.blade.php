@@ -31,35 +31,35 @@
                         <caption>Lokasi kerja</caption>
                         <thead>
                             <tr>
-                                <th scope="col">Nama</th>
-                                <th scope="col">Koordinat</th>
-                                <th scope="col">Radius</th>
-                                <th scope="col">Anggota</th>
-                                <th scope="col">Status</th>
-                                <th scope="col"><span class="sr-only">Tindakan</span></th>
+                                <th scope="col" class="cell-grow">Nama</th>
+                                <th scope="col" class="num-head cell-fit">Koordinat</th>
+                                <th scope="col" class="num-head cell-fit">Radius</th>
+                                <th scope="col" class="num-head cell-fit">Anggota</th>
+                                <th scope="col" class="cell-status">Status</th>
+                                <th scope="col" class="cell-action"><span class="sr-only">Tindakan</span></th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($locations as $location)
                                 <tr>
-                                    <td>
+                                    <td class="cell-grow">
                                         <a href="{{ route('app.locations.edit', $location) }}" class="link">{{ $location->name }}</a>
                                         @if($location->address)
                                             <p class="mt-0.5 max-w-[280px] truncate text-[12px] text-muted">{{ $location->address }}</p>
                                         @endif
                                     </td>
-                                    <td class="font-mono text-[12px] tabular-nums text-muted">
+                                    <td class="cell-num cell-fit cell-meta">
                                         {{ number_format((float) $location->latitude, 5, '.', '') }}, {{ number_format((float) $location->longitude, 5, '.', '') }}
                                     </td>
-                                    <td class="tabular-nums">{{ $location->radius_meters }} m</td>
-                                    <td class="tabular-nums">{{ $location->memberships_count }}</td>
-                                    <td>
+                                    <td class="cell-num cell-fit">{{ $location->radius_meters }} m</td>
+                                    <td class="cell-num cell-fit">{{ $location->memberships_count }}</td>
+                                    <td class="cell-status">
                                         <span class="status-pill {{ $location->is_active ? 'status-active' : 'status-cancelled' }}">
                                             {{ $location->is_active ? 'Aktif' : 'Nonaktif' }}
                                         </span>
                                     </td>
-                                    <td class="text-right">
-                                        <button type="button" wire:click="toggle({{ $location->id }})" class="link text-[12px]">
+                                    <td class="cell-action">
+                                        <button type="button" wire:click="toggle({{ $location->id }})" @if($location->is_active) data-confirm="Nonaktifkan lokasi ini?" data-confirm-detail="Anggota tidak dapat lagi absen di lokasi ini. Presensi yang sudah tercatat tetap tersimpan." data-confirm-action="Nonaktifkan" @endif class="link text-[12px]">
                                             {{ $location->is_active ? 'Nonaktifkan' : 'Aktifkan' }}
                                         </button>
                                     </td>

@@ -26,21 +26,21 @@
                         <caption>Jam lama dan usulan</caption>
                         <thead>
                             <tr>
-                                <th scope="col">Kolom</th>
-                                <th scope="col">Tercatat</th>
-                                <th scope="col">Diusulkan</th>
+                                <th scope="col" class="cell-grow">Kolom</th>
+                                <th scope="col" class="num-head cell-fit">Tercatat</th>
+                                <th scope="col" class="num-head cell-fit">Diusulkan</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>Jam masuk</td>
-                                <td class="tabular-nums text-muted">{{ $originalCheckIn }}</td>
-                                <td class="tabular-nums font-medium">{{ $requestedCheckIn ?? 'Tidak diubah' }}</td>
+                                <td class="cell-grow">Jam masuk</td>
+                                <td class="cell-time cell-fit text-muted">{{ $originalCheckIn }}</td>
+                                <td class="cell-time cell-fit font-medium">{{ $requestedCheckIn ?? 'Tidak diubah' }}</td>
                             </tr>
                             <tr>
-                                <td>Jam pulang</td>
-                                <td class="tabular-nums text-muted">{{ $originalCheckOut }}</td>
-                                <td class="tabular-nums font-medium">{{ $requestedCheckOut ?? 'Tidak diubah' }}</td>
+                                <td class="cell-grow">Jam pulang</td>
+                                <td class="cell-time cell-fit text-muted">{{ $originalCheckOut }}</td>
+                                <td class="cell-time cell-fit font-medium">{{ $requestedCheckOut ?? 'Tidak diubah' }}</td>
                             </tr>
                         </tbody>
                     </table>

@@ -31,23 +31,23 @@
                         <caption>Absen menunggu tinjauan</caption>
                         <thead>
                             <tr>
-                                <th scope="col">Anggota</th>
-                                <th scope="col">Tanggal</th>
-                                <th scope="col">Jenis</th>
+                                <th scope="col" class="cell-grow">Anggota</th>
+                                <th scope="col" class="cell-fit">Tanggal</th>
+                                <th scope="col" class="cell-fit">Jenis</th>
                                 <th scope="col">Lokasi</th>
                                 <th scope="col">Alasan</th>
-                                <th scope="col"><span class="sr-only">Tindakan</span></th>
+                                <th scope="col" class="cell-action"><span class="sr-only">Tindakan</span></th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($reviews as $review)
                                 <tr>
-                                    <td>{{ $review->user?->name ?? '--' }}</td>
-                                    <td class="tabular-nums">{{ $review->event ? \App\Support\Waktu::dateShort($review->event->work_date) : '--' }}</td>
-                                    <td>{{ $review->event?->type->label() ?? '--' }}</td>
+                                    <td class="cell-grow">{{ $review->user?->name ?? '--' }}</td>
+                                    <td class="cell-date cell-fit">{{ $review->event ? \App\Support\Waktu::dateShort($review->event->work_date) : '--' }}</td>
+                                    <td class="cell-fit">{{ $review->event?->type->label() ?? '--' }}</td>
                                     <td class="text-muted">{{ $review->event?->location?->name ?? 'Tanpa lokasi' }}</td>
                                     <td class="max-w-[220px] truncate text-muted">{{ $review->note }}</td>
-                                    <td class="text-right">
+                                    <td class="cell-action">
                                         <a href="{{ route('app.reviews.attendance', $review) }}" class="link text-[12px]">Tinjau</a>
                                     </td>
                                 </tr>
@@ -67,21 +67,21 @@
                         <caption>Koreksi menunggu tinjauan</caption>
                         <thead>
                             <tr>
-                                <th scope="col">Anggota</th>
-                                <th scope="col">Tanggal kerja</th>
+                                <th scope="col" class="cell-grow">Anggota</th>
+                                <th scope="col" class="cell-fit">Tanggal kerja</th>
                                 <th scope="col">Alasan</th>
                                 <th scope="col">Diajukan</th>
-                                <th scope="col"><span class="sr-only">Tindakan</span></th>
+                                <th scope="col" class="cell-action"><span class="sr-only">Tindakan</span></th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($corrections as $correction)
                                 <tr>
-                                    <td>{{ $correction->user?->name ?? '--' }}</td>
-                                    <td class="tabular-nums">{{ $correction->attendanceDay ? \App\Support\Waktu::dateShort($correction->attendanceDay->work_date) : '--' }}</td>
+                                    <td class="cell-grow">{{ $correction->user?->name ?? '--' }}</td>
+                                    <td class="cell-date cell-fit">{{ $correction->attendanceDay ? \App\Support\Waktu::dateShort($correction->attendanceDay->work_date) : '--' }}</td>
                                     <td class="max-w-[260px] truncate text-muted">{{ $correction->reason }}</td>
-                                    <td class="text-[12px] text-muted">{{ \App\Support\Waktu::dateShort($correction->created_at) }}</td>
-                                    <td class="text-right">
+                                    <td class="cell-date cell-fit cell-meta">{{ \App\Support\Waktu::dateShort($correction->created_at) }}</td>
+                                    <td class="cell-action">
                                         <a href="{{ route('app.reviews.correction', $correction) }}" class="link text-[12px]">Tinjau</a>
                                     </td>
                                 </tr>
@@ -101,23 +101,23 @@
                         <caption>Izin menunggu tinjauan</caption>
                         <thead>
                             <tr>
-                                <th scope="col">Anggota</th>
-                                <th scope="col">Jenis</th>
-                                <th scope="col">Tanggal</th>
-                                <th scope="col">Hari</th>
+                                <th scope="col" class="cell-grow">Anggota</th>
+                                <th scope="col" class="cell-fit">Jenis</th>
+                                <th scope="col" class="cell-fit">Tanggal</th>
+                                <th scope="col" class="num-head cell-fit">Hari</th>
                                 <th scope="col">Diajukan</th>
-                                <th scope="col"><span class="sr-only">Tindakan</span></th>
+                                <th scope="col" class="cell-action"><span class="sr-only">Tindakan</span></th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($leaves as $leave)
                                 <tr>
-                                    <td>{{ $leave->user?->name ?? '--' }}</td>
-                                    <td>{{ $leave->type->label() }}</td>
-                                    <td class="tabular-nums">{{ \App\Support\Waktu::dateShort($leave->start_date) }}</td>
-                                    <td class="tabular-nums">{{ $leave->durationInDays() }}</td>
-                                    <td class="text-[12px] text-muted">{{ \App\Support\Waktu::dateShort($leave->created_at) }}</td>
-                                    <td class="text-right">
+                                    <td class="cell-grow">{{ $leave->user?->name ?? '--' }}</td>
+                                    <td class="cell-fit">{{ $leave->type->label() }}</td>
+                                    <td class="cell-date cell-fit">{{ \App\Support\Waktu::dateShort($leave->start_date) }}</td>
+                                    <td class="cell-num cell-fit">{{ $leave->durationInDays() }}</td>
+                                    <td class="cell-date cell-fit cell-meta">{{ \App\Support\Waktu::dateShort($leave->created_at) }}</td>
+                                    <td class="cell-action">
                                         <a href="{{ route('app.reviews.leave', $leave) }}" class="link text-[12px]">Tinjau</a>
                                     </td>
                                 </tr>

@@ -18,30 +18,30 @@
                         <caption>Divisi organisasi</caption>
                         <thead>
                             <tr>
-                                <th scope="col">Nama</th>
-                                <th scope="col">Anggota</th>
-                                <th scope="col">Status</th>
-                                <th scope="col"><span class="sr-only">Tindakan</span></th>
+                                <th scope="col" class="cell-grow">Nama</th>
+                                <th scope="col" class="num-head cell-fit">Anggota</th>
+                                <th scope="col" class="cell-status">Status</th>
+                                <th scope="col" class="cell-action"><span class="sr-only">Tindakan</span></th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($divisions as $division)
                                 <tr>
-                                    <td>
+                                    <td class="cell-grow">
                                         <span class="font-medium">{{ $division->name }}</span>
                                         @if($division->description)
                                             <p class="mt-0.5 text-[12px] text-muted">{{ $division->description }}</p>
                                         @endif
                                     </td>
-                                    <td class="tabular-nums">{{ $division->memberships_count }}</td>
-                                    <td>
+                                    <td class="cell-num cell-fit">{{ $division->memberships_count }}</td>
+                                    <td class="cell-status">
                                         <span class="status-pill {{ $division->is_active ? 'status-active' : 'status-cancelled' }}">
                                             {{ $division->is_active ? 'Aktif' : 'Nonaktif' }}
                                         </span>
                                     </td>
-                                    <td class="space-x-3 text-right">
+                                    <td class="cell-action space-x-3">
                                         <button type="button" wire:click="edit({{ $division->id }})" class="link text-[12px]">Ubah</button>
-                                        <button type="button" wire:click="toggle({{ $division->id }})" class="link text-[12px]">
+                                        <button type="button" wire:click="toggle({{ $division->id }})" @if($division->is_active) data-confirm="Nonaktifkan divisi ini?" data-confirm-detail="Divisi tidak lagi tersedia saat mengatur anggota. Anggota yang sudah terdaftar tetap tercatat di divisi ini." data-confirm-action="Nonaktifkan" @endif class="link text-[12px]">
                                             {{ $division->is_active ? 'Nonaktifkan' : 'Aktifkan' }}
                                         </button>
                                     </td>

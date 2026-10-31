@@ -55,24 +55,24 @@
                     <caption>Laporan presensi {{ $monthLabel }}</caption>
                     <thead>
                         <tr>
-                            <th scope="col">Tanggal</th>
-                            <th scope="col">Nama</th>
+                            <th scope="col" class="cell-fit">Tanggal</th>
+                            <th scope="col" class="cell-grow">Nama</th>
                             <th scope="col">Divisi</th>
-                            <th scope="col">Jadwal</th>
-                            <th scope="col">Masuk</th>
-                            <th scope="col">Pulang</th>
-                            <th scope="col">Status</th>
+                            <th scope="col" class="num-head cell-fit">Jadwal</th>
+                            <th scope="col" class="num-head cell-fit">Masuk</th>
+                            <th scope="col" class="num-head cell-fit">Pulang</th>
+                            <th scope="col" class="cell-status">Status</th>
                             <th scope="col">Catatan</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($rows as $row)
                             <tr>
-                                <td class="whitespace-nowrap">
-                                    <span class="tabular-nums">{{ \App\Support\Waktu::dateShort($row['date']) }}</span>
+                                <td class="cell-date cell-fit">
+                                    {{ \App\Support\Waktu::dateShort($row['date']) }}
                                     <p class="text-[11px] text-muted">{{ $row['day_name'] }}</p>
                                 </td>
-                                <td>
+                                <td class="cell-grow">
                                     @if($row['attendance_day_id'])
                                         <a href="{{ route('app.attendance.show', $row['attendance_day_id']) }}" class="link">{{ $row['name'] }}</a>
                                     @else
@@ -80,10 +80,10 @@
                                     @endif
                                 </td>
                                 <td class="text-muted">{{ $row['division'] ?: '--' }}</td>
-                                <td class="font-mono text-[12px] tabular-nums text-muted">{{ $row['schedule'] }}</td>
-                                <td class="tabular-nums">{{ \App\Support\Waktu::time($row['check_in'], '--:--') }}</td>
-                                <td class="tabular-nums">{{ \App\Support\Waktu::time($row['check_out'], '--:--') }}</td>
-                                <td>
+                                <td class="cell-time cell-fit cell-meta text-muted">{{ $row['schedule'] }}</td>
+                                <td class="cell-time cell-fit">{{ \App\Support\Waktu::time($row['check_in'], '--:--') }}</td>
+                                <td class="cell-time cell-fit">{{ \App\Support\Waktu::time($row['check_out'], '--:--') }}</td>
+                                <td class="cell-status">
                                     <x-status :status="$row['status']" />
                                     @if(! empty($row['flags']))
                                         <p class="mt-1 text-[11px] leading-4 text-muted">
