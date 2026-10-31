@@ -50,7 +50,7 @@
     </main>
 
     <footer class="border-t border-divider">
-        <div class="container-page grid gap-6 py-10 md:grid-cols-12 md:gap-8">
+        <div class="container-page grid gap-6 pt-10 pb-24 md:grid-cols-12 md:gap-8 md:pb-20">
             <div class="md:col-span-6">
                 <x-wordmark :href="route('home')" />
                 <p class="mt-3 max-w-[36ch] text-[13px] leading-6 text-muted">
@@ -83,5 +83,7 @@
             </div>
         </div>
     </footer>
+
+    <x-help-widget />
 </body>
 </html>

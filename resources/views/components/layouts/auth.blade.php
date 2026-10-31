@@ -53,7 +53,7 @@
             <p class="hidden text-[12px] text-on-ink/50 lg:block">Dibuat untuk operasi harian di Indonesia.</p>
         </aside>
 
-        <main id="konten" class="relative flex items-start justify-center px-6 py-10 lg:items-center lg:py-16">
+        <main id="konten" class="relative flex items-start justify-center px-6 pt-10 pb-24 lg:items-center lg:py-16">
             <div class="absolute right-4 top-4">
                 <x-theme-toggle />
             </div>
@@ -63,5 +63,7 @@
             </div>
         </main>
     </div>
+
+    <x-help-widget />
 </body>
 </html>

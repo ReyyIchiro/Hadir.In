@@ -28,6 +28,20 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Bantuan pelanggan
+    |--------------------------------------------------------------------------
+    |
+    | Nomor WhatsApp yang dipakai tombol bantuan di halaman publik dan
+    | autentikasi. Kosongkan untuk menyembunyikan tombolnya.
+    |
+    */
+
+    'support' => [
+        'whatsapp' => env('SUPPORT_WHATSAPP', '6281399936900'),
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),

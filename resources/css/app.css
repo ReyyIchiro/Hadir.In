@@ -1334,6 +1334,66 @@
         top: 1rem;
     }
 
+    /* ---------------------------------------------------------------
+       Tombol bantuan mengambang
+       Satu-satunya elemen bulat penuh di luar avatar dan titik status:
+       ia meniru stempel bulat yang ditempel di sudut kertas.
+       --------------------------------------------------------------- */
+
+    .help-widget {
+        position: fixed;
+        right: 1rem;
+        bottom: calc(1rem + env(safe-area-inset-bottom));
+        z-index: 40;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 3rem;
+        padding-inline: 0.8125rem;
+        border: 1px solid var(--color-rule-strong);
+        border-radius: 999px;
+        background: var(--color-surface);
+        color: var(--color-text);
+        font-size: 0.8125rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: border-color 150ms ease-out, background-color 150ms ease-out;
+    }
+
+    .help-widget:hover {
+        background: var(--color-tint);
+        border-color: var(--color-text);
+        text-decoration: none;
+    }
+
+    .help-widget__icon {
+        flex: none;
+    }
+
+    .help-widget__label {
+        max-width: 0;
+        margin-left: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        transition: max-width 180ms ease-out, margin-left 180ms ease-out;
+    }
+
+    .help-widget:hover .help-widget__label,
+    .help-widget:focus-visible .help-widget__label {
+        max-width: 9rem;
+        margin-left: 0.5rem;
+    }
+
+    /* Di perangkat sentuh tombol tetap bundar: label hanya muncul saat hover
+       atau fokus keyboard, supaya tidak menutupi isi di layar sempit. */
+
+    @media (prefers-reduced-motion: reduce) {
+        .help-widget,
+        .help-widget__label {
+            transition: none;
+        }
+    }
+
     .map-pin {
         display: block;
         width: 18px;

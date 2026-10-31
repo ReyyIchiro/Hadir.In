@@ -546,8 +546,8 @@ Bentuk mengikuti alat tulis dan dokumen, bukan aplikasi mobile generik.
 - Radius tombol dan cap: 2 px.
 - Radius input dan label: 3 px.
 - Radius panel dan kartu: 6 px.
-- Tidak ada radius 12 px atau lebih, kecuali elemen bulat seperti avatar dan
-  titik status.
+- Tidak ada radius 12 px atau lebih, kecuali elemen yang memang bundar: avatar,
+  titik status, dan tombol bantuan mengambang.
 - Border: 1 px untuk garis struktural, 1.5 px untuk input dan tombol.
 - Sudut tajam adalah bagian dari karakter. Jangan membulatkan semua hal.
 - Garis pemisah horizontal lebih tipis dari garis struktural vertikal.
