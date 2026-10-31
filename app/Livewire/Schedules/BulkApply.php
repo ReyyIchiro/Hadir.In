@@ -57,7 +57,23 @@ class BulkApply extends Component
             $this->endDate = $date;
         }
 
-        $this->preview();
+        $this->refreshPreview();
+    }
+
+    /**
+     * Hitung ulang ringkasan. Dipakai saat mount dan saat tombol "Perbarui
+     * ringkasan" ditekan. Layanan diambil dari container supaya bisa dipanggil
+     * dari mount, di mana Livewire belum menyuntikkan dependensi aksi.
+     */
+    protected function refreshPreview(): void
+    {
+        $this->preview = app(ScheduleService::class)->preview($this->tenant(), [
+            'user_ids' => $this->userIds,
+            'start_date' => $this->startDate,
+            'end_date' => $this->endDate,
+            'weekdays' => $this->weekdays,
+            'mode' => $this->mode,
+        ]);
     }
 
     public function updated(string $property): void
@@ -67,7 +83,12 @@ class BulkApply extends Component
         }
     }
 
-    public function preview(ScheduleService $schedules): void
+    /**
+     * Nama aksi sengaja bukan "preview" karena properti publik $preview
+     * menutupi method dengan nama yang sama di Livewire, sehingga tombol
+     * tidak pernah memanggil method-nya.
+     */
+    public function refreshSummary(): void
     {
         $this->validate([
             'userIds' => ['array'],
@@ -76,13 +97,7 @@ class BulkApply extends Component
             'weekdays' => ['array'],
         ]);
 
-        $this->preview = $schedules->preview($this->tenant(), [
-            'user_ids' => $this->userIds,
-            'start_date' => $this->startDate,
-            'end_date' => $this->endDate,
-            'weekdays' => $this->weekdays,
-            'mode' => $this->mode,
-        ]);
+        $this->refreshPreview();
     }
 
     public function apply(ScheduleService $schedules): void
@@ -108,7 +123,18 @@ class BulkApply extends Component
             'endTime.after' => 'Jam selesai harus setelah jam mulai.',
         ]);
 
-        $result = $schedules->bulkApply($this->tenant(), $data);
+        $result = $schedules->bulkApply($this->tenant(), [
+            'user_ids' => $data['userIds'],
+            'start_date' => $data['startDate'],
+            'end_date' => $data['endDate'],
+            'weekdays' => $data['weekdays'],
+            'start_time' => $data['startTime'],
+            'end_time' => $data['endTime'],
+            'break_start' => $data['breakStart'] ?: null,
+            'break_end' => $data['breakEnd'] ?: null,
+            'mode' => $data['mode'],
+            'note' => $data['note'] ?: null,
+        ]);
 
         $this->flash = "Jadwal diterapkan: {$result['created']} dibuat, {$result['updated']} diperbarui, {$result['skipped']} dilewati.";
         $this->preview = null;

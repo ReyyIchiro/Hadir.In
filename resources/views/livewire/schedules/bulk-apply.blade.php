@@ -92,7 +92,7 @@
                         <p class="text-[13px] leading-6 text-muted">Pilih anggota dan rentang untuk melihat perkiraan.</p>
                     @endif
 
-                    <button type="button" wire:click="preview" class="btn btn-ghost btn-sm mt-3 w-full">Perbarui ringkasan</button>
+                    <button type="button" wire:click="refreshSummary" class="btn btn-ghost btn-sm mt-3 w-full">Perbarui ringkasan</button>
                 </div>
             </x-panel>
 
