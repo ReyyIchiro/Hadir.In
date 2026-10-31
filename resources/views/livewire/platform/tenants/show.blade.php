@@ -47,14 +47,14 @@
                         <button type="submit" class="btn btn-primary w-full">Aktifkan organisasi</button>
                     </form>
                 @elseif($tenant->status === \App\Enums\TenantStatus::Active)
-                    <form method="POST" action="{{ route('platform.tenants.suspend', $tenant) }}" onsubmit="return confirm('Tangguhkan organisasi ini? Anggota tidak dapat masuk sampai diaktifkan kembali.')">
+                    <form method="POST" action="{{ route('platform.tenants.suspend', $tenant) }}">
                         @csrf
-                        <button type="submit" class="btn btn-secondary w-full">Tangguhkan organisasi</button>
+                        <button type="submit" class="btn btn-secondary w-full" data-confirm="Tangguhkan organisasi ini?" data-confirm-detail="Seluruh anggota langsung kehilangan akses sampai organisasi diaktifkan kembali. Data presensi tidak dihapus." data-confirm-action="Tangguhkan">Tangguhkan organisasi</button>
                     </form>
                 @else
-                    <form method="POST" action="{{ route('platform.tenants.restore', $tenant) }}" onsubmit="return confirm('Aktifkan kembali organisasi ini?')">
+                    <form method="POST" action="{{ route('platform.tenants.restore', $tenant) }}">
                         @csrf
-                        <button type="submit" class="btn btn-primary w-full">Aktifkan kembali</button>
+                        <button type="submit" class="btn btn-primary w-full" data-confirm="Aktifkan kembali organisasi ini?" data-confirm-detail="Anggota dapat masuk lagi dan seluruh jadwal serta presensi yang ada kembali berlaku." data-confirm-action="Aktifkan">Aktifkan kembali</button>
                     </form>
                 @endif
 

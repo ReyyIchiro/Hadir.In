@@ -39,7 +39,7 @@
                     <x-field name="reviewNote" label="Catatan" type="textarea" rows="3" wire:model="reviewNote" help="Wajib diisi bila menolak." />
                     <div class="flex gap-2">
                         <button type="button" wire:click="approve" wire:loading.attr="disabled" wire:target="approve" class="btn btn-primary btn-sm flex-1">Setujui</button>
-                        <button type="button" wire:click="reject" wire:loading.attr="disabled" wire:target="reject" class="btn btn-secondary btn-sm flex-1">Tolak</button>
+                        <button type="button" wire:click="reject" wire:loading.attr="disabled" wire:target="reject" data-confirm="Tolak pengajuan izin ini?" data-confirm-detail="Anggota menerima keputusan ini dan pengajuan tidak dihitung sebagai izin. Keputusan tidak dapat dibatalkan." data-confirm-action="Tolak pengajuan" class="btn btn-secondary btn-sm flex-1">Tolak</button>
                     </div>
                     <p class="text-[12px] leading-5 text-muted">Persetujuan menandai hari kerja terkait sebagai izin, sakit, atau cuti.</p>
                 </div>

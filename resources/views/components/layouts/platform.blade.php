@@ -35,5 +35,7 @@
     <main id="konten" class="mx-auto w-full max-w-[1200px] px-4 py-6 md:px-6 md:py-8">
         {{ $slot }}
     </main>
+
+    <x-confirm-dialog />
 </body>
 </html>

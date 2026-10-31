@@ -34,7 +34,7 @@
 
         <div class="flex flex-wrap gap-2">
             <button type="submit" class="btn btn-primary" wire:loading.attr="disabled" wire:target="save">Simpan jadwal</button>
-            <button type="button" wire:click="delete" wire:confirm="Hapus jadwal pada tanggal ini?" class="btn btn-ghost">Hapus jadwal</button>
+            <button type="button" wire:click="delete" data-confirm="Hapus jadwal pada tanggal ini?" data-confirm-detail="Anggota kembali tanpa jadwal pada tanggal tersebut dan tidak punya jam kerja acuan. Presensi yang sudah tercatat tetap tersimpan." data-confirm-action="Hapus jadwal" class="btn btn-ghost">Hapus jadwal</button>
         </div>
     </form>
 </div>

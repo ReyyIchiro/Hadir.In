@@ -96,7 +96,7 @@
                 </div>
             </x-panel>
 
-            <button type="submit" class="btn btn-primary w-full" wire:loading.attr="disabled" wire:target="apply">
+            <button type="submit" class="btn btn-primary w-full" wire:loading.attr="disabled" wire:target="apply" data-confirm="Terapkan jadwal ini?" data-confirm-detail="Jadwal kerja akan dibuat atau diperbarui untuk semua anggota dan tanggal yang dipilih. Periksa ringkasan di samping sebelum melanjutkan." data-confirm-action="Terapkan jadwal">
                 <span wire:loading.remove wire:target="apply">Terapkan jadwal</span>
                 <span wire:loading wire:target="apply">Menerapkan...</span>
             </button>

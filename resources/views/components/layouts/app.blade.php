@@ -171,6 +171,8 @@
         </div>
     </div>
 
+    <x-confirm-dialog />
+
     @livewireScripts
 </body>
 </html>

@@ -61,7 +61,7 @@
                     <x-field name="reviewNote" label="Catatan" type="textarea" rows="3" wire:model="reviewNote" help="Wajib diisi bila menolak." />
                     <div class="flex gap-2">
                         <button type="button" wire:click="approve" wire:loading.attr="disabled" wire:target="approve" class="btn btn-primary btn-sm flex-1">Setujui</button>
-                        <button type="button" wire:click="reject" wire:loading.attr="disabled" wire:target="reject" class="btn btn-secondary btn-sm flex-1">Tolak</button>
+                        <button type="button" wire:click="reject" wire:loading.attr="disabled" wire:target="reject" data-confirm="Tolak koreksi presensi ini?" data-confirm-detail="Catatan presensi anggota tetap seperti semula dan anggota menerima keputusan ini. Keputusan tidak dapat dibatalkan." data-confirm-action="Tolak koreksi" class="btn btn-secondary btn-sm flex-1">Tolak</button>
                     </div>
                     <p class="text-[12px] leading-5 text-muted">Persetujuan mengubah catatan presensi dan menandainya sebagai dikoreksi.</p>
                 </div>
