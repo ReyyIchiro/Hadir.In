@@ -358,12 +358,15 @@ Konteks: pengguna utama di Indonesia. Menerjemahkan antarmuka menambah beban
 copy dan pengujian.
 
 Keputusan: antarmuka dan email berbahasa Indonesia. Kode, nama tabel, dan nama
-kelas berbahasa Inggris. Tidak ada pemilih bahasa.
+kelas berbahasa Inggris. Tidak ada pemilih bahasa. Pesan bawaan Laravel
+diterjemahkan di `lang/id` supaya tidak ada kunci mentah seperti
+`validation.password.letters` yang tampil ke pengguna.
 
 Konsekuensi:
 
 - Copy dapat ditulis lebih matang.
 - Format tanggal dan angka memakai kebiasaan Indonesia.
+- Setiap kunci terjemahan baru dari kerangka kerja harus ditambahkan ke `lang/id`.
 - Internasionalisasi dapat ditambahkan kemudian.
 
 ## ADR-022: Tidak ada penghapusan tenant
