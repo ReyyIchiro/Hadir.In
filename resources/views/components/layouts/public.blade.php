@@ -4,10 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     @include('partials.theme')
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    @include('partials.brand', ['canonical' => url()->current()])
     <title>{{ $title ?? 'Hadir.In' }}</title>
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
     <meta name="description" content="{{ $description ?? 'Presensi dengan waktu server, lokasi, dan selfie untuk kantor, toko, dan tim lapangan di Indonesia.' }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @stack('structured-data')
 </head>
 <body class="bg-paper text-text antialiased">
     <a href="#konten" class="skip-link">Lewati ke konten</a>
@@ -15,10 +17,7 @@
     <header class="border-b border-divider">
         <div class="container-page">
             <div class="flex h-16 items-center justify-between gap-6">
-                <a href="{{ route('home') }}" class="wordmark">
-                    <span class="wordmark-mark" aria-hidden="true"></span>
-                    <span>Hadir.In</span>
-                </a>
+                <x-wordmark :href="route('home')" />
 
                 <nav class="hidden items-center gap-7 md:flex" aria-label="Navigasi utama">
                     <a href="{{ route('public.how') }}" class="nav-public" @if(request()->routeIs('public.how')) aria-current="page" @endif>Cara kerja</a>
@@ -53,10 +52,7 @@
     <footer class="border-t border-divider">
         <div class="container-page grid gap-6 py-10 md:grid-cols-12 md:gap-8">
             <div class="md:col-span-6">
-                <a href="{{ route('home') }}" class="wordmark">
-                    <span class="wordmark-mark" aria-hidden="true"></span>
-                    <span>Hadir.In</span>
-                </a>
+                <x-wordmark :href="route('home')" />
                 <p class="mt-3 max-w-[36ch] text-[13px] leading-6 text-muted">
                     Buku absen resmi untuk operasi harian di Indonesia.
                     Waktu server, lokasi, dan selfie dalam satu catatan.

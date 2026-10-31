@@ -11,6 +11,7 @@ use App\Http\Controllers\Platform\TenantStatusController as PlatformTenantStatus
 use App\Http\Controllers\PublicPageController;
 use App\Http\Controllers\ReportExportController;
 use App\Http\Controllers\SelfieController;
+use App\Http\Controllers\SeoController;
 use App\Livewire\Attendance;
 use App\Livewire\Dashboard;
 use App\Livewire\Divisions;
@@ -39,6 +40,8 @@ Route::get('/privasi', [PublicPageController::class, 'privacy'])->name('public.p
 Route::get('/ketentuan', [PublicPageController::class, 'terms'])->name('public.terms');
 
 Route::get('/health', [HealthController::class, 'show'])->name('health');
+Route::get('/robots.txt', [SeoController::class, 'robots'])->name('robots');
+Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('sitemap');
 
 Route::middleware('guest')->group(function () {
     Route::get('/masuk', [LoginController::class, 'show'])->name('login');

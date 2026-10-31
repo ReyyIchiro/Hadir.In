@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     @include('partials.theme')
+    @include('partials.brand')
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="robots" content="noindex">
     <title>{{ $title ?? 'Platform Hadir.In' }}</title>
@@ -14,11 +15,7 @@
 
     <header class="border-b border-divider">
         <div class="mx-auto flex h-14 max-w-[1200px] items-center gap-6 px-4 md:px-6">
-            <a href="{{ route('platform.dashboard') }}" class="flex items-center gap-2 no-underline hover:no-underline">
-                <span class="inline-block h-3 w-3 rounded-[2px] bg-stamp" aria-hidden="true"></span>
-                <span class="font-display text-[15px] font-semibold tracking-[-0.02em]">Hadir.In</span>
-                <span class="text-[12px] text-muted">Platform</span>
-            </a>
+            <x-wordmark :href="route('platform.dashboard')" label="Platform" class="text-[15px]" />
 
             <nav class="flex items-center gap-4 text-[13px] text-muted" aria-label="Navigasi platform">
                 <a href="{{ route('platform.dashboard') }}" class="hover:text-text {{ request()->routeIs('platform.dashboard') ? 'text-text' : '' }}">Ringkasan</a>

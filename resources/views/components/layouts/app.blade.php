@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     @include('partials.theme')
+    @include('partials.brand')
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="robots" content="noindex">
     <title>{{ $title ?? 'Hadir.In' }}</title>
@@ -62,10 +63,7 @@
             aria-label="Navigasi aplikasi"
         >
             <div class="flex items-center justify-between px-2 pb-4">
-                <a href="{{ route('app.home') }}" class="wordmark">
-                    <span class="wordmark-mark" aria-hidden="true"></span>
-                    <span>Hadir.In</span>
-                </a>
+                <x-wordmark :href="route('app.home')" />
                 <button type="button" class="btn btn-ghost btn-sm px-2 lg:hidden" @click="navOpen = false" aria-label="Tutup navigasi">
                     <x-icon name="x" :size="18" />
                 </button>

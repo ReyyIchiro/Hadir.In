@@ -2,6 +2,11 @@
     title="Hadir.In - Presensi dengan bukti waktu, tempat, dan wajah"
     description="Hadir.In mencatat kehadiran dengan waktu server, lokasi, dan selfie, lalu merapikan jadwal, izin, dan laporan bulanan untuk kantor, toko, dan tim lapangan."
 >
+
+{{-- Struktur organisasi dan situs hanya untuk dokumen akar. --}}
+@push('structured-data')
+    @include('partials.structured-data')
+@endpush
     {{-- Pembuka: pernyataan, bukan janji kosong. --}}
     <section class="border-b border-divider">
         <div class="container-page">

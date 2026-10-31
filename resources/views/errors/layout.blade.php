@@ -19,10 +19,7 @@
 </head>
 <body class="bg-paper text-text antialiased">
     <main id="konten" class="mx-auto flex min-h-screen w-full max-w-[560px] flex-col justify-center px-6 py-16">
-        <a href="{{ route('home') }}" class="flex items-center gap-2 text-text no-underline hover:no-underline">
-            <span class="inline-block h-3.5 w-3.5 rounded-[2px] bg-stamp" aria-hidden="true"></span>
-            <span class="font-display text-[17px] font-semibold tracking-[-0.02em]">Hadir.In</span>
-        </a>
+        <x-wordmark :href="route('home')" class="text-text" />
 
         <p class="mt-12 font-mono text-[12px] tracking-[0.08em] text-muted">@yield('code')</p>
         <h1 class="mt-3 font-display text-[32px] leading-[1.2] font-semibold tracking-[-0.02em]">

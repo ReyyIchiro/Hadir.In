@@ -26,6 +26,24 @@
         ];
     @endphp
 
+    {{-- FAQPage memakai $groups yang sama dengan yang dirender, jadi data
+         terstruktur tidak pernah berbeda dari isi halaman. --}}
+    @push('structured-data')
+        <script type="application/ld+json">{!! json_encode([
+            '@context' => 'https://schema.org',
+            '@type' => 'FAQPage',
+            'inLanguage' => 'id',
+            'mainEntity' => collect($groups)->flatten(1)->map(fn (array $pair) => [
+                '@type' => 'Question',
+                'name' => $pair[0],
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text' => $pair[1],
+                ],
+            ])->values()->all(),
+        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+    @endpush
+
     <x-public.page-header
         folio="01"
         label="Pertanyaan"

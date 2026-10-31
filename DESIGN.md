@@ -552,6 +552,45 @@ Bentuk mengikuti alat tulis dan dokumen, bukan aplikasi mobile generik.
 - Sudut tajam adalah bagian dari karakter. Jangan membulatkan semua hal.
 - Garis pemisah horizontal lebih tipis dari garis struktural vertikal.
 
+## Merek
+
+Mark Hadir.In adalah huruf H yang dibentuk dua bilah arang dan satu figur
+bercap, dengan centang cap sebagai satu-satunya warna. Mark menyatakan dua hal
+sekaligus: kehadiran seseorang dan tanda tangan yang mengesahkannya.
+
+- **Komposisi.** Dua bilah vertikal arang, satu titik kepala, satu centang cap
+  yang menembus bidang. Jangan memisahkan, memutar, atau menumpuk unsur ini.
+- **Warna.** Arang `#2C2B34` dan cap `#B54B2C`. Di permukaan gelap, pakai
+  varian `hadir-in-mark-light.png` yang mengganti bilah arang menjadi paper;
+  latarnya tetap transparan. Komponen `<x-brand-mark>` merender kedua varian
+  dan CSS menukarnya lewat `html[data-theme='dark']`, jadi jangan memilih
+  varian secara manual di view. Prop `light` hanya untuk panel yang selalu
+  gelap, seperti panel masuk. Jangan mewarnai ulang mark dengan warna status
+  atau warna tema.
+- **Ruang kosong.** Sisakan minimal setengah tinggi mark di semua sisi. Jangan
+  menempelkan mark ke tepi panel, garis, atau teks lain tanpa jarak.
+- **Ukuran.** Di wordmark, tinggi mark mengikuti `1.15em` dari font-size induk
+  lewat kelas `brand-mark`. Jangan memberi ukuran piksel tetap yang memutus
+  kesejajaran dengan teks.
+- **Wordmark.** Selalu "Hadir.In" dengan titik, bukan "HadirIn" atau
+  "Hadir.in". Pakai komponen `<x-wordmark>`: mark di kiri, teks 17 px display
+  semibold, jarak 8 px. Lockup diratakan pada garis dasar, bukan tengah kotak
+  baris, supaya kaki mark dan kaki huruf duduk di garis yang sama; jangan
+  menyusun ulang mark dan teks secara manual di view mana pun. Label sekunder
+  seperti "Platform" memakai prop `label`, tampil sans 12 px muted dan ikut
+  garis dasar. Jangan menambahkan tagline di dalam lockup.
+- **Latar.** Mark berwarna, jadi jangan menaruhnya di atas foto, gradien, atau
+  warna status. Latar yang sah hanya paper, surface, dan bidang ink.
+- **Favicon dan ikon aplikasi.** `favicon.ico` untuk peramban, `icon-192` dan
+  `icon-512` untuk manifest, `icon-maskable-512` untuk Android, dan
+  `apple-touch-icon` 180 px untuk iOS. Semua berasal dari mark yang sama.
+- **Kartu pratinjau.** `og-default.png` 1200x630 memuat mark dan wordmark di
+  atas paper. Jangan membuat kartu pratinjau per halaman.
+
+Berkas kanonik ada di `public/brand/`. Sumber kuadrat ada di
+`Hadir.In Logo.png` di akar repo. Bila mark berubah, semua turunan di
+`public/brand/` harus dibuat ulang dari sumber itu, bukan dari tangkapan layar.
+
 ## Components
 
 ### Tombol
@@ -985,4 +1024,6 @@ Contoh pesan:
 - [ ] Tampil baik di 360 px, 768 px, 1024 px, dan 1440 px.
 - [ ] Mode gelap diperiksa: tidak ada kedipan tema, tombol tema ada di setiap
   layout, dan `aria-pressed` benar.
+- [ ] Mark merek memakai varian yang kontras di kedua tema, tanpa bayangan
+  putih sebagai pengganti varian.
 - [ ] Tidak ada klaim atau angka palsu.

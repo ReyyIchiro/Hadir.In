@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     @include('partials.theme')
+    @include('partials.brand')
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? 'Hadir.In' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -16,10 +17,7 @@
             {{-- Kolom tipis: satu-satunya dekorasi di panel ini. --}}
             <div class="pointer-events-none absolute inset-y-0 left-[72%] hidden w-px bg-white/10 lg:block" aria-hidden="true"></div>
 
-            <a href="{{ route('home') }}" class="wordmark text-on-ink">
-                <span class="wordmark-mark" aria-hidden="true"></span>
-                <span>Hadir.In</span>
-            </a>
+            <x-wordmark :href="route('home')" light class="text-on-ink" />
 
             {{-- Di ponsel panel ini menjadi header pendek: satu pernyataan dan cap. --}}
             <div class="lg:my-10">
