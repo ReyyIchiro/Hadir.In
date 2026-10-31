@@ -1,55 +1,90 @@
 # Hadir.In
 
-Presensi kantor dan tim lapangan dengan geofence dan verifikasi selfie. Hadir.In
-mencatat kehadiran harian, jadwal kerja, izin, cuti, dan laporan bulanan dalam satu
-tempat. Antarmuka berbahasa Indonesia, tenang, dan dibuat untuk dipakai setiap hari.
+Presensi kantor dan tim lapangan dengan bukti waktu, lokasi, dan selfie.
+Hadir.In mencatat kehadiran harian, jadwal kerja, izin, cuti, dan laporan bulanan
+dalam satu tempat. Antarmuka berbahasa Indonesia, dengan tabel yang tetap terbaca
+di layar 360 px. Halaman absen menempatkan peta, koordinat, akurasi, dan selfie
+dalam satu tampilan.
 
-## Status
+![Tur singkat Hadir.In: beranda, dasbor, dan halaman presensi](docs/media/readme/tour.gif)
 
-Versi 1.0 lengkap untuk alur inti dan siap diuji di staging. Dokumentasi produk
-dan teknis tetap menjadi sumber kebenaran bila kode dan dokumen berbeda.
+Satu instalasi dapat melayani banyak organisasi. Anggota, lokasi, jadwal, dan
+pengaturan dipisahkan per organisasi, sementara seorang pengguna boleh menjadi
+anggota di beberapa organisasi tanpa mencampur data.
 
-| Bagian | Status |
+Alur v1 sudah lengkap: 196 tes Pest lulus dengan 717 asersi. Sebelum go-live,
+masih ada dua uji yang harus dijalankan di luar mesin pengembangan: kamera dan
+GPS di perangkat nyata (`docs/TESTING.md` bagian 9), serta migrasi dan pengujian
+di staging PostgreSQL.
+
+## Tampilan
+
+Semua tangkapan layar memakai data seeder demo.
+
+![Beranda Hadir.In di desktop](docs/media/readme/home-desktop.png)
+
+| Dasbor | Absen masuk |
+| :---: | :---: |
+| [![Dasbor anggota](docs/media/readme/dashboard.png)](docs/media/readme/dashboard.png) | [![Halaman absen masuk](docs/media/readme/check-in.png)](docs/media/readme/check-in.png) |
+| Waktu server, antrean tinjauan, dan ringkasan bulan berjalan. | Peta, koordinat, akurasi GPS, dan selfie di satu halaman. |
+
+| Tinjauan | Laporan |
+| :---: | :---: |
+| [![Antrean tinjauan](docs/media/readme/review.png)](docs/media/readme/review.png) | [![Laporan bulanan](docs/media/readme/reports.png)](docs/media/readme/reports.png) |
+| Absen di luar radius dan koreksi jam, dengan nilai asli tetap tersimpan. | Ringkasan bulanan, rincian harian, filter divisi dan lokasi, ekspor CSV. |
+
+| Jadwal | Tampilan ponsel |
+| :---: | :---: |
+| [![Jadwal anggota](docs/media/readme/schedule.png)](docs/media/readme/schedule.png) | [![Beranda dan dasbor di ponsel](docs/media/readme/mobile-pair.png)](docs/media/readme/mobile-pair.png) |
+| Jadwal per anggota per tanggal, penerapan massal, dan hari libur. | Beranda publik dan dasbor anggota pada lebar 390 px. |
+
+## Cara kerja
+
+1. Anggota membuka halaman absen. Peta menunjukkan posisi, radius tiap lokasi
+   kerja, dan akurasi GPS. Selfie diambil dari kamera perangkat.
+2. Server memeriksa jadwal, radius, akurasi, dan duplikasi. Waktu yang dipakai
+   adalah jam server, bukan jam ponsel. Penolakan menyimpan alasan dan dapat
+   diajukan tinjauan.
+3. Peninjau atau admin memutuskan antrean. Koreksi menyimpan nilai asli, nilai
+   yang diminta, dan catatan keputusan.
+4. Finalisasi berjalan setiap jam. Hari kerja tanpa absen menjadi `absen`, dan
+   laporan bulanan siap diunduh sebagai CSV.
+
+## Yang sudah berjalan
+
+| Area | Isi |
 | --- | --- |
-| Dokumen produk, desain, arsitektur, database, rute, operasi | Selesai |
-| Scaffold Laravel, Livewire, Tailwind | Selesai |
-| Autentikasi, undangan, tenancy, peran | Selesai |
-| Presensi, geofence, selfie, tinjauan, koreksi | Selesai |
-| Jadwal, hari libur, izin, cuti | Selesai |
-| Laporan bulanan dan ekspor CSV | Selesai |
-| Halaman publik dan aplikasi anggota | Selesai |
-| Pengujian otomatis dan runbook produksi | Selesai |
+| Organisasi dan akses | Pendaftaran organisasi, aktivasi oleh platform admin, undangan sekali pakai, empat peran, dan perpindahan organisasi aktif. |
+| Presensi | Absen masuk dan pulang dengan jam server, geofence, akurasi GPS, selfie, penolakan yang tercatat, dan pengajuan tinjauan. |
+| Jadwal dan hari libur | Jadwal per anggota per tanggal, penerapan massal hingga 92 hari, hari libur organisasi, dan jadwal hari libur. |
+| Izin dan cuti | Pengajuan izin, sakit, dan cuti; persetujuan atau penolakan; pembatalan; pemblokiran absen pada tanggal yang disetujui. |
+| Tinjauan dan koreksi | Antrean untuk absen di luar radius dan koreksi jam. Nilai asli tetap tersimpan. |
+| Laporan | Ringkasan dan rincian bulanan, filter divisi dan lokasi, ekspor CSV. |
+| Platform | Daftar organisasi, status, paket, jumlah anggota, aktivasi, dan penangguhan. Platform admin tidak dapat melihat data presensi atau selfie. |
 
-167 tes Pest lulus. Sebelum go-live, jalankan matriks manual kamera dan GPS pada
-perangkat nyata (`docs/TESTING.md` bagian 7) dan uji staging PostgreSQL.
+## Batas v1
 
-## Akun demo
+- Tidak ada aplikasi native, absensi offline, pengenalan wajah, payroll, atau API
+  publik.
+- Selfie bukan verifikasi identitas. Tidak ada liveness detection.
+- Data presensi tidak dihapus. Retensi selfie diatur per organisasi (7-365
+  hari, default 90) dan hanya menghapus berkas, bukan catatan absen.
+- Uji kamera dan GPS di perangkat nyata serta uji staging PostgreSQL belum
+  dijalankan. Keduanya wajib sebelum go-live.
 
-Setelah `php artisan migrate:fresh --seed`, seeder demo membuat organisasi
-"Hadir.In Demo" dengan kata sandi `password123` untuk semua akun:
+Rincian kasus uji ada di `docs/TESTING.md` bagian 5 dan 9.
 
-| Peran | Email |
-| --- | --- |
-| Pemilik | `pemilik@hadir.test` |
-| Admin | `admin@hadir.test` |
-| Peninjau | `peninjau@hadir.test` |
-| Anggota | `anggota@hadir.test` |
-| Platform admin | `platform@hadir.test` |
+## Arsitektur dan data
 
-Seeder demo hanya berjalan di lingkungan `local` dan `testing`, dan aman
-dijalankan berulang.
+Laravel 12 dengan Livewire 3 dan Tailwind CSS 4. PostgreSQL 16 di produksi,
+SQLite untuk tes. Selfie disimpan di disk privat, metadata dihapus saat
+pemrosesan, dan dibuka lewat signed URL yang berlaku 5 menit. Setiap query
+tenant dibatasi `TenantContext` dan global scope. Waktu disimpan dalam UTC;
+tanggal kerja mengikuti zona waktu organisasi. Penjadwal menjalankan finalisasi
+presensi setiap jam dan pembersihan selfie setiap hari.
 
-## Stack
-
-- Laravel 12, PHP 8.3 atau lebih baru
-- Livewire 3 dan Alpine.js
-- Tailwind CSS 4 dan Vite
-- PostgreSQL 16 di produksi, SQLite untuk pengujian lokal
-- Pest untuk pengujian
-- Penyimpanan selfie privat di disk lokal
-
-Alasan pemilihan stack ada di `docs/DECISIONS.md`. Arsitektur ada di
-`docs/ARCHITECTURE.md`. Spesifikasi visual ada di `DESIGN.md`.
+Alasan pemilihan stack ada di `docs/DECISIONS.md`, arsitektur di
+`docs/ARCHITECTURE.md`, dan spesifikasi visual di `DESIGN.md`.
 
 ## Menjalankan secara lokal
 
@@ -67,7 +102,7 @@ npm run build
 php artisan serve
 ```
 
-Buka `http://127.0.0.1:8000`, lalu masuk dengan salah satu akun demo di atas.
+Buka `http://127.0.0.1:8000`, lalu masuk dengan salah satu akun demo di bawah.
 `.env.example` sudah memakai SQLite, jadi tidak perlu memasang PostgreSQL.
 
 Aset harus dibangun sebelum halaman dibuka. Tanpa `npm run build` atau
@@ -106,6 +141,22 @@ php artisan test
 
 Tanpa itu, keluaran hijau hanya membuktikan SQLite.
 
+## Akun demo
+
+Setelah `php artisan migrate --seed`, seeder demo membuat organisasi
+"Hadir.In Demo" dengan kata sandi `password123` untuk semua akun:
+
+| Peran | Email |
+| --- | --- |
+| Pemilik | `pemilik@hadir.test` |
+| Admin | `admin@hadir.test` |
+| Peninjau | `peninjau@hadir.test` |
+| Anggota | `anggota@hadir.test` |
+| Platform admin | `platform@hadir.test` |
+
+Seeder demo hanya berjalan di lingkungan `local` dan `testing`, dan aman
+dijalankan berulang.
+
 ## Perintah penting
 
 ```bash
@@ -113,6 +164,7 @@ php artisan test                 # seluruh pengujian
 php artisan test --filter=CheckInTest
 ./vendor/bin/pint                # format PHP
 npm run build                    # build aset produksi
+npm run design:lint              # periksa DESIGN.md terhadap skema token
 php artisan migrate:fresh --seed # reset database lokal
 php artisan schedule:work        # jalankan penjadwal di lokal
 php artisan queue:work           # jalankan worker antrean di lokal
