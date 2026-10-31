@@ -417,3 +417,19 @@ Konsekuensi:
 - Perhitungan sederhana.
 - Tim shift malam memerlukan perubahan model dan ADR baru.
 - Koreksi dapat memperbaiki pasangan yang salah tanpa menambah kejadian baru.
+## ADR-027: Header keamanan global
+Status: diterima.
+
+Konteks: respons tidak mengirim header keamanan apa pun.
+
+Keputusan: `SecurityHeaders` dipasang di akhir grup middleware `web`, sehingga
+semua rute termasuk halaman galat mendapat
+`X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`,
+`Permissions-Policy`, `Cross-Origin-Opener-Policy`, dan CSP.
+`Strict-Transport-Security` hanya dikirim lewat HTTPS.
+
+Konsekuensi:
+- Semua halaman menolak pembingkaian dan penebakan tipe konten.
+- CSP masih memuat `'unsafe-inline'` dan `'unsafe-eval'` selama skrip tema dan
+  Livewire membutuhkannya.
+- Peta OpenStreetMap harus tetap ada di `img-src` dan `connect-src`.

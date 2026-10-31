@@ -204,6 +204,19 @@ Penting: `Tenant` sendiri tidak memakai scope. Akses ke `Tenant` hanya lewat
 
 ## 6. Siklus permintaan
 
+### 6.0 Header keamanan
+Setiap respons web melewati `SecurityHeaders` yang dipasang di akhir grup
+middleware `web` pada `bootstrap/app.php`. Middleware ini menulis
+`X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`,
+`Permissions-Policy`, `Cross-Origin-Opener-Policy`, dan
+`Content-Security-Policy`. `Strict-Transport-Security` hanya ditulis bila
+permintaan memakai HTTPS, supaya pengembangan di `localhost` tidak memaksa
+peramban beralih ke HTTPS.
+CSP masih mengizinkan `'unsafe-inline'` pada `script-src` dan `style-src` karena
+skrip tema berjalan inline sebelum CSS dimuat dan Livewire menyisipkan gaya
+inline. CSP berfungsi menutup frame, plugin, dan asal sumber daya asing. Bila
+skrip inline diganti nonce, `'unsafe-inline'` dapat dihapus.
+
 ### 6.1 Halaman publik
 
 `Route` -> controller atau komponen Livewire -> Blade -> Vite. Tanpa middleware
