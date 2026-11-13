@@ -39,15 +39,20 @@ class Home extends Component
         $monthStart = $today->startOfMonth()->toDateString();
         $monthEnd = $today->endOfMonth()->toDateString();
 
-        $monthDays = AttendanceDay::where('user_id', $user->id)
+        // Ringkasan bulan lewat agregat, bukan memuat semua hari ke memori.
+        $counts = AttendanceDay::where('user_id', $user->id)
             ->whereBetween('work_date', [$monthStart, $monthEnd])
-            ->get();
+            ->selectRaw('status, count(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
 
         $stats = [
-            'hadir' => $monthDays->filter(fn (AttendanceDay $d) => $d->status === AttendanceStatus::Hadir)->count(),
-            'terlambat' => $monthDays->filter(fn (AttendanceDay $d) => $d->status === AttendanceStatus::Terlambat)->count(),
-            'izin' => $monthDays->filter(fn (AttendanceDay $d) => in_array($d->status, [AttendanceStatus::Izin, AttendanceStatus::Sakit, AttendanceStatus::Cuti], true))->count(),
-            'absen' => $monthDays->filter(fn (AttendanceDay $d) => $d->status === AttendanceStatus::Absen)->count(),
+            'hadir' => (int) ($counts[AttendanceStatus::Hadir->value] ?? 0),
+            'terlambat' => (int) ($counts[AttendanceStatus::Terlambat->value] ?? 0),
+            'izin' => (int) ($counts[AttendanceStatus::Izin->value] ?? 0)
+                + (int) ($counts[AttendanceStatus::Sakit->value] ?? 0)
+                + (int) ($counts[AttendanceStatus::Cuti->value] ?? 0),
+            'absen' => (int) ($counts[AttendanceStatus::Absen->value] ?? 0),
         ];
 
         $canReview = $membership->role->canReview();

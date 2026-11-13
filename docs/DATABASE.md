@@ -327,6 +327,8 @@ Indeks:
 - `attendance_days_tenant_date_status_index` pada `(tenant_id, work_date, status)`.
 - `attendance_days_tenant_location_index` pada `(tenant_id, location_id)`.
 - `attendance_days_tenant_user_index` pada `(tenant_id, user_id)`.
+- `attendance_days_tenant_check_in_at_index` pada `(tenant_id, check_in_at)`.
+- `attendance_days_tenant_finalized_at_index` pada `(tenant_id, finalized_at)`.
 - `attendance_days_leave_request_index` pada `leave_request_id`.
 
 Aturan:

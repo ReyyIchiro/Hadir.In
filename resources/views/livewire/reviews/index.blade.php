@@ -54,6 +54,11 @@
                             @endforeach
                         </tbody>
                     </table>
+                    @if($counts['presensi'] > $limit)
+                        <p class="px-4 py-2 text-[12px] text-muted md:px-6">
+                            Menampilkan {{ $limit }} pengajuan tertua dari {{ $counts['presensi'] }}. Selesaikan tinjauan lama lebih dulu.
+                        </p>
+                    @endif
                 </div>
             </x-panel>
         @endif
@@ -88,6 +93,11 @@
                             @endforeach
                         </tbody>
                     </table>
+                    @if($counts['koreksi'] > $limit)
+                        <p class="px-4 py-2 text-[12px] text-muted md:px-6">
+                            Menampilkan {{ $limit }} pengajuan tertua dari {{ $counts['koreksi'] }}. Selesaikan tinjauan lama lebih dulu.
+                        </p>
+                    @endif
                 </div>
             </x-panel>
         @endif
@@ -124,6 +134,11 @@
                             @endforeach
                         </tbody>
                     </table>
+                    @if($counts['izin'] > $limit)
+                        <p class="px-4 py-2 text-[12px] text-muted md:px-6">
+                            Menampilkan {{ $limit }} pengajuan tertua dari {{ $counts['izin'] }}. Selesaikan tinjauan lama lebih dulu.
+                        </p>
+                    @endif
                 </div>
             </x-panel>
         @endif

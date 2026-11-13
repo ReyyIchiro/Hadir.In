@@ -55,6 +55,9 @@ return new class extends Migration
             $table->index(['tenant_id', 'work_date', 'status']);
             $table->index(['tenant_id', 'location_id']);
             $table->index(['tenant_id', 'user_id']);
+            // Urutan "masuk terbaru" di ringkasan dan pencarian hari terbuka.
+            $table->index(['tenant_id', 'check_in_at']);
+            $table->index(['tenant_id', 'finalized_at']);
             $table->index('leave_request_id');
         });
     }

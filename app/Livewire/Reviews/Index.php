@@ -42,13 +42,37 @@ class Index extends Component
     {
         $membership = $this->membership();
         $scopedUserIds = $this->scopedUserIds($membership);
-
         $scopeLocation = $this->scopeLocationId($membership);
 
-        // BR-62: peninjau melihat kejadian yang lokasinya sama dengan lokasi
-        // utamanya, atau yang pemiliknya berlokasi utama sama. Dua cabang itu
-        // harus muncul di antrean, bukan hanya salah satunya.
-        $reviews = AttendanceReview::with(['user', 'event.location'])
+        // Batas antrean per tab: baris tertua ditampilkan lebih dulu dan
+        // jumlah sebenarnya tetap dihitung penuh untuk lencana tab.
+        $limit = 50;
+
+        $reviews = $this->pendingReviews($scopedUserIds, $scopeLocation, $limit);
+        $corrections = $this->pendingCorrections($scopedUserIds, $scopeLocation, $limit);
+        $leaves = $this->pendingLeaves($scopedUserIds, $limit);
+
+        return view('livewire.reviews.index', [
+            'reviews' => $reviews,
+            'corrections' => $corrections,
+            'leaves' => $leaves,
+            'limit' => $limit,
+            'counts' => [
+                'presensi' => $this->countPendingReviews($scopedUserIds, $scopeLocation),
+                'koreksi' => $this->countPendingCorrections($scopedUserIds, $scopeLocation),
+                'izin' => $this->countPendingLeaves($scopedUserIds),
+            ],
+        ])->layoutData(['heading' => 'Tinjauan'])->title('Tinjauan');
+    }
+
+    /**
+     * BR-62: peninjau melihat kejadian yang lokasinya sama dengan lokasi
+     * utamanya, atau yang pemiliknya berlokasi utama sama. Dua cabang itu
+     * harus muncul di antrean, bukan hanya salah satunya.
+     */
+    protected function pendingReviews(?array $scopedUserIds, ?int $scopeLocation, int $limit)
+    {
+        return AttendanceReview::with(['user', 'event.location'])
             ->where('status', ReviewStatus::Pending)
             ->when($scopedUserIds !== null, function ($q) use ($scopedUserIds, $scopeLocation) {
                 $q->where(function ($inner) use ($scopedUserIds, $scopeLocation) {
@@ -60,9 +84,13 @@ class Index extends Component
                 });
             })
             ->orderBy('created_at')
+            ->limit($limit)
             ->get();
+    }
 
-        $corrections = AttendanceCorrection::with(['user', 'attendanceDay'])
+    protected function pendingCorrections(?array $scopedUserIds, ?int $scopeLocation, int $limit)
+    {
+        return AttendanceCorrection::with(['user', 'attendanceDay'])
             ->where('status', CorrectionStatus::Pending)
             ->when($scopedUserIds !== null, function ($q) use ($scopedUserIds, $scopeLocation) {
                 $q->where(function ($inner) use ($scopedUserIds, $scopeLocation) {
@@ -74,24 +102,55 @@ class Index extends Component
                 });
             })
             ->orderBy('created_at')
+            ->limit($limit)
             ->get();
+    }
 
-        $leaves = LeaveRequest::with('user')
+    protected function pendingLeaves(?array $scopedUserIds, int $limit)
+    {
+        return LeaveRequest::with('user')
             ->where('status', LeaveStatus::Pending)
             ->when($scopedUserIds !== null, fn ($q) => $q->whereIn('user_id', $scopedUserIds))
             ->orderBy('created_at')
+            ->limit($limit)
             ->get();
+    }
 
-        return view('livewire.reviews.index', [
-            'reviews' => $reviews,
-            'corrections' => $corrections,
-            'leaves' => $leaves,
-            'counts' => [
-                'presensi' => $reviews->count(),
-                'koreksi' => $corrections->count(),
-                'izin' => $leaves->count(),
-            ],
-        ])->layoutData(['heading' => 'Tinjauan'])->title('Tinjauan');
+    protected function countPendingReviews(?array $scopedUserIds, ?int $scopeLocation): int
+    {
+        return AttendanceReview::where('status', ReviewStatus::Pending)
+            ->when($scopedUserIds !== null, function ($q) use ($scopedUserIds, $scopeLocation) {
+                $q->where(function ($inner) use ($scopedUserIds, $scopeLocation) {
+                    $inner->whereIn('user_id', $scopedUserIds);
+
+                    if ($scopeLocation !== null) {
+                        $inner->orWhereHas('event', fn ($e) => $e->where('location_id', $scopeLocation));
+                    }
+                });
+            })
+            ->count();
+    }
+
+    protected function countPendingCorrections(?array $scopedUserIds, ?int $scopeLocation): int
+    {
+        return AttendanceCorrection::where('status', CorrectionStatus::Pending)
+            ->when($scopedUserIds !== null, function ($q) use ($scopedUserIds, $scopeLocation) {
+                $q->where(function ($inner) use ($scopedUserIds, $scopeLocation) {
+                    $inner->whereIn('user_id', $scopedUserIds);
+
+                    if ($scopeLocation !== null) {
+                        $inner->orWhereHas('attendanceDay', fn ($d) => $d->where('location_id', $scopeLocation));
+                    }
+                });
+            })
+            ->count();
+    }
+
+    protected function countPendingLeaves(?array $scopedUserIds): int
+    {
+        return LeaveRequest::where('status', LeaveStatus::Pending)
+            ->when($scopedUserIds !== null, fn ($q) => $q->whereIn('user_id', $scopedUserIds))
+            ->count();
     }
 
     /**

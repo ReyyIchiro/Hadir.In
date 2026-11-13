@@ -71,7 +71,20 @@
                         </tbody>
                     </table>
                 </div>
-                <p class="border-t border-divider px-4 py-3 text-[12px] text-muted md:px-6">{{ $total }} anggota pada filter ini.</p>
+                <div class="flex flex-wrap items-center justify-between gap-2 border-t border-divider px-4 py-3 md:px-6">
+                    <p class="text-[12px] text-muted">{{ $total }} anggota pada filter ini.</p>
+                    @if($totalPages > 1)
+                        <div class="flex items-center gap-2">
+                            <span class="text-[12px] text-muted">Halaman {{ $currentPage }} dari {{ $totalPages }}</span>
+                            <button type="button" class="btn btn-secondary btn-sm" wire:click="previousPage" @disabled($currentPage <= 1)>
+                                Sebelumnya
+                            </button>
+                            <button type="button" class="btn btn-secondary btn-sm" wire:click="nextPage" @disabled($currentPage >= $totalPages)>
+                                Berikutnya
+                            </button>
+                        </div>
+                    @endif
+                </div>
             @endif
         </x-panel>
     @else

@@ -157,6 +157,8 @@ class Index extends Component
             'summary' => $summary,
             'days' => null,
             'total' => null,
+            'totalPages' => null,
+            'currentPage' => null,
         ];
     }
 
@@ -227,11 +229,20 @@ class Index extends Component
 
         $total = $rows->count();
 
+        // Tampilan tim dibatasi 25 baris per halaman agar DOM Livewire tetap
+        // kecil pada organisasi besar (ARCHITECTURE 14).
+        $perPage = 25;
+        $totalPages = max(1, (int) ceil($total / $perPage));
+        $page = min(max(1, $this->getPage()), $totalPages);
+        $rows = $rows->slice(($page - 1) * $perPage, $perPage)->values();
+
         return [
             'rows' => $rows,
             'summary' => null,
             'days' => null,
             'total' => $total,
+            'totalPages' => $totalPages,
+            'currentPage' => $page,
         ];
     }
 }

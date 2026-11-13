@@ -1,4 +1,2 @@
-import axios from 'axios';
-window.axios = axios;
-
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+// Livewire menangani semua permintaan HTTP aplikasi; tidak ada klien HTTP
+// global yang dipakai langsung dari skrip halaman.
