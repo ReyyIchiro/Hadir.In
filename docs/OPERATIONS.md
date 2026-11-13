@@ -102,16 +102,15 @@ MAIL_PASSWORD=...
 MAIL_ENCRYPTION=tls
 MAIL_FROM_ADDRESS=no-reply@hadir.example.id
 MAIL_FROM_NAME="Hadir.In"
-
-SELFIE_DISK=private
-SELFIE_RETENTION_DAYS=90
 ```
-
 Catatan:
 
 - `APP_TIMEZONE` wajib `UTC`. Zona tenant disimpan di database.
 - `APP_DEBUG=false` di produksi.
 - `SESSION_SECURE_COOKIE=true` hanya bila HTTPS aktif.
+- Disk dan retensi selfie tidak diatur lewat env: selfie disimpan di disk
+  `local` yang rootnya `storage/app/private`, dan retensinya diatur per
+  organisasi di pengaturan (`tenant_settings.selfie_retention_days`).
 - Jangan memakai `MAIL_MAILER=log` di produksi kecuali tautan undangan disalin
   manual dan sudah disepakati.
 
@@ -224,6 +223,7 @@ server {
         fastcgi_pass unix:/run/php/php8.3-fpm.sock;
         fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
         fastcgi_param DOCUMENT_ROOT $realpath_root;
+        fastcgi_param HTTP_X_FORWARDED_PROTO $scheme;
         fastcgi_read_timeout 60s;
     }
 
@@ -650,6 +650,7 @@ apa pun. Jalankan matriks manual di `TESTING.md` bagian 7 pada perangkat nyata.
 - [ ] Domain dan TLS aktif.
 - [ ] `APP_DEBUG=false`.
 - [ ] `APP_ENV=production`.
+- [ ] `SESSION_ENCRYPT=true` dan `SESSION_SECURE_COOKIE=true`.
 - [ ] `APP_KEY` dibuat dan disimpan aman.
 - [ ] Database PostgreSQL dibuat dan dimigrasi.
 - [ ] Platform admin dibuat.

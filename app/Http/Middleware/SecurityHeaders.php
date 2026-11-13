@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
  * dan Livewire/Alpine menyisipkan atribut style. Selama itu belum diganti nonce,
  * CSP di sini berfungsi menutup frame, plugin, dan sumber daya asing, bukan
  * menggantikan perlindungan XSS yang sudah ada di lapisan Blade dan policy.
+ * 'unsafe-eval' sengaja tidak diizinkan: Livewire 3 tidak membutuhkannya.
  */
 class SecurityHeaders
 {
@@ -29,7 +30,7 @@ class SecurityHeaders
 
         $response->headers->set('Content-Security-Policy', implode('; ', [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+            "script-src 'self' 'unsafe-inline'",
             "style-src 'self' 'unsafe-inline'",
             "img-src 'self' data: blob: https://tile.openstreetmap.org https://*.tile.openstreetmap.org",
             "font-src 'self' data:",

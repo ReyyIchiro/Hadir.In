@@ -465,6 +465,7 @@ semua rute termasuk halaman galat mendapat
 
 Konsekuensi:
 - Semua halaman menolak pembingkaian dan penebakan tipe konten.
-- CSP masih memuat `'unsafe-inline'` dan `'unsafe-eval'` selama skrip tema dan
-  Livewire membutuhkannya.
+- CSP masih memuat `'unsafe-inline'` selama skrip tema dan Livewire
+  membutuhkannya. `'unsafe-eval'` tidak diizinkan karena Livewire 3 tidak
+  membutuhkannya.
 - Peta OpenStreetMap harus tetap ada di `img-src` dan `connect-src`.

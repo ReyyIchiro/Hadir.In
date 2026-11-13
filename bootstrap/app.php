@@ -19,6 +19,11 @@ return Application::configure(basePath: dirname(__DIR__))
         // satu rute baru tidak pernah lolos tanpa header keamanan.
         $middleware->web(append: [SecurityHeaders::class]);
 
+        // Produksi selalu berada di belakang Nginx (OPERATIONS.md bagian 5).
+        // Tanpa ini, $request->secure() membaca koneksi Nginx ke PHP-FPM yang
+        // selalu HTTP dan HSTS tidak pernah terkirim.
+        $middleware->trustProxies(at: '*');
+
         $middleware->alias([
             'tenant' => ResolveTenant::class,
             'tenant.active' => EnsureTenantActive::class,
