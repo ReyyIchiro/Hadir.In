@@ -31,6 +31,11 @@ class InvitationController extends Controller
             return view('invitations.invalid', ['reason' => $reason]);
         }
 
+        // BR-63: platform admin tidak boleh memiliki keanggotaan organisasi.
+        if (Auth::user()?->is_platform_admin) {
+            return view('invitations.invalid', ['reason' => 'Akun admin platform tidak dapat menerima undangan organisasi.']);
+        }
+
         $existingUser = User::where('email', $invitation->email)->exists();
 
         return view('invitations.show', [
@@ -40,7 +45,7 @@ class InvitationController extends Controller
         ]);
     }
 
-    public function accept(Request $request, string $token): RedirectResponse
+    public function accept(Request $request, string $token): RedirectResponse|View
     {
         $invitation = $this->invitations->findByToken($token);
 
@@ -50,6 +55,10 @@ class InvitationController extends Controller
         }
 
         $user = Auth::user();
+
+        if ($user?->is_platform_admin) {
+            return view('invitations.invalid', ['reason' => 'Akun admin platform tidak dapat menerima undangan organisasi.']);
+        }
 
         if ($user && mb_strtolower($user->email) !== $invitation->email) {
             return back()->withErrors(['email' => 'Undangan ini ditujukan untuk alamat email lain. Keluar lalu buka tautan ini lagi.']);

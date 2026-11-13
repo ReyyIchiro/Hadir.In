@@ -103,11 +103,20 @@ class InvitationService
 
     public function accept(Invitation $invitation, ?User $user, ?string $name = null, ?string $password = null): User
     {
-        if (! $invitation->isPending()) {
-            throw ValidationException::withMessages(['token' => 'Undangan ini sudah tidak berlaku.']);
-        }
-
         return DB::transaction(function () use ($invitation, $user, $name, $password) {
+            // Kunci baris undangan agar dua permintaan bersamaan tidak
+            // menerimanya sekaligus. Status tanpa kunci hanya cek awal.
+            $locked = Invitation::withoutGlobalScopes()
+                ->whereKey($invitation->id)
+                ->lockForUpdate()
+                ->first();
+
+            if (! $locked?->isPending()) {
+                throw ValidationException::withMessages(['token' => 'Undangan ini sudah tidak berlaku.']);
+            }
+
+            $invitation = $locked;
+
             if ($user) {
                 if (mb_strtolower($user->email) !== $invitation->email) {
                     throw ValidationException::withMessages([

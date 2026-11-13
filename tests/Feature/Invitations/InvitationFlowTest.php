@@ -88,6 +88,28 @@ it('menolak token kedaluwarsa', function () {
     $this->get('/undangan/'.$token)->assertSee('kedaluwarsa', false);
 });
 
+it('menolak admin platform menerima undangan', function () {
+    $tenant = makeTenant();
+    $owner = makeUser();
+    makeMembership($tenant, $owner, 'owner');
+    setTenant($tenant);
+
+    [$invitation, $token] = inviteMember($tenant, $owner);
+
+    // BR-63: platform admin tidak boleh memiliki keanggotaan organisasi.
+    $admin = makeUser(['email' => $invitation->email, 'is_platform_admin' => true]);
+
+    $this->actingAs($admin)
+        ->get('/undangan/'.$token)
+        ->assertSee('admin platform', false);
+
+    $this->actingAs($admin)
+        ->post('/undangan/'.$token, ['name' => 'Admin Platform'])
+        ->assertSee('admin platform', false);
+
+    expect($admin->memberships()->count())->toBe(0);
+});
+
 it('menolak token yang sudah dipakai', function () {
     $tenant = makeTenant();
     $owner = makeUser();
