@@ -51,6 +51,18 @@ it('membatasi percobaan masuk menjadi lima per menit', function () {
     $response->assertStatus(429);
 });
 
+it('membatasi percobaan gagal lintas email dari satu alamat IP', function () {
+    // Dua puluh email berbeda dengan satu percobaan gagal masing-masing
+    // lolos batas lima-per-email, lalu batas per IP mengunci yang berikut.
+    for ($i = 0; $i < 20; $i++) {
+        $this->post('/masuk', ['email' => 'penyerang-'.$i.'@hadir.test', 'password' => 'salah']);
+    }
+
+    $response = $this->post('/masuk', ['email' => 'korban@hadir.test', 'password' => 'salah']);
+
+    $response->assertStatus(429);
+});
+
 it('mengeluarkan pengguna dan menghapus sesi', function () {
     $user = makeUser();
 

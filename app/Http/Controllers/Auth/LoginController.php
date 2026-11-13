@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\View\View;
 
 class LoginController extends Controller
@@ -26,12 +27,29 @@ class LoginController extends Controller
 
         $credentials['email'] = mb_strtolower(trim($credentials['email']));
 
+        // Batas kedua per alamat IP: satu kantor di belakang satu IP publik
+        // berbagi kuota, jadi hanya percobaan gagal yang dihitung.
+        $ipKey = 'login-ip:'.$request->ip();
+
+        if (RateLimiter::tooManyAttempts($ipKey, 20)) {
+            return back()
+                ->withInput($request->only('email'))
+                ->withErrors([
+                    'email' => 'Terlalu banyak percobaan gagal dari jaringan Anda. Coba lagi dalam '
+                        .RateLimiter::availableIn($ipKey).' detik.',
+                ])
+                ->setStatusCode(429);
+        }
+
         if (! Auth::attempt($credentials, $request->boolean('remember'))) {
+            RateLimiter::hit($ipKey, 60);
+
             return back()
                 ->withInput($request->only('email', 'remember'))
                 ->withErrors(['email' => 'Email atau kata sandi tidak cocok.']);
         }
 
+        RateLimiter::clear($ipKey);
         $request->session()->regenerate();
         $user = $request->user();
 

@@ -50,14 +50,18 @@ Route::middleware('guest')->group(function () {
         ->name('login.store');
 
     Route::get('/daftar', [RegisterController::class, 'show'])->name('register');
-    Route::post('/daftar', [RegisterController::class, 'store'])->name('register.store');
+    Route::post('/daftar', [RegisterController::class, 'store'])
+        ->middleware('throttle:5,1')
+        ->name('register.store');
 
     Route::get('/lupa-kata-sandi', [PasswordResetController::class, 'request'])->name('password.request');
     Route::post('/lupa-kata-sandi', [PasswordResetController::class, 'send'])
         ->middleware('throttle:6,1')
         ->name('password.email');
     Route::get('/atur-ulang-kata-sandi/{token}', [PasswordResetController::class, 'edit'])->name('password.reset');
-    Route::post('/atur-ulang-kata-sandi', [PasswordResetController::class, 'update'])->name('password.update');
+    Route::post('/atur-ulang-kata-sandi', [PasswordResetController::class, 'update'])
+        ->middleware('throttle:6,1')
+        ->name('password.update');
 });
 
 Route::get('/undangan/{token}', [InvitationController::class, 'show'])->name('invitations.show');

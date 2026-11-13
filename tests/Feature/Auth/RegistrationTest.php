@@ -69,6 +69,32 @@ it('menolak zona waktu di luar daftar yang didukung', function () {
     $response->assertSessionHasErrors('timezone');
 });
 
+it('membatasi pendaftaran menjadi lima per menit', function () {
+    // Kirim tanpa nama organisasi supaya validasi gagal dan tidak ada baris
+    // yang ditulis; middleware throttle tetap berjalan sebelum controller.
+    for ($i = 0; $i < 5; $i++) {
+        $this->post('/daftar', [
+            'name' => 'Rani Prameswari',
+            'email' => 'rani-'.$i.'@hadir.test',
+            'password' => 'rahasia123',
+            'password_confirmation' => 'rahasia123',
+            'timezone' => 'Asia/Jakarta',
+        ]);
+    }
+
+    $response = $this->post('/daftar', [
+        'name' => 'Rani Prameswari',
+        'email' => 'rani-terakhir@hadir.test',
+        'password' => 'rahasia123',
+        'password_confirmation' => 'rahasia123',
+        'organization' => 'Toko Rani',
+        'timezone' => 'Asia/Jakarta',
+    ]);
+
+    $response->assertStatus(429);
+    expect(Tenant::count())->toBe(0);
+});
+
 it('menampilkan halaman pendaftaran', function () {
     $this->get('/daftar')->assertOk()->assertSee('Daftar', false);
 });
