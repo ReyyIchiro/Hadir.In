@@ -957,6 +957,19 @@
        Navigasi
        --------------------------------------------------------------- */
 
+    /* Laci navigasi mobile. Atribut data-nav-closed dipasang statis sehingga
+       laci tetap tertutup tanpa JavaScript; rule di bawah 1024px mengabaikannya
+       di desktop. */
+    [data-nav-closed] {
+        transform: translateX(-100%);
+    }
+
+    @media (min-width: 1024px) {
+        [data-nav-closed] {
+            transform: none;
+        }
+    }
+
     .nav-link {
         display: flex;
         align-items: center;

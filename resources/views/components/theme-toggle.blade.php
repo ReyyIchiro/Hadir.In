@@ -9,6 +9,7 @@
     class="theme-toggle"
     data-theme-toggle
     aria-label="Ganti tema terang atau gelap"
+    aria-pressed="false"
     title="Ganti tema"
     {{ $attributes }}
 >

@@ -46,7 +46,7 @@
     @endif
 
     @if($error)
-        <ul id="{{ $id }}-error" class="field-error-list">
+        <ul id="{{ $id }}-error" class="field-error-list" role="alert">
             @foreach($messages as $message)
                 <li class="field-error">
                     <x-icon name="alert-triangle" :size="14" class="mt-px shrink-0" />

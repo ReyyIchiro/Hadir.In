@@ -31,7 +31,7 @@
     @endif
 
     @if($error)
-        <p id="{{ $id }}-error" class="field-error">
+        <p id="{{ $id }}-error" class="field-error" role="alert">
             <x-icon name="alert-triangle" :size="14" class="mt-px shrink-0" />
             <span>{{ $error }}</span>
         </p>

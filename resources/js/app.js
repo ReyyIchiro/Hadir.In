@@ -97,7 +97,9 @@ window.copyText = async function (text) {
 
 // Tombol mata pada kolom kata sandi. State disimpan di checkbox asli supaya
 // CSS bisa mengganti ikon tanpa JavaScript; di sini hanya tipe input yang
-// diubah. Nilai sandi tidak pernah disalin ke mana pun.
+// diubah. Nama aksesibel input tetap milik labelnya, sehingga dua kolom sandi
+// pada satu halaman tetap bisa dibedakan pembaca layar. Nilai sandi tidak
+// pernah disalin ke mana pun.
 function syncPasswordField(field) {
     const checkbox = field.querySelector('[data-password-checkbox]');
     const input = field.querySelector('input[type="password"], input[data-password-visible]');
@@ -107,11 +109,11 @@ function syncPasswordField(field) {
     if (checkbox.checked) {
         input.type = 'text';
         input.dataset.passwordVisible = 'true';
-        input.setAttribute('aria-label', 'Kata sandi terlihat');
+        checkbox.setAttribute('aria-label', 'Sembunyikan kata sandi');
     } else {
         input.type = 'password';
         delete input.dataset.passwordVisible;
-        input.setAttribute('aria-label', 'Kata sandi tersembunyi');
+        checkbox.setAttribute('aria-label', 'Tampilkan kata sandi');
     }
 }
 

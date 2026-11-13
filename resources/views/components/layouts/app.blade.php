@@ -46,7 +46,12 @@
         ];
     @endphp
 
-    <div x-data="{ navOpen: false }" class="min-h-screen lg:grid lg:grid-cols-[240px_1fr]">
+    <div
+        x-data="{ navOpen: false, mobile: window.matchMedia('(max-width: 1023px)').matches }"
+        x-init="window.matchMedia('(max-width: 1023px)').addEventListener('change', (event) => mobile = event.matches)"
+        @keydown.escape.window="navOpen = false"
+        class="min-h-screen lg:grid lg:grid-cols-[240px_1fr]"
+    >
         <div
             x-cloak
             x-show="navOpen"
@@ -56,10 +61,15 @@
             aria-hidden="true"
         ></div>
 
+        {{-- Tanpa JavaScript: data-nav-closed menahan laci di luar layar pada
+             mobile dan diabaikan pada desktop. Alpine menghapus atribut ini
+             saat laci dibuka. --}}
         <aside
             id="navigasi"
-            class="fixed inset-y-0 left-0 z-40 flex w-[248px] flex-col overflow-y-auto border-r border-divider bg-paper px-3 py-4 transition-transform duration-150 ease-out lg:static lg:z-auto lg:w-auto lg:translate-x-0"
-            :class="navOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
+            data-nav-closed
+            class="fixed inset-y-0 left-0 z-40 flex w-[248px] flex-col overflow-y-auto border-r border-divider bg-paper px-3 py-4 transition-transform duration-150 ease-out lg:static lg:z-auto lg:w-auto"
+            x-bind:data-nav-closed="navOpen || ! mobile ? null : ''"
+            x-bind:inert="navOpen || ! mobile ? null : true"
             aria-label="Navigasi aplikasi"
         >
             <div class="flex items-center justify-between px-2 pb-4">
@@ -146,7 +156,14 @@
 
         <div class="flex min-h-screen min-w-0 flex-col">
             <header class="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-divider bg-paper px-4 md:px-6">
-                <button type="button" class="btn btn-ghost btn-sm px-2 lg:hidden" @click="navOpen = true" aria-label="Buka navigasi" aria-controls="navigasi">
+                <button
+                    type="button"
+                    class="btn btn-ghost btn-sm px-2 lg:hidden"
+                    @click="navOpen = true"
+                    aria-label="Buka navigasi"
+                    aria-controls="navigasi"
+                    x-bind:aria-expanded="navOpen ? 'true' : 'false'"
+                >
                     <x-icon name="menu" :size="20" />
                 </button>
 

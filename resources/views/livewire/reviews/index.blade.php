@@ -4,13 +4,12 @@
         Tinjau absen di luar radius, koreksi jam, dan pengajuan izin. Setiap keputusan tercatat.
     </p>
 
-    <div class="mt-5 flex flex-wrap gap-1 border-b border-divider" role="tablist" aria-label="Jenis tinjauan">
+    <div class="mt-5 flex flex-wrap gap-1 border-b border-divider" aria-label="Jenis tinjauan">
         @foreach(['presensi' => 'Presensi', 'koreksi' => 'Koreksi', 'izin' => 'Izin dan cuti'] as $key => $label)
             <button
                 type="button"
-                role="tab"
                 wire:click="setTab('{{ $key }}')"
-                aria-selected="{{ $tab === $key ? 'true' : 'false' }}"
+                aria-pressed="{{ $tab === $key ? 'true' : 'false' }}"
                 class="relative -mb-px border-b-2 px-3 py-2 text-[13px] {{ $tab === $key ? 'border-stamp font-medium text-text' : 'border-transparent text-muted hover:text-text' }}"
             >
                 {{ $label }}

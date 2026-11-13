@@ -24,7 +24,7 @@
 
     <div class="confirm-dialog__panel" role="document">
         <p class="folio" data-confirm-eyebrow>Konfirmasi</p>
-        <h2 id="confirm-title" class="confirm-dialog__title" data-confirm-title>—</h2>
+        <h2 id="confirm-title" class="confirm-dialog__title" data-confirm-title></h2>
         <p id="confirm-detail" class="confirm-dialog__detail" data-confirm-detail-text></p>
 
         <div class="confirm-dialog__actions">
