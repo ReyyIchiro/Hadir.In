@@ -42,6 +42,28 @@
         </dl>
     </div>
 
+    @if($otherMemberships->isNotEmpty())
+        <div class="panel panel-pad mt-4">
+            <h2 class="title-md">Berpindah organisasi</h2>
+            <p class="mt-1 text-[13px] leading-5 text-muted">
+                Anda juga menjadi anggota organisasi berikut. Pilih organisasi untuk melanjutkan.
+            </p>
+            <div class="mt-4 divide-y divide-divider">
+                @foreach($otherMemberships as $other)
+                    <form method="POST" action="{{ route('app.tenants.switch', $other->tenant) }}"
+                          class="flex items-center justify-between gap-3 py-3">
+                        @csrf
+                        <div class="min-w-0">
+                            <p class="truncate text-[14px]">{{ $other->tenant->name }}</p>
+                            <p class="mt-0.5 text-[12px] text-muted">{{ $other->role->label() }}</p>
+                        </div>
+                        <button type="submit" class="btn btn-secondary btn-sm">Pindah ke sini</button>
+                    </form>
+                @endforeach
+            </div>
+        </div>
+    @endif
+
     <form method="POST" action="{{ route('logout') }}" class="mt-6 text-center">
         @csrf
         <button type="submit" class="text-[13px] text-muted hover:text-text">Keluar dari akun</button>

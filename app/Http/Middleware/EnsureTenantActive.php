@@ -24,11 +24,15 @@ class EnsureTenantActive
         if ($tenant->status !== TenantStatus::Active) {
             $membership = $this->context->membership();
 
-            if ($membership?->role === MembershipRole::Owner) {
-                return redirect()->route('tenant.status');
-            }
+            // Pemilik dan anggota sama-sama diarahkan ke halaman status.
+            // Anggota menerima pesan berbeda dari pemilik (ARCHITECTURE 5.2).
+            $message = $membership?->role === MembershipRole::Owner
+                ? 'Organisasi ini belum aktif.'
+                : ($tenant->status === TenantStatus::Suspended
+                    ? 'Organisasi ini sedang ditangguhkan.'
+                    : 'Organisasi ini belum aktif. Anda dapat masuk setelah organisasi diaktifkan.');
 
-            abort(403, 'Organisasi ini belum aktif.');
+            return redirect()->route('tenant.status')->withErrors(['status' => $message]);
         }
 
         return $next($request);

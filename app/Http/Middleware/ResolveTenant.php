@@ -23,11 +23,18 @@ class ResolveTenant
             abort(403);
         }
 
-        // Hanya tenant yang dibutuhkan untuk mengisi konteks. Lokasi dan divisi
-        // sengaja tidak dimuat di sini: komponen yang memakainya sudah memuat
-        // relasi itu sendiri, sehingga memuatnya di sini berarti dua query
-        // tambahan pada setiap permintaan.
-        $memberships = $user->activeMemberships()
+        // Konteks dibersihkan lebih dulu: singleton ini boleh terbawa dari
+        // permintaan sebelumnya pada worker yang berumur panjang. Scope tenant
+        // tidak boleh mewarisi sisa permintaan lama.
+        $this->context->clear();
+
+        // Query keanggotaan harus lintas organisasi: middleware inilah yang
+        // memilih organisasi aktif, jadi scope tenant belum boleh aktif di
+        // sini. Tanpa tanpaGlobalScopes, keanggotaan tenant lain tidak terlihat
+        // dan perpindahan organisasi diam-diam gagal.
+        $memberships = Membership::withoutGlobalScopes()
+            ->where('user_id', $user->id)
+            ->where('is_active', true)
             ->with('tenant')
             ->get()
             ->filter(fn (Membership $membership) => $membership->tenant !== null);
@@ -50,9 +57,13 @@ class ResolveTenant
 
         $tenant = $membership->tenant;
 
+        // Anggota organisasi yang ditangguhkan diarahkan ke halaman status,
+        // bukan ditolak keras: pengguna dengan beberapa keanggotaan tetap bisa
+        // berpindah ke organisasi aktif dari halaman itu (BR-64).
         if ($tenant->status === TenantStatus::Suspended
             && $membership->role !== MembershipRole::Owner) {
-            abort(403, 'Organisasi ini sedang ditangguhkan.');
+            return redirect()->route('tenant.status')
+                ->withErrors(['status' => 'Organisasi ini sedang ditangguhkan.']);
         }
 
         $request->session()->put('active_tenant_id', $tenant->id);

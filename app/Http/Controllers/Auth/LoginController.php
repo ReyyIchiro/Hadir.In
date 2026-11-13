@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Enums\MembershipRole;
 use App\Enums\TenantStatus;
 use App\Http\Controllers\Controller;
+use App\Models\Membership;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -57,7 +58,15 @@ class LoginController extends Controller
             return redirect()->intended(route('platform.dashboard'));
         }
 
-        $memberships = $user->activeMemberships()->with('tenant')->get();
+        // Daftar organisasi harus lintas tenant: saat login belum ada organisasi
+        // aktif, dan scope tenant tidak boleh mewarisi konteks dari request
+        // lain pada worker yang sama.
+        $memberships = Membership::withoutGlobalScopes()
+            ->where('user_id', $user->id)
+            ->where('is_active', true)
+            ->with('tenant')
+            ->get()
+            ->filter(fn (Membership $membership) => $membership->tenant !== null);
 
         if ($memberships->isEmpty()) {
             Auth::logout();

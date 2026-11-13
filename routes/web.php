@@ -130,8 +130,16 @@ Route::middleware(['auth', 'tenant', 'tenant.active'])
 
         Route::get('/profil', Settings\Profile::class)->name('profile');
         Route::get('/tampilan', Settings\Appearance::class)->name('appearance');
+    });
 
-        Route::post('/organisasi/{tenant}/pilih', [TenantSwitchController::class, 'store'])->name('tenants.switch');
+// Perpindahan organisasi tidak memakai tenant.active: pengguna organisasi
+// yang ditangguhkan tetap harus bisa berpindah ke organisasi aktifnya (BR-64).
+Route::middleware('auth')
+    ->prefix('app')
+    ->name('app.')
+    ->group(function () {
+        Route::post('/organisasi/{tenant}/pilih', [TenantSwitchController::class, 'store'])
+            ->name('tenants.switch');
     });
 
 Route::get('/selfie/{event}', [SelfieController::class, 'show'])
