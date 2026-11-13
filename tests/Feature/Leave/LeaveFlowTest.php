@@ -186,6 +186,47 @@ it('mengizinkan peninjau membatalkan izin yang disetujui', function () {
     expect($leave->refresh()->status->value)->toBe('cancelled');
 });
 
+it('tidak membuat hari presensi izin pada tanggal tanpa jadwal', function () {
+    // BR-46 dan FR-47: persetujuan izin hanya membuat hari kerja terjadwal
+    // yang bukan hari libur, berlaku untuk semua jenis pengajuan.
+    makeSchedule($this->tenant, $this->member, '2026-11-03');
+
+    $leave = app(LeaveService::class)->submit($this->member, $this->tenant, [
+        'type' => 'izin',
+        'start_date' => '2026-11-02',
+        'end_date' => '2026-11-03',
+        'reason' => 'Urusan keluarga.',
+    ]);
+
+    app(LeaveService::class)->approve($leave, $this->owner);
+
+    $days = AttendanceDay::orderBy('work_date')->get(['work_date', 'status']);
+
+    expect($days)->toHaveCount(1)
+        ->and($days->first()->work_date->toDateString())->toBe('2026-11-03')
+        ->and($days->first()->status->value)->toBe('izin');
+});
+
+it('tidak membuat hari presensi izin pada hari libur', function () {
+    makeSchedule($this->tenant, $this->member, '2026-11-02');
+    \App\Models\Holiday::create([
+        'tenant_id' => $this->tenant->id,
+        'date' => '2026-11-02',
+        'name' => 'Hari Uji',
+    ]);
+
+    $leave = app(LeaveService::class)->submit($this->member, $this->tenant, [
+        'type' => 'izin',
+        'start_date' => '2026-11-02',
+        'end_date' => '2026-11-02',
+        'reason' => 'Urusan keluarga.',
+    ]);
+
+    app(LeaveService::class)->approve($leave, $this->owner);
+
+    expect(AttendanceDay::count())->toBe(0);
+});
+
 it('mengirim email status izin lewat antrean saat disetujui dan ditolak', function () {
     Mail::fake();
 

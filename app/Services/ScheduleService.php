@@ -63,41 +63,73 @@ class ScheduleService
         $counts = ['created' => 0, 'updated' => 0, 'skipped' => 0];
         $mode = ($data['mode'] ?? 'skip') === 'overwrite' ? 'overwrite' : 'skip';
 
-        DB::transaction(function () use ($tenant, $userIds, $start, $end, $weekdays, $payload, $mode, &$counts) {
-            $cursor = $start->copy();
+        // Semua pasangan (anggota, tanggal) dibangun lebih dulu, lalu jadwal
+        // yang sudah ada diambil dalam satu query. Penulisan berjalan massal:
+        // satu UPDATE berkelompok untuk penimpaan dan insertOrIgnore per
+        // kelompok untuk jadwal baru, bukan satu query per baris.
+        $dates = [];
+        $cursor = $start->copy();
 
-            while ($cursor->lte($end)) {
-                if (in_array($cursor->dayOfWeekIso, $weekdays, true)) {
-                    foreach ($userIds as $userId) {
-                        $existing = Schedule::withoutGlobalScopes()
-                            ->where('tenant_id', $tenant->id)
-                            ->where('user_id', $userId)
-                            ->where('work_date', $cursor->toDateString())
-                            ->first();
+        while ($cursor->lte($end)) {
+            if (in_array($cursor->dayOfWeekIso, $weekdays, true)) {
+                $dates[] = $cursor->toDateString();
+            }
 
-                        if ($existing) {
-                            if ($mode === 'skip') {
-                                $counts['skipped']++;
+            $cursor = $cursor->addDay();
+        }
 
-                                continue;
-                            }
+        if (empty($dates)) {
+            return $counts;
+        }
 
-                            $existing->update($payload);
+        DB::transaction(function () use ($tenant, $userIds, $dates, $payload, $mode, &$counts) {
+            $existing = Schedule::withoutGlobalScopes()
+                ->where('tenant_id', $tenant->id)
+                ->whereIn('user_id', $userIds)
+                ->whereIn('work_date', $dates)
+                ->get(['id', 'user_id', 'work_date'])
+                ->keyBy(fn (Schedule $schedule) => $schedule->user_id.'|'.$schedule->work_date->toDateString());
+
+            $existingIds = [];
+            $rows = [];
+            $timestamp = now();
+
+            foreach ($userIds as $userId) {
+                foreach ($dates as $date) {
+                    $current = $existing->get($userId.'|'.$date);
+
+                    if ($current !== null) {
+                        if ($mode === 'skip') {
+                            $counts['skipped']++;
+                        } else {
+                            $existingIds[] = $current->id;
                             $counts['updated']++;
-
-                            continue;
                         }
 
-                        Schedule::create(array_merge($payload, [
-                            'tenant_id' => $tenant->id,
-                            'user_id' => $userId,
-                            'work_date' => $cursor->toDateString(),
-                        ]));
-                        $counts['created']++;
+                        continue;
                     }
-                }
 
-                $cursor = $cursor->addDay();
+                    $rows[] = array_merge($payload, [
+                        'tenant_id' => $tenant->id,
+                        'user_id' => $userId,
+                        'work_date' => $date,
+                        'created_at' => $timestamp,
+                        'updated_at' => $timestamp,
+                    ]);
+                    $counts['created']++;
+                }
+            }
+
+            foreach (array_chunk($existingIds, 500) as $chunk) {
+                Schedule::withoutGlobalScopes()
+                    ->whereIn('id', $chunk)
+                    ->update(array_merge($payload, ['updated_at' => $timestamp]));
+            }
+
+            // Keunikan (tenant, anggota, tanggal) menahan tabrakan dengan
+            // penerapan yang berjalan bersamaan.
+            foreach (array_chunk($rows, 500) as $chunk) {
+                DB::table('schedules')->insertOrIgnore($chunk);
             }
         });
 

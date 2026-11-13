@@ -96,47 +96,85 @@ class LeaveService
                 'reviewed_at' => now(),
             ]);
 
-            $status = $leave->type->attendanceStatus();
-            $cursor = CarbonImmutable::parse($leave->start_date);
-            $end = CarbonImmutable::parse($leave->end_date);
-
-            while ($cursor->lte($end)) {
-                $date = $cursor->toDateString();
-                $schedule = $this->scheduleFor($leave->user_id, $date);
-                $isHoliday = $this->isHoliday($date);
-
-                if ($leave->type === LeaveType::Cuti && (! $schedule || $schedule->is_day_off || $isHoliday)) {
-                    $cursor = $cursor->addDay();
-
-                    continue;
-                }
-
-                $existing = AttendanceDay::where('user_id', $leave->user_id)
-                    ->where('work_date', $date)
-                    ->first();
-
-                if ($existing?->check_in_at) {
-                    $cursor = $cursor->addDay();
-
-                    continue;
-                }
-
-                AttendanceDay::updateOrCreate(
-                    ['user_id' => $leave->user_id, 'work_date' => $date],
-                    [
-                        'tenant_id' => $leave->tenant_id,
-                        'schedule_id' => $schedule?->id,
-                        'leave_request_id' => $leave->id,
-                        'status' => $status,
-                        'flags' => [],
-                    ],
-                );
-
-                $cursor = $cursor->addDay();
-            }
+            $this->createDaysFor($leave->refresh());
         });
 
         $this->notifyStatus($leave, 'Disetujui');
+    }
+
+    /**
+     * Buat hari presensi izin untuk seluruh rentang. Semua bahan diambil dalam
+     * tiga query, bukan empat query per hari (BR-46, FR-47: hanya hari kerja
+     * terjadwal yang bukan hari libur, untuk semua jenis izin).
+     */
+    protected function createDaysFor(LeaveRequest $leave): void
+    {
+        $start = CarbonImmutable::parse($leave->start_date);
+        $end = CarbonImmutable::parse($leave->end_date);
+
+        $schedules = Schedule::where('user_id', $leave->user_id)
+            ->whereBetween('work_date', [$start->toDateString(), $end->toDateString()])
+            ->where('is_day_off', false)
+            ->get(['id', 'user_id', 'work_date'])
+            ->keyBy(fn (Schedule $schedule) => $schedule->work_date->toDateString());
+
+        $holidays = Holiday::whereBetween('date', [$start->toDateString(), $end->toDateString()])
+            ->pluck('date')
+            ->map(fn ($date) => CarbonImmutable::parse($date)->toDateString())
+            ->all();
+
+        $existing = AttendanceDay::where('user_id', $leave->user_id)
+            ->whereBetween('work_date', [$start->toDateString(), $end->toDateString()])
+            ->get(['id', 'user_id', 'work_date', 'check_in_at'])
+            ->keyBy(fn (AttendanceDay $day) => $day->user_id.'|'.$day->work_date->toDateString());
+
+        $status = $leave->type->attendanceStatus();
+        $toCreate = [];
+        $toUpdate = [];
+        $timestamp = now();
+
+        foreach ($schedules as $date => $schedule) {
+            if (in_array($date, $holidays, true)) {
+                continue;
+            }
+
+            $day = $existing->get($leave->user_id.'|'.$date);
+
+            if ($day !== null) {
+                if ($day->check_in_at !== null) {
+                    continue;
+                }
+
+                $toUpdate[] = $day->id;
+
+                continue;
+            }
+
+            $toCreate[] = [
+                'tenant_id' => $leave->tenant_id,
+                'user_id' => $leave->user_id,
+                'work_date' => $date,
+                'schedule_id' => $schedule->id,
+                'leave_request_id' => $leave->id,
+                'status' => $status->value,
+                'flags' => json_encode([]),
+                'created_at' => $timestamp,
+                'updated_at' => $timestamp,
+            ];
+        }
+
+        foreach (array_chunk($toUpdate, 500) as $chunk) {
+            AttendanceDay::whereIn('id', $chunk)->update([
+                'leave_request_id' => $leave->id,
+                'status' => $status->value,
+                'flags' => json_encode([]),
+                'updated_at' => $timestamp,
+            ]);
+        }
+
+        foreach (array_chunk($toCreate, 500) as $chunk) {
+            DB::table('attendance_days')->insertOrIgnore($chunk);
+        }
     }
 
     public function reject(LeaveRequest $leave, User $reviewer, ?string $note = null): void
@@ -239,15 +277,5 @@ class LeaveService
             ->filter(fn (Schedule $schedule) => ! in_array($schedule->work_date->toDateString(), $holidays, true))
             ->map(fn (Schedule $schedule) => CarbonImmutable::parse($schedule->work_date))
             ->values();
-    }
-
-    protected function scheduleFor(int $userId, string $date): ?Schedule
-    {
-        return Schedule::where('user_id', $userId)->where('work_date', $date)->first();
-    }
-
-    protected function isHoliday(string $date): bool
-    {
-        return Holiday::where('date', $date)->exists();
     }
 }
