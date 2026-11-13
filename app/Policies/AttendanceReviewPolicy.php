@@ -37,6 +37,11 @@ class AttendanceReviewPolicy
 
     public function decide(User $user, AttendanceReview $review): bool
     {
+        // Pengaju tinjauan tidak memutus tinjauannya sendiri.
+        if ($review->user_id === $user->id) {
+            return false;
+        }
+
         return $this->view($user, $review) && $review->status === ReviewStatus::Pending;
     }
 

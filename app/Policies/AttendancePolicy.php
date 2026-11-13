@@ -52,6 +52,11 @@ class AttendancePolicy
             return false;
         }
 
+        // Pemilik hari presensi tidak meninjau kejadian miliknya sendiri.
+        if ($day->user_id === $user->id) {
+            return false;
+        }
+
         if ($actor->role->canManageMembers()) {
             return true;
         }

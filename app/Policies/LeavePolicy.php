@@ -50,6 +50,12 @@ class LeavePolicy
             return false;
         }
 
+        // Pemohon tidak dapat menyetujui pengajuan miliknya sendiri, meski
+        // perannya berwenang meninjau.
+        if ($leave->user_id === $user->id) {
+            return false;
+        }
+
         if ($actor->role->canManageMembers()) {
             return true;
         }

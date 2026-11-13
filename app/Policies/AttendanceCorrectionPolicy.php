@@ -34,6 +34,11 @@ class AttendanceCorrectionPolicy
 
     public function decide(User $user, AttendanceCorrection $correction): bool
     {
+        // Pengaju koreksi tidak memutus koreksinya sendiri.
+        if ($correction->user_id === $user->id) {
+            return false;
+        }
+
         return $this->view($user, $correction) && $correction->status === CorrectionStatus::Pending;
     }
 
