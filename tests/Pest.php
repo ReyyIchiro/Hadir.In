@@ -26,6 +26,13 @@ pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
     ->in('Feature', 'Unit');
 
+afterEach(function () {
+    // Waktu beku dan konteks tenant tidak boleh bocor ke tes berikutnya.
+    Carbon\Carbon::setTestNow();
+    Carbon\CarbonImmutable::setTestNow();
+    app(App\Support\TenantContext::class)->clear();
+});
+
 /*
 |--------------------------------------------------------------------------
 | Helpers

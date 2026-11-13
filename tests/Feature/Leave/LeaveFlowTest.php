@@ -8,6 +8,11 @@ use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 beforeEach(function () {
+    // Tanggal pengajuan di tes ini tertulis langsung. Bekukan waktu pada
+    // hari sebelum tanggal terawal agar validasi BR-44 tetap lolos setiap
+    // hari kalender, bukan hanya pada hari tes ditulis.
+    freezeAt('2026-11-02 00:55:00');
+
     Storage::fake('local');
     $this->tenant = makeTenant();
     $this->location = makeLocation($this->tenant);
@@ -33,7 +38,7 @@ it('mengajukan izin dengan status menunggu', function () {
 it('menolak rentang lebih dari 30 hari', function () {
     expect(fn () => app(LeaveService::class)->submit($this->member, $this->tenant, [
         'type' => 'izin',
-        'start_date' => '2026-11-01',
+        'start_date' => '2026-11-02',
         'end_date' => '2026-12-15',
         'reason' => 'Panjang.',
     ]))->toThrow(ValidationException::class);
