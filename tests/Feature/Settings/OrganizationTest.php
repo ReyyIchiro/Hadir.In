@@ -257,6 +257,34 @@ it('menolak menetapkan peran pemilik lewat formulir anggota', function () {
     expect(Membership::where('user_id', $this->member->id)->firstOrFail()->role->value)->toBe('member');
 });
 
+it('menolak lokasi utama dari organisasi lain pada ubah anggota', function () {
+    $foreignTenant = makeTenant(['slug' => 'organisasi-lain']);
+    $foreignLocation = makeLocation($foreignTenant);
+
+    $this->actingAs($this->owner);
+
+    Livewire\Livewire::test(Edit::class, ['membership' => Membership::where('user_id', $this->member->id)->firstOrFail()])
+        ->set('primary_location_id', (string) $foreignLocation->id)
+        ->call('save')
+        ->assertHasErrors('primary_location_id');
+
+    expect(Membership::where('user_id', $this->member->id)->firstOrFail()->primary_location_id)->toBeNull();
+});
+
+it('menolak divisi dari organisasi lain pada ubah anggota', function () {
+    $foreignTenant = makeTenant(['slug' => 'organisasi-divisi-lain']);
+    $foreignDivision = makeDivision($foreignTenant);
+
+    $this->actingAs($this->owner);
+
+    Livewire\Livewire::test(Edit::class, ['membership' => Membership::where('user_id', $this->member->id)->firstOrFail()])
+        ->set('division_id', (string) $foreignDivision->id)
+        ->call('save')
+        ->assertHasErrors('division_id');
+
+    expect(Membership::where('user_id', $this->member->id)->firstOrFail()->division_id)->toBeNull();
+});
+
 it('menolak admin mengubah pemilik', function () {
     $admin = makeUser();
     makeMembership($this->tenant, $admin, 'admin');

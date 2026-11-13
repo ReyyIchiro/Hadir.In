@@ -9,6 +9,7 @@ use App\Models\Location;
 use App\Services\InvitationService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
@@ -37,14 +38,18 @@ class Invite extends Component
     {
         Gate::authorize('manage-members', $this->membership());
 
+        $tenantId = $this->tenant()->id;
+
         $this->validate([
             'email' => ['required', 'email', 'max:190'],
             'role' => ['required', 'in:admin,reviewer,member'],
-            'primary_location_id' => ['nullable', 'integer'],
-            'division_id' => ['nullable', 'integer'],
+            'primary_location_id' => ['nullable', Rule::exists('locations', 'id')->where('tenant_id', $tenantId)],
+            'division_id' => ['nullable', Rule::exists('divisions', 'id')->where('tenant_id', $tenantId)],
         ], [
             'email.required' => 'Alamat email wajib diisi.',
             'email.email' => 'Format email tidak sah.',
+            'primary_location_id.exists' => 'Lokasi utama tidak ditemukan di organisasi ini.',
+            'division_id.exists' => 'Divisi tidak ditemukan di organisasi ini.',
         ]);
 
         $actor = $this->membership();

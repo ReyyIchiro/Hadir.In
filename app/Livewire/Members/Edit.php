@@ -9,6 +9,7 @@ use App\Models\Location;
 use App\Models\Membership;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 class Edit extends Component
@@ -44,13 +45,17 @@ class Edit extends Component
     {
         Gate::authorize('update', $this->member);
 
+        $tenantId = $this->member->tenant_id;
+
         $this->validate([
             'role' => ['required', 'in:admin,reviewer,member'],
-            'primary_location_id' => ['nullable', 'integer'],
-            'division_id' => ['nullable', 'integer'],
+            'primary_location_id' => ['nullable', Rule::exists('locations', 'id')->where('tenant_id', $tenantId)],
+            'division_id' => ['nullable', Rule::exists('divisions', 'id')->where('tenant_id', $tenantId)],
             'is_active' => ['boolean'],
         ], [
             'role.required' => 'Peran wajib dipilih.',
+            'primary_location_id.exists' => 'Lokasi utama tidak ditemukan di organisasi ini.',
+            'division_id.exists' => 'Divisi tidak ditemukan di organisasi ini.',
         ]);
 
         if ($this->role === MembershipRole::Reviewer->value && $this->primary_location_id === '') {

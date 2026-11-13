@@ -29,6 +29,20 @@ it('membuat undangan dengan token sekali pakai', function () {
         ->and($invitation->expires_at->isAfter(now()->addDays(6)))->toBeTrue();
 });
 
+it('menolak undangan dengan lokasi utama dari organisasi lain', function () {
+    $tenant = makeTenant();
+    $owner = makeUser();
+    makeMembership($tenant, $owner, 'owner');
+    setTenant($tenant);
+
+    $foreignLocation = makeLocation(makeTenant(['slug' => 'organisasi-lokasi-lain']));
+
+    expect(fn () => inviteMember($tenant, $owner, [
+        'role' => 'reviewer',
+        'primary_location_id' => $foreignLocation->id,
+    ]))->toThrow(ValidationException::class);
+});
+
 it('mengirim email undangan lewat antrean', function () {
     Mail::fake();
 

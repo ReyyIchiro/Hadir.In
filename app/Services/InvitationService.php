@@ -4,7 +4,9 @@ namespace App\Services;
 
 use App\Enums\MembershipRole;
 use App\Mail\SendInvitationEmail;
+use App\Models\Division;
 use App\Models\Invitation;
+use App\Models\Location;
 use App\Models\Membership;
 use App\Models\Tenant;
 use App\Models\User;
@@ -36,6 +38,18 @@ class InvitationService
 
         if ($role === MembershipRole::Reviewer && empty($data['primary_location_id'])) {
             throw ValidationException::withMessages(['primary_location_id' => 'Peninjau wajib memiliki lokasi utama.']);
+        }
+
+        // Komponen sudah memvalidasi lewat Rule::exists. Pemeriksaan kedua
+        // menjaga pemanggil lain dari id lintas organisasi (BR-80).
+        if (! empty($data['primary_location_id'])
+            && ! Location::whereKey($data['primary_location_id'])->exists()) {
+            throw ValidationException::withMessages(['primary_location_id' => 'Lokasi utama tidak ditemukan di organisasi ini.']);
+        }
+
+        if (! empty($data['division_id'])
+            && ! Division::whereKey($data['division_id'])->exists()) {
+            throw ValidationException::withMessages(['division_id' => 'Divisi tidak ditemukan di organisasi ini.']);
         }
 
         $email = mb_strtolower(trim($data['email']));
