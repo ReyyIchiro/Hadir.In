@@ -27,8 +27,12 @@ return new class extends Migration
             $table->string('selfie_path')->nullable();
             $table->string('reason', 80)->nullable();
             $table->json('flags')->nullable();
-            $table->char('attempt_uuid', 36)->unique();
+            $table->char('attempt_uuid', 36);
             $table->timestamps();
+
+            // Unik per anggota per organisasi: uuid adalah konsep idempotensi
+            // milik satu pengguna, bukan pengenal lintas pengguna.
+            $table->unique(['tenant_id', 'user_id', 'attempt_uuid']);
 
             $table->index(['tenant_id', 'user_id', 'work_date']);
             $table->index(['tenant_id', 'occurred_at']);

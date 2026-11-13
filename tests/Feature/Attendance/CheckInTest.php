@@ -267,3 +267,68 @@ it('mengembalikan hasil yang sama untuk attempt uuid yang sama', function () {
     expect($second->event->id)->toBe($first->event->id)
         ->and(AttendanceEvent::count())->toBe(1);
 });
+
+it('menerima attempt uuid yang sama dari organisasi berbeda', function () {
+    // Index keunikan attempt_uuid bersifat per organisasi. Uuid yang sudah
+    // dipakai tenant A tidak boleh membuat percobaan tenant B gagal 500.
+    freezeAt('2026-10-30 00:55:00');
+
+    $uuid = (string) Str::uuid();
+
+    $this->service->checkIn($this->user, $this->tenant, [
+        'latitude' => -6.2000000,
+        'longitude' => 106.8166667,
+        'accuracy' => 10,
+        'attempt_uuid' => $uuid,
+    ], selfieFile());
+
+    $otherTenant = makeTenant(['slug' => 'organisasi-uuid-lain']);
+    $otherUser = makeUser();
+    makeMembership($otherTenant, $otherUser, 'member');
+    makeSchedule($otherTenant, $otherUser, '2026-10-30');
+    setTenant($otherTenant);
+
+    $result = app(AttendanceService::class)->checkIn($otherUser, $otherTenant, [
+        'latitude' => -6.2000000,
+        'longitude' => 106.8166667,
+        'accuracy' => 10,
+        'attempt_uuid' => $uuid,
+    ], selfieFile());
+
+    expect($result->accepted)->toBeTrue()
+        ->and($result->event->attempt_uuid)->toBe($uuid)
+        ->and(AttendanceEvent::withoutGlobalScopes()->count())->toBe(2);
+});
+
+it('tidak membaca kejadian anggota lain lewat attempt uuid', function () {
+    freezeAt('2026-10-30 00:55:00');
+
+    $firstUser = $this->user;
+    $secondUser = makeUser();
+    makeMembership($this->tenant, $secondUser, 'member', ['primary_location_id' => $this->location->id]);
+    makeSchedule($this->tenant, $secondUser, '2026-10-30');
+
+    $uuid = (string) Str::uuid();
+
+    $first = $this->service->checkIn($firstUser, $this->tenant, [
+        'latitude' => -6.2000000,
+        'longitude' => 106.8166667,
+        'accuracy' => 10,
+        'attempt_uuid' => $uuid,
+    ], selfieFile());
+
+    setTenant($this->tenant);
+
+    // Uuid milik anggota pertama tidak dipakai ulang untuk anggota kedua:
+    // keduanya membuat kejadian sendiri, bukan saling mengembalikan hasil.
+    $second = $this->service->checkIn($secondUser, $this->tenant, [
+        'latitude' => -6.2000000,
+        'longitude' => 106.8166667,
+        'accuracy' => 10,
+        'attempt_uuid' => $uuid,
+    ], selfieFile());
+
+    expect($second->accepted)->toBeTrue()
+        ->and($second->event->id)->not->toBe($first->event->id)
+        ->and(AttendanceEvent::count())->toBe(2);
+});

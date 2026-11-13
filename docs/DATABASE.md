@@ -388,7 +388,8 @@ Menyimpan setiap percobaan absen. Kejadian ditolak tidak memiliki hari presensi.
 
 Indeks:
 
-- `attendance_events_attempt_uuid_unique` unik pada `attempt_uuid`.
+- `attendance_events_tenant_user_attempt_uuid_unique` unik pada
+  `(tenant_id, user_id, attempt_uuid)`.
 - `attendance_events_tenant_user_date_index` pada `(tenant_id, user_id, work_date)`.
 - `attendance_events_tenant_occurred_index` pada `(tenant_id, occurred_at)`.
 - `attendance_events_tenant_location_index` pada `(tenant_id, location_id)`.

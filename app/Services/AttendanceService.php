@@ -38,7 +38,7 @@ class AttendanceService
         $workDate = $now->toDateString();
         $attemptUuid = $this->attemptUuid($input);
 
-        if ($existing = $this->existingAttempt($attemptUuid)) {
+        if ($existing = $this->existingAttempt($user, $attemptUuid)) {
             return $this->duplicateResult($existing);
         }
 
@@ -195,7 +195,7 @@ class AttendanceService
         $workDate = $now->toDateString();
         $attemptUuid = $this->attemptUuid($input);
 
-        if ($existing = $this->existingAttempt($attemptUuid)) {
+        if ($existing = $this->existingAttempt($user, $attemptUuid)) {
             return $this->duplicateResult($existing);
         }
 
@@ -520,9 +520,13 @@ class AttendanceService
         return (string) Str::uuid();
     }
 
-    protected function existingAttempt(string $uuid): ?AttendanceEvent
+    protected function existingAttempt(User $user, string $uuid): ?AttendanceEvent
     {
-        return AttendanceEvent::where('attempt_uuid', $uuid)->first();
+        // Cakup pengguna: uuid yang dikirim klien tidak boleh membaca kejadian
+        // milik anggota lain, bahkan pada organisasi yang sama.
+        return AttendanceEvent::where('user_id', $user->id)
+            ->where('attempt_uuid', $uuid)
+            ->first();
     }
 
     protected function duplicateResult(AttendanceEvent $event): AttendanceResult
