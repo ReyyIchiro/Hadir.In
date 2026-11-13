@@ -1,8 +1,10 @@
 <?php
 
+use App\Mail\SendLeaveStatusEmail;
 use App\Models\AttendanceDay;
 use App\Services\AttendanceService;
 use App\Services\LeaveService;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -182,6 +184,42 @@ it('mengizinkan peninjau membatalkan izin yang disetujui', function () {
     app(LeaveService::class)->cancel($leave->refresh(), $this->owner);
 
     expect($leave->refresh()->status->value)->toBe('cancelled');
+});
+
+it('mengirim email status izin lewat antrean saat disetujui dan ditolak', function () {
+    Mail::fake();
+
+    makeSchedule($this->tenant, $this->member, '2026-11-02');
+
+    $leave = app(LeaveService::class)->submit($this->member, $this->tenant, [
+        'type' => 'izin',
+        'start_date' => '2026-11-02',
+        'end_date' => '2026-11-02',
+        'reason' => 'Urusan keluarga.',
+    ]);
+
+    app(LeaveService::class)->approve($leave, $this->owner, 'Setuju.');
+
+    Mail::assertQueued(SendLeaveStatusEmail::class, 1);
+
+    Mail::assertQueued(SendLeaveStatusEmail::class, function (SendLeaveStatusEmail $mail) use ($leave) {
+        return $mail->hasTo($this->member->email)
+            && $mail->statusLabel === 'Disetujui'
+            && $mail->typeName === 'Izin'
+            && $mail->reviewNote === 'Setuju.';
+    });
+
+    // Pengajuan baru ditolak, email kedua dikirim dengan status Ditolak.
+    $second = app(LeaveService::class)->submit($this->member, $this->tenant, [
+        'type' => 'sakit',
+        'start_date' => '2026-11-03',
+        'end_date' => '2026-11-03',
+        'reason' => 'Sakit.',
+    ]);
+
+    app(LeaveService::class)->reject($second, $this->owner);
+
+    Mail::assertQueued(SendLeaveStatusEmail::class, 2);
 });
 
 it('menampilkan halaman pengajuan izin untuk anggota', function () {

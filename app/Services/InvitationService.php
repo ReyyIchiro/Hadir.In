@@ -3,11 +3,14 @@
 namespace App\Services;
 
 use App\Enums\MembershipRole;
+use App\Mail\SendInvitationEmail;
 use App\Models\Invitation;
 use App\Models\Membership;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Support\Waktu;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -64,6 +67,14 @@ class InvitationService
             'invited_by_id' => $inviter->id,
             'expires_at' => now()->addDays(7),
         ]);
+
+        Mail::to($email)->queue(new SendInvitationEmail(
+            $tenant->name,
+            $role->label(),
+            $inviter->name,
+            Waktu::dateLong($invitation->expires_at->toDateString()),
+            route('invitations.show', $token),
+        ));
 
         return [$invitation, $token];
     }

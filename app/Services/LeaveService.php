@@ -4,15 +4,18 @@ namespace App\Services;
 
 use App\Enums\LeaveStatus;
 use App\Enums\LeaveType;
+use App\Mail\SendLeaveStatusEmail;
 use App\Models\AttendanceDay;
 use App\Models\Holiday;
 use App\Models\LeaveRequest;
 use App\Models\Schedule;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Support\Waktu;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 class LeaveService
@@ -132,6 +135,8 @@ class LeaveService
                 $cursor = $cursor->addDay();
             }
         });
+
+        $this->notifyStatus($leave, 'Disetujui');
     }
 
     public function reject(LeaveRequest $leave, User $reviewer, ?string $note = null): void
@@ -146,6 +151,27 @@ class LeaveService
             'review_note' => $note,
             'reviewed_at' => now(),
         ]);
+
+        $this->notifyStatus($leave, 'Ditolak');
+    }
+
+    protected function notifyStatus(LeaveRequest $leave, string $statusLabel): void
+    {
+        $leave->loadMissing(['user', 'tenant']);
+
+        $range = $leave->start_date->eq($leave->end_date)
+            ? Waktu::dateLong($leave->start_date->toDateString())
+            : Waktu::dateLong($leave->start_date->toDateString()).' sampai '.Waktu::dateLong($leave->end_date->toDateString());
+
+        Mail::to($leave->user->email)->queue(new SendLeaveStatusEmail(
+            $leave->user->name,
+            $leave->tenant->name,
+            $leave->type->label(),
+            $range,
+            $statusLabel,
+            $leave->review_note,
+            route('app.leave.show', $leave->id),
+        ));
     }
 
     public function cancel(LeaveRequest $leave, User $actor): void

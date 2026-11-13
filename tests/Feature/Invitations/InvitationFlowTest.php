@@ -1,9 +1,11 @@
 <?php
 
 use App\Enums\MembershipRole;
+use App\Mail\SendInvitationEmail;
 use App\Models\Invitation;
 use App\Models\User;
 use App\Services\InvitationService;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 function inviteMember($tenant, $inviter, array $overrides = []): array
@@ -25,6 +27,26 @@ it('membuat undangan dengan token sekali pakai', function () {
     expect($invitation->email)->toBe('undangan@hadir.test')
         ->and($invitation->token_hash)->toBe(hash('sha256', $token))
         ->and($invitation->expires_at->isAfter(now()->addDays(6)))->toBeTrue();
+});
+
+it('mengirim email undangan lewat antrean', function () {
+    Mail::fake();
+
+    $tenant = makeTenant(['name' => 'Organisasi Uji Email']);
+    $owner = makeUser(['name' => 'Pengundang Uji']);
+    makeMembership($tenant, $owner, 'owner');
+    setTenant($tenant);
+
+    [$invitation] = inviteMember($tenant, $owner);
+
+    Mail::assertQueued(SendInvitationEmail::class, 1);
+
+    Mail::assertQueued(SendInvitationEmail::class, function (SendInvitationEmail $mail) use ($invitation) {
+        return $mail->hasTo($invitation->email)
+            && $mail->tenantName === 'Organisasi Uji Email'
+            && $mail->roleName === 'Anggota'
+            && str_contains($mail->invitationUrl, '/undangan/');
+    });
 });
 
 it('menampilkan halaman undangan untuk token yang sah', function () {
