@@ -4,6 +4,7 @@ namespace App\Livewire\Settings;
 
 use App\Livewire\Concerns\WithTenant;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Livewire\Component;
@@ -15,6 +16,8 @@ class Profile extends Component
     public string $name = '';
 
     public string $email = '';
+
+    public string $original_email = '';
 
     public string $current_password = '';
 
@@ -32,26 +35,41 @@ class Profile extends Component
 
         $this->name = $user->name;
         $this->email = $user->email;
+        $this->original_email = $user->email;
     }
 
     public function save(): void
     {
         $user = $this->currentUser();
 
+        // Perubahan email dianggap aksi sensitif: wajib konfirmasi kata sandi
+        // saat ini supaya sesi yang dibajak tidak bisa mengalihkan akun.
+        $emailChanged = mb_strtolower(trim($this->email)) !== mb_strtolower($this->original_email);
+
         $this->validate([
             'name' => ['required', 'string', 'max:120'],
             'email' => ['required', 'email', 'max:190', 'unique:users,email,'.$user->id],
+            'current_password' => [$emailChanged ? 'required' : 'nullable', 'string'],
         ], [
             'name.required' => 'Nama wajib diisi.',
             'email.required' => 'Email wajib diisi.',
             'email.unique' => 'Email ini sudah dipakai akun lain.',
+            'current_password.required' => 'Kata sandi saat ini wajib diisi untuk mengubah email.',
         ]);
+
+        if ($emailChanged && ! Hash::check($this->current_password, $user->password)) {
+            $this->addError('current_password', 'Kata sandi saat ini tidak cocok.');
+
+            return;
+        }
 
         $user->update([
             'name' => $this->name,
             'email' => $this->email,
         ]);
 
+        $this->original_email = $user->email;
+        $this->reset('current_password');
         $this->flash = 'Profil diperbarui.';
     }
 
@@ -75,6 +93,9 @@ class Profile extends Component
         }
 
         $user->update(['password' => $this->password]);
+
+        // Sesi lain diputus supaya perangkat yang tidak dikenal tetap keluar.
+        Auth::logoutOtherDevices($this->password);
 
         $this->reset('current_password', 'password', 'password_confirmation');
         $this->passwordFlash = 'Kata sandi diperbarui.';

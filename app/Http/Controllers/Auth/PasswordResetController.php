@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\Rules\Password as PasswordRule;
 use Illuminate\View\View;
@@ -25,11 +26,13 @@ class PasswordResetController extends Controller
             ['email' => mb_strtolower(trim($request->input('email')))]
         );
 
-        if ($status === Password::RESET_LINK_SENT) {
+        // Email yang tidak terdaftar mendapat jawaban yang sama dengan email
+        // yang terdaftar supaya pendaftar tidak bisa dipetakan dari respons.
+        if ($status === Password::RESET_LINK_SENT || $status === Password::INVALID_USER) {
             return back()->with('status', 'Tautan atur ulang sudah dikirim bila email terdaftar.');
         }
 
-        return back()->withErrors(['email' => 'Tautan tidak dapat dikirim. Periksa alamat email Anda.']);
+        return back()->withErrors(['email' => 'Tautan tidak dapat dikirim sekarang. Tunggu sebentar lalu coba lagi.']);
     }
 
     public function edit(string $token): View
@@ -50,6 +53,10 @@ class PasswordResetController extends Controller
             function (User $user, string $password) {
                 $user->password = $password;
                 $user->save();
+
+                // Sesi lain diputus supaya kata sandi baru benar-benar berlaku
+                // pada perangkat yang lama sampai masuk ulang.
+                Auth::logoutOtherDevices($password);
             }
         );
 

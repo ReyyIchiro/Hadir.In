@@ -18,6 +18,15 @@
                     <div class="sm:col-span-2">
                         <x-field name="email" label="Email" type="email" wire:model="email" required />
                     </div>
+                    <div class="sm:col-span-2" x-show="$wire.email.toLowerCase() !== $wire.original_email.toLowerCase()">
+                        <x-password-field
+                            name="current_password"
+                            label="Kata sandi saat ini untuk konfirmasi"
+                            wire:model="current_password"
+                            autocomplete="current-password"
+                        />
+                        <p class="mt-1 text-[12px] text-muted">Perubahan email memerlukan konfirmasi kata sandi saat ini.</p>
+                    </div>
                     <div class="sm:col-span-2">
                         <button type="submit" class="btn btn-primary" wire:loading.attr="disabled" wire:target="save">
                             <span wire:loading.remove wire:target="save">Simpan profil</span>
