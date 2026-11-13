@@ -108,6 +108,24 @@ it('mengekspor csv dengan pemisah titik koma dan bom utf8', function () {
     expect($response->headers->get('content-disposition'))->toContain('laporan-presensi-2026-10.csv');
 });
 
+it('membuat halaman baris laporan tanpa mengubah ringkasan', function () {
+    makeSchedule($this->tenant, $this->member, '2026-10-01');
+    makeSchedule($this->tenant, $this->member, '2026-10-02');
+    makeSchedule($this->tenant, $this->member, '2026-10-03');
+
+    $page1 = app(ReportService::class)->monthData($this->tenant, '2026-10', page: 1, perPage: 2);
+    $page2 = app(ReportService::class)->monthData($this->tenant, '2026-10', page: 2, perPage: 2);
+    $all = app(ReportService::class)->monthData($this->tenant, '2026-10');
+
+    expect($page1['rows'])->toHaveCount(2)
+        ->and($page1['total'])->toBe(3)
+        ->and($page2['rows'])->toHaveCount(1)
+        ->and($all['rows'])->toHaveCount(3)
+        // Ringkasan selalu menghitung seluruh bulan, bukan halaman aktif.
+        ->and($page1['summary']['scheduled'])->toBe(3)
+        ->and($all['summary']['scheduled'])->toBe(3);
+});
+
 it('menetralisir sel csv yang diawali karakter formula', function () {
     $formula = makeUser(['name' => '=HYPERLINK("https://contoh.test")', 'email' => 'formula@hadir.test']);
     makeMembership($this->tenant, $formula, 'member', ['primary_location_id' => $this->location->id]);

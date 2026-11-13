@@ -22,6 +22,8 @@ class Index extends Component
 
     public string $locationId = '';
 
+    public int $page = 1;
+
     public function mount(): void
     {
         Gate::authorize('view-reports', $this->membership());
@@ -35,9 +37,31 @@ class Index extends Component
 
     public function updatedMonth(string $value): void
     {
+        $this->page = 1;
+
         if (! $this->isValidMonth($value)) {
             $this->month = Waktu::now($this->tenant())->format('Y-m');
         }
+    }
+
+    public function updatedDivisionId(): void
+    {
+        $this->page = 1;
+    }
+
+    public function updatedLocationId(): void
+    {
+        $this->page = 1;
+    }
+
+    public function previousPage(): void
+    {
+        $this->page = max(1, $this->page - 1);
+    }
+
+    public function nextPage(): void
+    {
+        $this->page++;
     }
 
     public function render(ReportService $reports): View
@@ -51,12 +75,22 @@ class Index extends Component
             $this->divisionId !== '' ? (int) $this->divisionId : null,
             $this->locationId !== '' ? (int) $this->locationId : null,
             $membership,
+            $this->page,
         );
 
-        $start = CarbonImmutable::createFromFormat('Y-m', $this->month, $tenant->timezone);
+        $start = CarbonImmutable::createFromFormat('Y-m', $this->month, $tenant->timezone)->startOfMonth();
+        $total = $data['total'];
+        $totalPages = max(1, (int) ceil($total / 25));
+
+        // Jeda aman: halaman bisa tersisa besar setelah filter menyempit.
+        if ($this->page > $totalPages) {
+            $this->page = $totalPages;
+        }
 
         return view('livewire.reports.index', [
             'rows' => $data['rows'],
+            'total' => $total,
+            'totalPages' => $totalPages,
             'summary' => $data['summary'],
             'start' => $start,
             'monthLabel' => Waktu::monthLabel($start->month).' '.$start->year,

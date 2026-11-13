@@ -37,7 +37,7 @@
 
         <div class="flex flex-wrap items-center justify-between gap-2 border-b border-divider px-4 py-2.5 md:px-6">
             <p class="text-[13px] text-muted">Periode {{ $monthLabel }}</p>
-            <p class="text-[12px] text-muted">{{ count($rows) }} baris</p>
+            <p class="text-[12px] text-muted">{{ $total }} baris</p>
         </div>
 
         @if(($summary['not_finalized'] ?? 0) > 0)
@@ -99,6 +99,20 @@
                     </tbody>
                 </table>
             </div>
+
+            @if($totalPages > 1)
+                <div class="flex items-center justify-between gap-3 border-t border-divider px-4 py-3 md:px-6">
+                    <p class="text-[12px] text-muted">Halaman {{ $page }} dari {{ $totalPages }}</p>
+                    <div class="flex gap-2">
+                        <button type="button" class="btn btn-secondary btn-sm" wire:click="previousPage" @disabled($page <= 1)>
+                            Halaman sebelumnya
+                        </button>
+                        <button type="button" class="btn btn-secondary btn-sm" wire:click="nextPage" @disabled($page >= $totalPages)>
+                            Halaman berikutnya
+                        </button>
+                    </div>
+                </div>
+            @endif
         @endif
     </x-panel>
 </div>

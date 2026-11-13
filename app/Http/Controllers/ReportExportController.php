@@ -50,17 +50,12 @@ class ReportExportController extends Controller
             abort_unless(Location::whereKey($validated['location_id'])->exists(), 422);
         }
 
-        $data = $reports->monthData(
-            $tenant,
-            $validated['month'],
-            ! empty($validated['division_id']) ? (int) $validated['division_id'] : null,
-            ! empty($validated['location_id']) ? (int) $validated['location_id'] : null,
-            $membership,
-        );
+        $divisionId = ! empty($validated['division_id']) ? (int) $validated['division_id'] : null;
+        $locationId = ! empty($validated['location_id']) ? (int) $validated['location_id'] : null;
 
         $filename = 'laporan-presensi-'.$validated['month'].'.csv';
 
-        return response()->streamDownload(function () use ($data) {
+        return response()->streamDownload(function () use ($reports, $tenant, $validated, $divisionId, $locationId, $membership) {
             $handle = fopen('php://output', 'w');
 
             // UTF-8 BOM so Excel on Windows reads Indonesian characters correctly.
@@ -81,7 +76,9 @@ class ReportExportController extends Controller
                 'Tanda',
             ], ';', '"', '');
 
-            foreach ($data['rows'] as $row) {
+            // Baris mengalir dari generator per baris; bulan panjang tidak
+            // pernah dihidrasi penuh ke memori (ARCHITECTURE 14).
+            foreach ($reports->monthRows($tenant, $validated['month'], $divisionId, $locationId, $membership) as $row) {
                 fputcsv($handle, [
                     $row['date'],
                     $row['day_name'],
