@@ -10,6 +10,7 @@ use App\Models\Membership;
 use App\Models\Schedule;
 use App\Models\TenantSetting;
 use App\Services\ScheduleService;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
@@ -283,6 +284,15 @@ it('menolak divisi dari organisasi lain pada ubah anggota', function () {
         ->assertHasErrors('division_id');
 
     expect(Membership::where('user_id', $this->member->id)->firstOrFail()->division_id)->toBeNull();
+});
+
+it('menolak lokasi milik organisasi lain pada policy', function () {
+    $foreignLocation = makeLocation(makeTenant(['slug' => 'organisasi-policy-lain']));
+
+    $this->actingAs($this->owner);
+
+    expect(Gate::allows('update', $foreignLocation))->toBeFalse()
+        ->and(Gate::allows('view', $foreignLocation))->toBeFalse();
 });
 
 it('menolak admin mengubah pemilik', function () {
