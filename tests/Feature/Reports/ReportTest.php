@@ -8,6 +8,11 @@ use App\Services\ReportService;
 use Illuminate\Support\Facades\Storage;
 
 beforeEach(function () {
+    // Bulan laporan tertulis 2026-10. Bekukan waktu di bulan itu supaya
+    // rentang 24 bulan dan batas "belum berjalan" tetap konsisten setiap
+    // hari kalender.
+    freezeAt('2026-10-05 01:00:00');
+
     Storage::fake('local');
     $this->tenant = makeTenant();
     $this->location = makeLocation($this->tenant);
@@ -101,6 +106,28 @@ it('mengekspor csv dengan pemisah titik koma dan bom utf8', function () {
         ->and($content)->toContain('Sari Dewi');
 
     expect($response->headers->get('content-disposition'))->toContain('laporan-presensi-2026-10.csv');
+});
+
+it('menetralisir sel csv yang diawali karakter formula', function () {
+    $formula = makeUser(['name' => '=HYPERLINK("https://contoh.test")', 'email' => 'formula@hadir.test']);
+    makeMembership($this->tenant, $formula, 'member', ['primary_location_id' => $this->location->id]);
+
+    makeSchedule($this->tenant, $this->member, '2026-10-01');
+    makeSchedule($this->tenant, $formula, '2026-10-01');
+
+    $response = $this->actingAs($this->owner)
+        ->get('/app/laporan/ekspor?month=2026-10');
+
+    $content = $response->streamedContent();
+
+    // Awalan kutip tunggal membuat Excel membaca sel sebagai teks, bukan formula.
+    expect($content)->toContain("'=HYPERLINK");
+});
+
+it('menolak bulan laporan di masa depan', function () {
+    $this->actingAs($this->owner)
+        ->get('/app/laporan/ekspor?month=2030-01')
+        ->assertStatus(422);
 });
 
 it('menolak ekspor tanpa format bulan yang sah', function () {

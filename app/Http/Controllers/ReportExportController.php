@@ -34,10 +34,13 @@ class ReportExportController extends Controller
             'month.regex' => 'Format bulan harus YYYY-MM.',
         ]);
 
-        $start = CarbonImmutable::createFromFormat('Y-m', $validated['month'], $tenant->timezone);
+        // createFromFormat menyisakan jam saat ini; bulan selalu dinormalisasi
+        // ke awal bulan supaya batas bawah dan atas tidak tergantung jam ekspor.
+        $start = CarbonImmutable::createFromFormat('Y-m', $validated['month'], $tenant->timezone)->startOfMonth();
         $earliest = Waktu::now($tenant)->startOfMonth()->subMonths(23);
 
         abort_if($start->lt($earliest), 422, 'Bulan di luar rentang 24 bulan terakhir.');
+        abort_if($start->gt(Waktu::now($tenant)->startOfMonth()), 422, 'Bulan tidak boleh di masa depan.');
 
         if (! empty($validated['division_id'])) {
             abort_unless(Division::whereKey($validated['division_id'])->exists(), 422);
@@ -82,15 +85,15 @@ class ReportExportController extends Controller
                 fputcsv($handle, [
                     $row['date'],
                     $row['day_name'],
-                    $row['name'],
-                    $row['email'],
-                    $row['division'],
-                    $row['location'],
+                    self::safeCell($row['name']),
+                    self::safeCell($row['email']),
+                    self::safeCell($row['division']),
+                    self::safeCell($row['location']),
                     $row['schedule'],
                     $row['check_in'] ? Waktu::time($row['check_in']) : '',
                     $row['check_out'] ? Waktu::time($row['check_out']) : '',
                     $row['status_label'],
-                    (string) ($row['note'] ?? ''),
+                    self::safeCell((string) ($row['note'] ?? '')),
                     implode(', ', array_map(fn (string $flag) => Flags::label($flag), $row['flags'])),
                 ], ';', '"', '');
             }
@@ -100,5 +103,18 @@ class ReportExportController extends Controller
             'Content-Type' => 'text/csv; charset=UTF-8',
             'Cache-Control' => 'private, no-store, max-age=0',
         ]);
+    }
+
+    /**
+     * Sel yang diawali karakter formula dieksekusi Excel saat berkas dibuka.
+     * Awali tanda kutip tunggal supaya teks tetap terbaca sebagai teks.
+     */
+    protected static function safeCell(string $value): string
+    {
+        if ($value === '' || ! in_array($value[0], ['=', '+', '-', '@', "\t"], true)) {
+            return $value;
+        }
+
+        return "'".$value;
     }
 }
