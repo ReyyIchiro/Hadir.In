@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\TenantStatus;
 use App\Models\Tenant;
 use App\Services\FinalizationService;
 use Illuminate\Console\Command;
@@ -14,7 +15,7 @@ class FinalizeAttendance extends Command
 
     public function handle(FinalizationService $finalization): int
     {
-        $query = Tenant::query();
+        $query = Tenant::query()->where('status', TenantStatus::Active->value);
 
         if ($this->option('tenant')) {
             $query->whereKey($this->option('tenant'));

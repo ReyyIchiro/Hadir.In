@@ -113,3 +113,21 @@ it('menyediakan perintah artisan finalisasi', function () {
 
     expect(AttendanceDay::count())->toBe(1);
 });
+
+it('melewati organisasi yang ditangguhkan saat finalisasi', function () {
+    makeSchedule($this->tenant, $this->user, '2026-10-29');
+
+    $suspended = makeTenant(['status' => 'suspended', 'slug' => 'uji-finalisasi-tangguhkan']);
+    $suspendedUser = makeUser();
+    makeMembership($suspended, $suspendedUser, 'member');
+    makeSchedule($suspended, $suspendedUser, '2026-10-29');
+
+    freezeAt('2026-10-30 02:00:00');
+
+    $this->artisan('attendance:finalize')->assertSuccessful();
+
+    // Hanya organisasi aktif yang menghasilkan hari absen; organisasi
+    // ditangguhkan tidak diproses (TESTING.md 5.6).
+    expect(AttendanceDay::withoutGlobalScopes()->count())->toBe(1)
+        ->and(AttendanceDay::withoutGlobalScopes()->first()->tenant_id)->toBe($this->tenant->id);
+});

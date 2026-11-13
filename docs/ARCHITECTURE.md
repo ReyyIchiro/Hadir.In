@@ -421,14 +421,21 @@ Pembatalan:
 
 ## 12. Antrean dan penjadwalan
 
-Antrean memakai driver database. Pekerjaan:
+Antrean memakai driver database. Pekerjaan antrean berupa Mailable yang
+dikirim lewat `Mail::to(...)->queue()`:
 
 | Pekerjaan | Pemicu | Sifat |
 | --- | --- | --- |
 | `SendInvitationEmail` | undangan dibuat | idempoten, aman diulang |
 | `SendLeaveStatusEmail` | izin disetujui/ditolak | opsional |
-| `PurgeExpiredSelfies` | harian 02.00 | idempoten |
-| `FinalizeAttendance` | setiap jam | idempoten |
+
+Pembersihan dan finalisasi berjalan sebagai command terjadwal, bukan job
+antrean, karena keduanya idempoten dan tidak perlu paralel pada v1:
+
+| Command | Pemicu | Sifat |
+| --- | --- | --- |
+| `attendance:finalize` | setiap jam | idempoten, hanya organisasi aktif |
+| `selfies:purge` | harian 02.00 | idempoten, hanya menghapus berkas selfie |
 
 Penjadwalan di `routes/console.php`:
 

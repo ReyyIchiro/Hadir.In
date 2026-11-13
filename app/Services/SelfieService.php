@@ -79,11 +79,15 @@ class SelfieService
         return $path;
     }
 
-    public function delete(?string $path): void
+    public function delete(?string $path): bool
     {
-        if ($path) {
-            Storage::disk('local')->delete($path);
+        if (! $path) {
+            return false;
         }
+
+        // Hasil diteruskan ke pemanggil: bila disk gagal menghapus, path tidak
+        // boleh dikosongkan supaya percobaan berikutnya tetap menemukan berkas.
+        return Storage::disk('local')->delete($path);
     }
 
     /**

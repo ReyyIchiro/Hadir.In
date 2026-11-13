@@ -27,7 +27,13 @@ class PurgeSelfies extends Command
                     ->where('occurred_at', '<', now()->subDays($days))
                     ->chunkById(200, function ($events) use ($selfies, &$purged) {
                         foreach ($events as $event) {
-                            $selfies->delete($event->selfie_path);
+                            // Path dikosongkan hanya bila berkas benar-benar
+                            // hilang; kegagalan disk dibiarkan untuk percobaan
+                            // berikutnya agar tidak ada berkas yatim.
+                            if (! $selfies->delete($event->selfie_path)) {
+                                continue;
+                            }
+
                             $event->forceFill(['selfie_path' => null])->save();
                             $purged++;
                         }
