@@ -17,7 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // Diterapkan pada semua respons web, termasuk halaman galat, supaya
         // satu rute baru tidak pernah lolos tanpa header keamanan.
-        $middleware->web(append: [SecurityHeaders::class]);
+        $middleware->append(SecurityHeaders::class);
 
         // Produksi selalu berada di belakang Nginx (OPERATIONS.md bagian 5).
         // Tanpa ini, $request->secure() membaca koneksi Nginx ke PHP-FPM yang

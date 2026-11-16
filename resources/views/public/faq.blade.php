@@ -29,7 +29,7 @@
     {{-- FAQPage memakai $groups yang sama dengan yang dirender, jadi data
          terstruktur tidak pernah berbeda dari isi halaman. --}}
     @push('structured-data')
-        <script type="application/ld+json">{!! json_encode([
+        <script type="application/ld+json"{!! csp_script_nonce() !!}>{!! json_encode([
             '@context' => 'https://schema.org',
             '@type' => 'FAQPage',
             'inLanguage' => 'id',

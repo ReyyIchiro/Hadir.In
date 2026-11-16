@@ -7,6 +7,7 @@
     @include('partials.brand')
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? 'Hadir.In' }}</title>
+    @livewireStyles
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-paper text-text antialiased">
@@ -65,5 +66,7 @@
     </div>
 
     <x-help-widget />
+
+    @livewireScripts(['nonce' => config('csp_nonce', '')])
 </body>
 </html>

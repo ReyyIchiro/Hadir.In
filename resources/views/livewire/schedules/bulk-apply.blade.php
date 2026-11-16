@@ -33,8 +33,8 @@
             <x-panel title="Rentang dan pola">
                 <div class="panel-pad space-y-4">
                     <div class="grid gap-3 sm:grid-cols-2">
-                        <x-field name="startDate" label="Tanggal mulai" type="date" wire:model.live="startDate" required />
-                        <x-field name="endDate" label="Tanggal selesai" type="date" wire:model.live="endDate" required help="Maksimal 92 hari." />
+                        <x-field name="startDate" label="Tanggal mulai" type="date" wire:model.live="startDate" required :help="$startDate ? \App\Support\Waktu::dateLong($startDate) : null" />
+                        <x-field name="endDate" label="Tanggal selesai" type="date" wire:model.live="endDate" required :help="$endDate ? \App\Support\Waktu::dateLong($endDate) : 'Maksimal 92 hari.'" />
                     </div>
 
                     <fieldset>

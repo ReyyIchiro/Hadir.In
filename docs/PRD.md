@@ -170,6 +170,10 @@ anggota lain.
 Organisasi yang ditangguhkan tidak dapat diakses anggota. Pemilik melihat halaman
 status penangguhan. Tidak ada penghapusan organisasi sendiri di v1.
 
+Formulir pendaftaran memakai honeypot: satu kolom tersembunyi bernama
+`website` yang wajib kosong. Formulir yang mengisinya ditolak sebagai upaya
+bot, di samping pembatasan laju lima percobaan per menit per email dan IP.
+
 ### 7.2 Undangan anggota
 
 1. Admin atau pemilik membuka `/app/anggota/undang`.
@@ -592,6 +596,7 @@ kata kerja. Tidak ada tanda seru. Tidak ada emoji. Tidak ada em dash.
 
 - [x] Pendaftaran membuat organisasi menunggu aktivasi, pemilik, dan pengaturan
       bawaan dalam satu transaksi.
+- [x] Pendaftaran yang mengisi honeypot `website` ditolak tanpa membuat data.
 - [x] Pemilik dapat masuk saat menunggu dan hanya melihat halaman status.
 - [x] Anggota tidak dapat masuk saat organisasi belum aktif.
 - [x] Organisasi yang ditangguhkan memblokir akses anggota.

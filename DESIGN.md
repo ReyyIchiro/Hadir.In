@@ -11,7 +11,7 @@ colors:
   muted: "#666B61"
   secondary: "#4A5047"
   rule: "#D9D5C9"
-  rule-strong: "#B9B4A6"
+  rule-strong: "#7A776F"
   seal: "#B23A26"
   seal-deep: "#8F2D1D"
   seal-tint: "#F3DED7"
@@ -373,7 +373,7 @@ dokumen lama yang berdebu.
 | `--color-muted` | `#666B61` | Teks sekunder, label, keterangan |
 | `--color-secondary` | `#4A5047` | Teks pendukung yang perlu lebih tegas |
 | `--color-rule` | `#D9D5C9` | Garis pemisah dan border |
-| `--color-rule-strong` | `#B9B4A6` | Garis struktural, border input |
+| `--color-rule-strong` | `#7A776F` | Garis struktural, border input. Digelapkan dari `#B9B4A6` agar kontras batas komponen minimal 3:1 di kedua tema (NFR-04). Hanya untuk bingkai dan garis, bukan warna teks: di atas kertas kontrasnya 4.00:1, di bawah ambang teks 4.5:1 |
 | `--color-seal` | `#B23A26` | Tindakan utama, tanda penting |
 | `--color-seal-deep` | `#8F2D1D` | Hover dan pressed |
 | `--color-seal-tint` | `#F3DED7` | Latar lembut untuk cap |
@@ -413,7 +413,7 @@ Kontras terukur di mode terang:
 | `--color-muted` | `#A3A89C` |
 | `--color-secondary` | `#C4C8BC` |
 | `--color-rule` | `#2C332C` |
-| `--color-rule-strong` | `#3E463E` |
+| `--color-rule-strong` | `#7A776F` |
 | `--color-seal` | `#E07054` |
 | `--color-seal-deep` | `#F08A70` |
 | `--color-seal-tint` | `#3A211B` |
@@ -428,6 +428,12 @@ Kontras terukur di mode terang:
 
 Kontras mode gelap: teks 15.17:1 pada paper, muted 7.63:1, cap 5.84:1, hadir
 8.51:1, terlambat 8.80:1, izin 7.85:1, sakit 7.55:1, absen 7.65:1.
+
+Mode awal: tanpa pilihan tersimpan di `localStorage` (`hadir-theme`), tema
+mengikuti `prefers-color-scheme` peramban. Skrip penentu tema berjalan inline
+sebelum CSS dimuat (partial `partials/theme.blade.php`), sehingga tidak ada
+kilau latar terang pada peramban mode gelap. Tombol tema selalu mengubah dan
+menyimpan pilihan eksplisit, yang menang atas `prefers-color-scheme`.
 
 ### Aturan pemakaian warna
 

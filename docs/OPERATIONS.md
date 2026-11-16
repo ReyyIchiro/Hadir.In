@@ -314,6 +314,18 @@ Jadwal aplikasi:
 - `selfies:purge` setiap hari pukul 02.00 UTC.
 - `model:prune` setiap hari pukul 03.00 UTC untuk undangan kedaluwarsa.
 
+Jadwal backup di server (cron, bukan jadwal aplikasi). Jalankan setelah
+`selfies:purge` supaya arsip selfie berisi berkas yang sudah dibersihkan:
+
+```cron
+15 2 * * * /usr/local/bin/hadir-backup-db.sh >> /var/www/hadir/backup/db.log 2>&1
+45 2 * * * /usr/local/bin/hadir-backup-selfies.sh >> /var/www/hadir/backup/selfies.log 2>&1
+```
+
+Skrip di bagian 10 disimpan sebagai `/usr/local/bin/hadir-backup-db.sh` dan
+`/usr/local/bin/hadir-backup-selfies.sh` dengan kepemilikan root dan mode 700.
+Nilai `DB_PASSWORD` dibaca dari `/var/www/hadir/shared/.env` di dalam skrip.
+
 Pastikan hanya satu cron scheduler berjalan. Jangan menjalankan `schedule:run`
 di dua server tanpa `onOneServer()` dan cache bersama.
 
@@ -482,6 +494,16 @@ Log rotasi ditangani `LOG_CHANNEL=daily` dan logrotate untuk Nginx.
 2. Periksa CSP bila ada.
 3. Peta tetap harus menampilkan alamat dan jarak sebagai teks.
 4. Jangan menambahkan kunci API pihak ketiga tanpa ADR.
+
+### 12.8 Skrip diblokir CSP di konsol peramban
+
+1. Gejala: konsol menampilkan `Refused to execute inline script` atau
+   `Refused to load the script` karena Content-Security-Policy.
+2. Skrip inline baru wajib menerima nonce: tambahkan
+   `<script{!! csp_script_nonce() !!}>`, bukan `<script>` polos.
+3. Skrip dari paket yang menyisipkan tag sendiri (misalnya widget pihak ketiga)
+   tidak bisa menerima nonce. Jangan pulas jaring pengaman `'unsafe-inline'`;
+   catat kebutuhan di `docs/DECISIONS.md` dan cari alternatif.
 
 ## 13. Pemeliharaan rutin
 

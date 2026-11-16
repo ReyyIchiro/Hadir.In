@@ -3,7 +3,7 @@
     tidak ada kedipan tema yang salah. Semua layout memakai partial ini.
 --}}
 <meta name="theme-color" content="#f5f2ea" data-theme-color>
-<script>
+<script{!! csp_script_nonce() !!}>
     (function () {
         var stored = localStorage.getItem('hadir-theme');
         var dark = stored === 'dark'

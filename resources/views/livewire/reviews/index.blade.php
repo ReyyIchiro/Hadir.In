@@ -40,7 +40,7 @@
                         </thead>
                         <tbody>
                             @foreach($reviews as $review)
-                                <tr>
+                                <tr wire:key="review-{{ $review->id }}">
                                     <td class="cell-grow">{{ $review->user?->name ?? '--' }}</td>
                                     <td class="cell-date cell-fit">{{ $review->event ? \App\Support\Waktu::dateShort($review->event->work_date) : '--' }}</td>
                                     <td class="cell-fit">{{ $review->event?->type->label() ?? '--' }}</td>
@@ -80,7 +80,7 @@
                         </thead>
                         <tbody>
                             @foreach($corrections as $correction)
-                                <tr>
+                                <tr wire:key="correction-{{ $correction->id }}">
                                     <td class="cell-grow">{{ $correction->user?->name ?? '--' }}</td>
                                     <td class="cell-date cell-fit">{{ $correction->attendanceDay ? \App\Support\Waktu::dateShort($correction->attendanceDay->work_date) : '--' }}</td>
                                     <td class="max-w-[260px] truncate text-muted">{{ $correction->reason }}</td>
@@ -120,7 +120,7 @@
                         </thead>
                         <tbody>
                             @foreach($leaves as $leave)
-                                <tr>
+                                <tr wire:key="leave-{{ $leave->id }}">
                                     <td class="cell-grow">{{ $leave->user?->name ?? '--' }}</td>
                                     <td class="cell-fit">{{ $leave->type->label() }}</td>
                                     <td class="cell-date cell-fit">{{ \App\Support\Waktu::dateShort($leave->start_date) }}</td>

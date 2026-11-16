@@ -4,7 +4,7 @@
 $orgName = config('app.name', 'Hadir.In');
 $orgUrl = url('/');
 ?>
-<script type="application/ld+json">{!! json_encode([
+<script type="application/ld+json"{!! csp_script_nonce() !!}>{!! json_encode([
     '@context' => 'https://schema.org',
     '@type' => 'Organization',
     'name' => $orgName,
@@ -13,7 +13,7 @@ $orgUrl = url('/');
     'description' => $description ?? 'Presensi dengan waktu server, lokasi, dan selfie untuk kantor, toko, dan tim lapangan di Indonesia.',
     'areaServed' => 'ID',
 ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
-<script type="application/ld+json">{!! json_encode([
+<script type="application/ld+json"{!! csp_script_nonce() !!}>{!! json_encode([
     '@context' => 'https://schema.org',
     '@type' => 'WebSite',
     'name' => $orgName,

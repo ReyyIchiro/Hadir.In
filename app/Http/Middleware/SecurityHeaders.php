@@ -4,22 +4,32 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Vite;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Header keamanan untuk setiap respons HTML.
  *
- * CSP masih mengizinkan 'unsafe-inline' pada script dan style karena tema
- * dijalankan sebagai skrip inline sebelum CSS dimuat (partials/theme.blade.php)
- * dan Livewire/Alpine menyisipkan atribut style. Selama itu belum diganti nonce,
- * CSP di sini berfungsi menutup frame, plugin, dan sumber daya asing, bukan
- * menggantikan perlindungan XSS yang sudah ada di lapisan Blade dan policy.
- * 'unsafe-eval' sengaja tidak diizinkan: Livewire 3 tidak membutuhkannya.
+ * CSP script-src menggabungkan nonce dengan 'unsafe-inline' dan 'strict-dynamic'.
+ * Peramban modern yang mendukung strict-dynamic mengabaikan 'self' dan
+ * 'unsafe-inline', sehingga hanya skrip dengan nonce (tema, Vite, Livewire)
+ * dan skrip yang dimuat oleh skrip tepercaya yang berjalan. Blok tema inline
+ * menerima nonce lewat csp_script_nonce() dan Vite/Livewire menerimanya lewat
+ * konfigurasi csp_nonce. Style tetap 'unsafe-inline' karena Livewire/Alpine
+ * menyisipkan atribut style. 'unsafe-eval' sengaja tidak diizinkan: Livewire 3
+ * tidak membutuhkannya.
  */
 class SecurityHeaders
 {
     public function handle(Request $request, Closure $next): Response
     {
+        // Nonce per permintaan, dibagikan ke partial tema dan Vite. Vite
+        // menyimpannya untuk tag skrip; Livewire membaca Vite::cspNonce()
+        // pada @livewireScripts.
+        $nonce = base64_encode(random_bytes(16));
+        config(['csp_nonce' => $nonce]);
+        Vite::useCspNonce($nonce);
+
         $response = $next($request);
 
         $response->headers->set('X-Content-Type-Options', 'nosniff');
@@ -28,9 +38,11 @@ class SecurityHeaders
         $response->headers->set('Permissions-Policy', 'camera=(self), geolocation=(self), microphone=()');
         $response->headers->set('Cross-Origin-Opener-Policy', 'same-origin');
 
+        $nonce = "'nonce-".config('csp_nonce', '')."'";
+
         $response->headers->set('Content-Security-Policy', implode('; ', [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline'",
+            "script-src {$nonce} 'strict-dynamic' 'unsafe-inline' https:",
             "style-src 'self' 'unsafe-inline'",
             "img-src 'self' data: blob: https://tile.openstreetmap.org https://*.tile.openstreetmap.org",
             "font-src 'self' data:",

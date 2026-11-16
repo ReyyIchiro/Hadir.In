@@ -6,7 +6,7 @@
     <meta name="robots" content="noindex">
     <title>@yield('heading') - Hadir.In</title>
     @vite(['resources/css/app.css'])
-    <script>
+    <script{!! csp_script_nonce() !!}>
         (function () {
             var t = localStorage.getItem('hadir-theme');
             if (t === 'dark' || t === 'light') {

@@ -8,6 +8,7 @@
     <title>{{ $title ?? 'Hadir.In' }}</title>
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
     <meta name="description" content="{{ $description ?? 'Presensi dengan waktu server, lokasi, dan selfie untuk kantor, toko, dan tim lapangan di Indonesia.' }}">
+    @livewireStyles
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('structured-data')
 </head>
@@ -85,5 +86,7 @@
     </footer>
 
     <x-help-widget />
+
+    @livewireScripts(['nonce' => config('csp_nonce', '')])
 </body>
 </html>

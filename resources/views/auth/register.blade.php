@@ -25,6 +25,12 @@
             <x-password-field name="password" label="Kata sandi" required autocomplete="new-password" help="Minimal 8 karakter, mengandung huruf dan angka." />
             <x-password-field name="password_confirmation" label="Ulangi kata sandi" required autocomplete="new-password" />
 
+            {{-- Honeypot: harus tetap kosong. Disembunyikan dari layar dan pembaca layar. --}}
+            <div aria-hidden="true" class="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+                <label for="website">Website</label>
+                <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
+            </div>
+
             <button type="submit" class="btn btn-primary w-full">Buat organisasi</button>
         </form>
 

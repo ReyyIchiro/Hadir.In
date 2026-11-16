@@ -14,9 +14,9 @@
 
     <x-panel class="mt-5">
         <div class="grid gap-3 border-b border-divider px-4 py-3 sm:grid-cols-3 md:px-6">
-            <x-select name="month" label="Bulan" wire:model.live="month" :options="$monthOptions" />
-            <x-select name="divisionId" label="Divisi" wire:model.live="divisionId" placeholder="Semua divisi" :options="$divisions->pluck('name', 'id')->all()" />
-            <x-select name="locationId" label="Lokasi utama" wire:model.live="locationId" placeholder="Semua lokasi" :options="$locations->pluck('name', 'id')->all()" />
+            <x-select name="month" label="Bulan" wire:model.live.debounce.150ms="month" :options="$monthOptions" />
+            <x-select name="divisionId" label="Divisi" wire:model.live.debounce.150ms="divisionId" placeholder="Semua divisi" :options="$divisions->pluck('name', 'id')->all()" />
+            <x-select name="locationId" label="Lokasi utama" wire:model.live.debounce.150ms="locationId" placeholder="Semua lokasi" :options="$locations->pluck('name', 'id')->all()" />
         </div>
 
         <div class="grid grid-cols-2 border-b border-divider sm:grid-cols-3 lg:grid-cols-6">

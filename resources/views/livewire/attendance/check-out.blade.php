@@ -51,7 +51,7 @@
             await window.hadirLoadMap();
 
             if (! this.map) {
-                this.map = window.L.map(this.$refs.map).setView([lat, lng], 16);
+                this.map = window.L.map(this.$refs.map, { keyboard: false }).setView([lat, lng], 16);
                 window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     maxZoom: 19,
                     attribution: '&copy; OpenStreetMap'
@@ -67,23 +67,27 @@
             this.locations.forEach((loc) => {
                 window.L.circle([loc.lat, loc.lng], {
                     radius: loc.radius,
-                    color: '#A63A2B',
+                    color: '#b23a26',
                     weight: 1.5,
-                    fillOpacity: 0.06,
+                    fillOpacity: 0.08,
                 }).addTo(this.map);
             });
         }
     }"
-    x-init="capture()"
     class="grid gap-4 lg:grid-cols-[1.1fr_1fr]"
 >
     <x-panel title="Lokasi Anda" description="Pastikan posisi sudah sesuai sebelum absen pulang.">
         <div class="panel-pad">
-            <div x-show="status === 'ready'" wire:ignore x-ref="map" class="h-[280px] w-full rounded-[4px] border border-divider bg-tint" role="img" aria-label="Peta lokasi kerja"></div>
+            <div x-show="status === 'ready'" wire:ignore x-ref="map" class="h-[320px] w-full rounded-[4px] border border-divider bg-tint" role="img" aria-label="Peta lokasi kerja"></div>
 
-            <div x-show="status !== 'ready'" class="flex h-[280px] w-full flex-col items-center justify-center gap-2 rounded-[4px] border border-divider bg-tint px-6 text-center">
+            {{-- Izin lokasi diminta setelah pengguna menekan tombol, bukan
+                 langsung saat halaman dibuka (DESIGN.md bagian Peta). --}}
+            <div x-show="status !== 'ready'" class="flex h-[320px] w-full flex-col items-center justify-center gap-3 rounded-[4px] border border-divider bg-tint px-6 text-center">
                 <x-icon name="map-pin" :size="22" class="text-muted" />
                 <p class="text-[13px] leading-5 text-muted" x-text="status === 'locating' ? 'Menunggu izin dan titik GPS.' : 'Peta muncul setelah lokasi terbaca.'"></p>
+                <button type="button" class="btn btn-primary btn-sm" x-show="status !== 'locating'" @click="capture()">
+                    <span x-text="status === 'error' ? 'Coba lagi' : 'Aktifkan lokasi'"></span>
+                </button>
             </div>
 
             <p class="mt-3 text-[13px] leading-5 text-muted" x-text="message"></p>

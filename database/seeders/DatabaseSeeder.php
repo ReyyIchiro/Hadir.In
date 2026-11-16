@@ -14,6 +14,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Data demo hanya untuk lingkungan non-produksi: produksi tidak boleh
+        // memiliki akun contoh dengan kata sandi yang diketahui umum.
+        if (app()->environment('production')) {
+            $this->command?->info('Lingkungan produksi: seeder demo dilewati.');
+
+            return;
+        }
+
         $this->call(DemoSeeder::class);
     }
 }

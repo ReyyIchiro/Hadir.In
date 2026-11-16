@@ -98,7 +98,7 @@
                                 <li>
                                     <form method="POST" action="{{ route('app.tenants.switch', $option->tenant) }}">
                                         @csrf
-                                        <button type="submit" class="w-full truncate rounded-[2px] px-1 py-1 text-left text-[12px] text-muted hover:bg-tint hover:text-text">
+                                        <button type="submit" class="w-full truncate rounded-[2px] px-2 py-3 text-left text-[12px] text-muted hover:bg-tint hover:text-text">
                                             {{ $option->tenant->name }}
                                         </button>
                                     </form>
@@ -190,6 +190,6 @@
 
     <x-confirm-dialog />
 
-    @livewireScripts
+    @livewireScripts(['nonce' => config('csp_nonce', '')])
 </body>
 </html>

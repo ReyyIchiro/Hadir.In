@@ -22,17 +22,25 @@
                     { value: 'light', label: 'Terang', note: 'Latar kertas, teks gelap.' },
                     { value: 'dark', label: 'Gelap', note: 'Latar gelap, teks terang.' }
                 ]" :key="option.value">
-                    <button
-                        type="button"
-                        @click="choose(option.value)"
-                        role="radio"
-                        :aria-checked="theme === option.value ? 'true' : 'false'"
-                        class="rounded-[4px] border p-4 text-left transition-colors"
-                        :class="theme === option.value ? 'border-stamp bg-stamp-tint/40' : 'border-divider bg-card hover:border-muted'"
-                    >
-                        <span class="block font-display text-[14px] font-semibold" x-text="option.label"></span>
-                        <span class="mt-1 block text-[12px] text-muted" x-text="option.note"></span>
-                    </button>
+                    <div class="flex flex-col gap-1">
+                        <input
+                            type="radio"
+                            name="hadir-theme"
+                            :value="option.value"
+                            x-model="theme"
+                            @change="choose(option.value)"
+                            class="sr-only peer"
+                        />
+                        <button
+                            type="button"
+                            @click.prevent="choose(option.value)"
+                            class="peer-checked:border-stamp peer-checked:bg-stamp-tint/40 rounded-[4px] border p-4 text-left transition-colors peer-focus:ring-2 peer-focus:ring-focus peer-focus:ring-offset-1"
+                            :class="theme === option.value ? 'border-stamp bg-stamp-tint/40' : 'border-divider bg-card hover:border-muted'"
+                        >
+                            <span class="block font-display text-[14px] font-semibold" x-text="option.label"></span>
+                            <span class="mt-1 block text-[12px] text-muted" x-text="option.note"></span>
+                        </button>
+                    </div>
                 </template>
             </div>
             <p class="mt-4 text-[12px] leading-5 text-muted">

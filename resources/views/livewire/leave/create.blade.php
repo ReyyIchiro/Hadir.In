@@ -15,8 +15,8 @@
                 <x-select name="type" label="Jenis" wire:model.live="type" :options="$types" required help="Cuti hanya dapat diajukan pada hari kerja terjadwal." />
 
                 <div class="grid gap-3 sm:grid-cols-2">
-                    <x-field name="startDate" label="Tanggal mulai" type="date" wire:model="startDate" required />
-                    <x-field name="endDate" label="Tanggal selesai" type="date" wire:model="endDate" required help="Maksimal 30 hari." />
+                    <x-field name="startDate" label="Tanggal mulai" type="date" wire:model="startDate" required :help="$startDate ? \App\Support\Waktu::dateLong($startDate) : null" />
+                    <x-field name="endDate" label="Tanggal selesai" type="date" wire:model="endDate" required :help="$endDate ? \App\Support\Waktu::dateLong($endDate) : 'Maksimal 30 hari.'" />
                 </div>
 
                 <x-field name="reason" label="Alasan" type="textarea" rows="4" wire:model="reason" required help="Tuliskan alasan singkat dan jelas." />

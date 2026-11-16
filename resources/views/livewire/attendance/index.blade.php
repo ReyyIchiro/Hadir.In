@@ -21,9 +21,9 @@
     @if($canReview && $view === 'team')
         <div class="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <x-field name="date" label="Tanggal" type="date" wire:model.live="date" :help="$date ? \App\Support\Waktu::dateLong($date) : null" />
-            <x-select name="locationFilter" label="Lokasi" wire:model.live="locationFilter" placeholder="Semua lokasi" :options="$locations->pluck('name', 'id')->all()" />
-            <x-select name="divisionFilter" label="Divisi" wire:model.live="divisionFilter" placeholder="Semua divisi" :options="$divisions->pluck('name', 'id')->all()" />
-            <x-select name="statusFilter" label="Status" wire:model.live="statusFilter" placeholder="Semua status" :options="$statuses" />
+            <x-select name="locationFilter" label="Lokasi" wire:model.live.debounce.150ms="locationFilter" placeholder="Semua lokasi" :options="$locations->pluck('name', 'id')->all()" />
+            <x-select name="divisionFilter" label="Divisi" wire:model.live.debounce.150ms="divisionFilter" placeholder="Semua divisi" :options="$divisions->pluck('name', 'id')->all()" />
+            <x-select name="statusFilter" label="Status" wire:model.live.debounce.150ms="statusFilter" placeholder="Semua status" :options="$statuses" />
         </div>
 
         <x-panel class="mt-4">

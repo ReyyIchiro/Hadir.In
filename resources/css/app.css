@@ -24,7 +24,7 @@
     --color-secondary: #4a5047;
     --color-divider: #d9d5c9;
     --color-rule: #d9d5c9;
-    --color-rule-strong: #b9b4a6;
+    --color-rule-strong: #7a776f;
     --color-stamp: #b23a26;
     --color-seal: #b23a26;
     --color-stamp-deep: #8f2d1d;
@@ -67,7 +67,7 @@
         --color-secondary: #c4c8bc;
         --color-divider: #2c332c;
         --color-rule: #2c332c;
-        --color-rule-strong: #3e463e;
+        --color-rule-strong: #7a776f;
         --color-stamp: #e07054;
         --color-seal: #e07054;
         --color-stamp-deep: #f08a70;
@@ -982,6 +982,13 @@
         text-decoration: none;
     }
 
+    @media (max-width: 1023px) {
+        .nav-link {
+            padding: 0.75rem;
+            min-height: 44px;
+        }
+    }
+
     .nav-link:hover {
         background: var(--color-tint);
         color: var(--color-text);
@@ -1510,6 +1517,7 @@
             font-size: 1.5rem;
         }
 
+        .btn,
         .btn-sm {
             min-height: 44px;
         }

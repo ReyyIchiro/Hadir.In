@@ -27,9 +27,13 @@ class RegisterController extends Controller
             'password' => ['required', 'confirmed', Password::min(8)->letters()->numbers()],
             'organization' => ['required', 'string', 'max:120'],
             'timezone' => ['required', 'in:Asia/Jakarta,Asia/Makassar,Asia/Jayapura'],
+            // Honeypot: kolom tersembunyi untuk manusia. Bot yang mengisinya
+            // diblokir tanpa memberi tahu bahwa ini penangkal bot.
+            'website' => ['prohibited'],
         ], [
             'email.unique' => 'Email ini sudah terdaftar. Masuk dengan akun tersebut.',
             'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
+            'website.prohibited' => 'Pendaftaran tidak dapat diproses.',
         ]);
 
         $tenant = $this->tenants->register(

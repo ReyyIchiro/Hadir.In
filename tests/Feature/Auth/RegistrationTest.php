@@ -56,6 +56,22 @@ it('menolak pendaftaran tanpa nama organisasi', function () {
     expect(Tenant::count())->toBe(0);
 });
 
+it('menolak pendaftaran yang mengisi honeypot', function () {
+    $response = $this->from('/daftar')->post('/daftar', [
+        'name' => 'Bot Sam',
+        'email' => 'bot@hadir.test',
+        'password' => 'rahasia123',
+        'password_confirmation' => 'rahasia123',
+        'organization' => 'Toko Bot',
+        'timezone' => 'Asia/Jakarta',
+        'website' => 'https://spam.example',
+    ]);
+
+    $response->assertSessionHasErrors('website');
+    expect(Tenant::count())->toBe(0)
+        ->and(User::where('email', 'bot@hadir.test')->exists())->toBeFalse();
+});
+
 it('menolak zona waktu di luar daftar yang didukung', function () {
     $response = $this->from('/daftar')->post('/daftar', [
         'name' => 'Rani Prameswari',

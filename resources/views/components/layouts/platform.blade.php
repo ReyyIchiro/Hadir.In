@@ -8,6 +8,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="robots" content="noindex">
     <title>{{ $title ?? 'Platform Hadir.In' }}</title>
+    @livewireStyles
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-paper text-text antialiased">
@@ -37,5 +38,7 @@
     </main>
 
     <x-confirm-dialog />
+
+    @livewireScripts(['nonce' => config('csp_nonce', '')])
 </body>
 </html>

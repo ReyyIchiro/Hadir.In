@@ -15,8 +15,8 @@ use App\Models\TenantSetting;
 use App\Support\Flags;
 use App\Support\Waktu;
 use Carbon\CarbonImmutable;
-use Illuminate\Support\Collection;
 use Generator;
+use Illuminate\Support\Collection;
 
 class ReportService
 {
@@ -236,8 +236,8 @@ class ReportService
      * bila $summary diberikan, menghitung ringkasan sekaligus tanpa lintasan
      * kedua.
      *
-     * @param array<string, mixed> $materials
-     * @param array<string, int>|null $summary
+     * @param  array<string, mixed>  $materials
+     * @param  array<string, int>|null  $summary
      * @return Generator<int, array<string, mixed>>
      */
     protected function walkRows(array $materials, ?array &$summary): Generator

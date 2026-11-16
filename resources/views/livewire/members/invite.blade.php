@@ -18,11 +18,21 @@
     @if($inviteLink)
         <x-panel class="mt-4" title="Tautan undangan" description="Salin dan kirim melalui email atau pesan internal.">
             <div class="panel-pad">
-                <div class="flex flex-col gap-2 sm:flex-row">
+                <div class="flex flex-col gap-2 sm:flex-row" x-data="{ copied: false }">
                     <input type="text" readonly value="{{ $inviteLink }}" class="field-input font-mono text-[12px]" aria-label="Tautan undangan">
-                    <button type="button" class="btn btn-secondary btn-sm shrink-0" onclick="navigator.clipboard.writeText('{{ $inviteLink }}'); this.textContent='Tersalin'">Salin</button>
+                    {{-- Penyalinan lewat window.copyText (ada penanganan kegagalan
+                         di app.js), bukan onclick mentah tanpa perhitungan galat. --}}
+                    <button
+                        type="button"
+                        class="btn btn-secondary btn-sm shrink-0"
+                        x-on:click="copied = await window.copyText('{{ $inviteLink }}')"
+                        aria-live="polite"
+                    >
+                        <span x-text="copied ? 'Tersalin' : 'Salin'">Salin</span>
+                    </button>
                 </div>
-                <p class="mt-2 text-[12px] text-muted">Tautan ini hanya ditampilkan sekali. Bila hilang, buat undangan baru.</p>
+                <p class="mt-2 text-[12px] text-muted" x-show="copied === false" aria-hidden="true">Tautan ini hanya ditampilkan sekali. Bila hilang, buat undangan baru.</p>
+                <p class="mt-2 text-[12px] text-muted" x-show="copied === true" x-cloak>Tautan tersalin. Kirim melalui email atau pesan internal.</p>
             </div>
         </x-panel>
     @endif

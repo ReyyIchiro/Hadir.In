@@ -20,9 +20,9 @@
     <x-panel class="mt-5">
         <div class="grid gap-3 border-b border-divider px-4 py-3 sm:grid-cols-2 lg:grid-cols-4 md:px-6">
             <x-field name="search" label="Cari" wire:model.live.debounce.300ms="search" placeholder="Nama atau email" />
-            <x-select name="roleFilter" label="Peran" wire:model.live="roleFilter" placeholder="Semua peran" :options="$roles" />
-            <x-select name="locationFilter" label="Lokasi utama" wire:model.live="locationFilter" placeholder="Semua lokasi" :options="$locations->pluck('name', 'id')->all()" />
-            <x-select name="divisionFilter" label="Divisi" wire:model.live="divisionFilter" placeholder="Semua divisi" :options="$divisions->pluck('name', 'id')->all()" />
+            <x-select name="roleFilter" label="Peran" wire:model.live.debounce.150ms="roleFilter" placeholder="Semua peran" :options="$roles" />
+            <x-select name="locationFilter" label="Lokasi utama" wire:model.live.debounce.150ms="locationFilter" placeholder="Semua lokasi" :options="$locations->pluck('name', 'id')->all()" />
+            <x-select name="divisionFilter" label="Divisi" wire:model.live.debounce.150ms="divisionFilter" placeholder="Semua divisi" :options="$divisions->pluck('name', 'id')->all()" />
         </div>
 
         @if($members->isEmpty())
@@ -43,7 +43,7 @@
                     </thead>
                     <tbody>
                         @foreach($members as $member)
-                            <tr>
+                            <tr wire:key="member-{{ $member->id }}">
                                 <td class="cell-grow">
                                     <span class="font-medium">{{ $member->user?->name }}</span>
                                     <p class="mt-0.5 text-[12px] text-muted">{{ $member->user?->email }}</p>

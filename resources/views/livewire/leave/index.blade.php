@@ -15,7 +15,7 @@
     </div>
 
     <div class="mt-5 flex flex-wrap items-center gap-2 border-y border-divider py-3">
-        <select wire:model.live="statusFilter" class="field-input w-auto py-1.5 text-[13px]" aria-label="Filter status">
+        <select wire:model.live.debounce.150ms="statusFilter" class="field-input w-auto py-1.5 text-[13px]" aria-label="Filter status">
             <option value="">Semua status</option>
             @foreach($statuses as $value => $label)
                 <option value="{{ $value }}">{{ $label }}</option>
@@ -53,7 +53,7 @@
                     </thead>
                     <tbody>
                         @foreach($leaves as $leave)
-                            <tr>
+                            <tr wire:key="leave-{{ $leave->id }}">
                                 @if($isTeam)<td class="cell-grow">{{ $leave->user?->name ?? '--' }}</td>@endif
                                 <td class="cell-fit">{{ $leave->type->label() }}</td>
                                 @if($isTeam)

@@ -205,17 +205,31 @@ Penting: `Tenant` sendiri tidak memakai scope. Akses ke `Tenant` hanya lewat
 ## 6. Siklus permintaan
 
 ### 6.0 Header keamanan
-Setiap respons web melewati `SecurityHeaders` yang dipasang di akhir grup
-middleware `web` pada `bootstrap/app.php`. Middleware ini menulis
+Setiap respons melewati `SecurityHeaders` yang dipasang sebagai middleware
+global pada `bootstrap/app.php`, termasuk halaman galat, supaya satu rute baru
+tidak pernah lolos tanpa header keamanan. Middleware ini menulis
 `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`,
 `Permissions-Policy`, `Cross-Origin-Opener-Policy`, dan
 `Content-Security-Policy`. `Strict-Transport-Security` hanya ditulis bila
 permintaan memakai HTTPS, supaya pengembangan di `localhost` tidak memaksa
 peramban beralih ke HTTPS.
-CSP masih mengizinkan `'unsafe-inline'` pada `script-src` dan `style-src` karena
-skrip tema berjalan inline sebelum CSS dimuat dan Livewire menyisipkan gaya
-inline. CSP berfungsi menutup frame, plugin, dan asal sumber daya asing. Bila
-skrip inline diganti nonce, `'unsafe-inline'` dapat dihapus.
+
+CSP `script-src` memakai nonce per permintaan. Middleware membuat nonce,
+menyimpannya di `config('csp_nonce')` dan di `Vite::useCspNonce()`. Semua tag
+`<script>` inline menerima nonce lewat helper `csp_script_nonce()` (tema,
+JSON-LD), Vite menerapkannya pada tag build, dan `@livewireScripts` menerimanya
+lewat argumen eksplisit. Livewire sendiri membaca nonce dari
+`Vite::cspNonce()` dan dari atribut `<style nonce>` yang ia tulis sendiri.
+`config('livewire.inject_assets')` diatur `false`, jadi keempat layout memanggil
+`@livewireStyles` dan `@livewireScripts` secara eksplisit; injeksi otomatis
+tidak bisa menerima argumen nonce.
+
+`'unsafe-inline'` dan `'strict-dynamic'` tetap ada pada `script-src` sebagai
+jaring pengaman untuk peramban lama: peramban modern yang mendukung
+`strict-dynamic` mengabaikan keduanya, peramban lama yang tidak mendukung nonce
+masih bisa menjalankan skrip. `style-src` masih `'unsafe-inline'` karena
+Livewire/Alpine menyisipkan gaya inline tanpa nonce. CSP berfungsi menutup
+frame, plugin, dan asal sumber daya asing.
 
 ### 6.1 Halaman publik
 Enam halaman publik memakai `cache.headers:private;max_age=300;etag`. Peramban

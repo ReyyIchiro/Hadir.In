@@ -19,8 +19,8 @@
                     <div class="sm:col-span-2">
                         <x-field name="address" label="Alamat" wire:model="address" placeholder="Jalan, nomor, kota" />
                     </div>
-                    <x-field name="latitude" label="Latitude" wire:model="latitude" required placeholder="-6.2088" help="Format desimal, contoh -6.2088." />
-                    <x-field name="longitude" label="Longitude" wire:model="longitude" required placeholder="106.8456" help="Format desimal, contoh 106.8456." />
+                    <x-field name="latitude" label="Latitude" wire:model="latitude" required inputmode="decimal" placeholder="-6.2088" help="Format desimal, contoh -6.2088." />
+                    <x-field name="longitude" label="Longitude" wire:model="longitude" required inputmode="decimal" placeholder="106.8456" help="Format desimal, contoh 106.8456." />
                     <x-field name="radius_meters" label="Radius (meter)" type="number" wire:model="radius_meters" required help="Antara 20 dan 5000 meter." />
                     <div class="flex items-end pb-2">
                         <label class="flex items-center gap-2 text-[13px]">
@@ -58,7 +58,7 @@
 
                             if (this.map) return;
                             const start = [parseFloat(this.lat) || -6.2088, parseFloat(this.lng) || 106.8456];
-                            this.map = window.L.map(this.$refs.peta, { scrollWheelZoom: false }).setView(start, 15);
+                            this.map = window.L.map(this.$refs.peta, { scrollWheelZoom: false, keyboard: false }).setView(start, 15);
                             window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                                 maxZoom: 19,
                                 attribution: '&copy; OpenStreetMap'
@@ -79,16 +79,16 @@
                             this.marker = window.L.marker([lat, lng]).addTo(this.map);
                             this.circle = window.L.circle([lat, lng], {
                                 radius: parseInt(this.radius) || 100,
-                                color: '#A63A2B',
+                                color: '#b23a26',
                                 weight: 1.5,
-                                fillOpacity: 0.06
+                                fillOpacity: 0.08
                             }).addTo(this.map);
                             this.map.setView([lat, lng]);
                         }
                     }"
                     x-init="init()"
                 >
-                    <div x-ref="peta" class="h-[260px] w-full rounded-[2px] border border-divider bg-tint"></div>
+                    <div x-ref="peta" class="h-[240px] w-full rounded-[2px] border border-divider bg-tint" role="img" aria-label="Peta pemilih titik lokasi"></div>
                     <p class="mt-2 text-[12px] leading-5 text-muted">Peta memuat ubin OpenStreetMap. Titik dan radius diperbarui saat Anda mengubah angka.</p>
                 </div>
             </div>
