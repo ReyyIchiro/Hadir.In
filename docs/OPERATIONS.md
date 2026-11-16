@@ -107,7 +107,10 @@ Catatan:
 
 - `APP_TIMEZONE` wajib `UTC`. Zona tenant disimpan di database.
 - `APP_DEBUG=false` di produksi.
-- `SESSION_SECURE_COOKIE=true` hanya bila HTTPS aktif.
+- `SESSION_SECURE_COOKIE` dan `SESSION_ENCRYPT` default `true` sejak 2026-11-17.
+  Deployment HTTP non-lokal yang membutuhkan keduanya mati harus menyetel
+  `false` eksplisit. Mengaktifkan enkripsi sesi mengganti format cookie, jadi
+  sesi lama tidak terbaca dan semua pengguna perlu masuk kembali.
 - Disk dan retensi selfie tidak diatur lewat env: selfie disimpan di disk
   `local` yang rootnya `storage/app/private`, dan retensinya diatur per
   organisasi di pengaturan (`tenant_settings.selfie_retention_days`).
