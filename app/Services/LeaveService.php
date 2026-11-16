@@ -173,6 +173,8 @@ class LeaveService
         }
 
         foreach (array_chunk($toCreate, 500) as $chunk) {
+            // Tanpa scope tabel: setiap baris memuat tenant_id eksplisit dari
+            // $tenant; lihat AGENTS.md.
             DB::table('attendance_days')->insertOrIgnore($chunk);
         }
     }

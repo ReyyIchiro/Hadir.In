@@ -150,7 +150,7 @@ global scope, policy, route model binding, dan pengujian lintas tenant.
 API:
 
 ```php
-$context->set(Tenant $tenant, Membership $membership): void
+$context->set(Tenant $tenant, ?Membership $membership = null): void
 $context->tenant(): ?Tenant
 $context->membership(): ?Membership
 $context->id(): ?int
@@ -194,7 +194,8 @@ Penting: `Tenant` sendiri tidak memakai scope. Akses ke `Tenant` hanya lewat
 ### 5.4 Konsekuensi dan pengaman
 
 - Job yang berjalan tanpa request wajib memanggil `TenantContext::set()` sebelum
-  menyentuh model tenant, dan `clear()` setelah selesai.
+  menyentuh model tenant, dan `clear()` setelah selesai. Membership boleh null
+  untuk job konsol; scope tetap aktif bila tenant diset.
 - Pengujian kebocoran wajib membuat dua tenant dan memastikan query tenant A
   tidak mengembalikan data tenant B, termasuk lewat route model binding.
 - `withoutGlobalScope` hanya boleh dipakai di panel platform, dengan komentar

@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Enums\TenantStatus;
 use App\Models\Tenant;
 use App\Services\FinalizationService;
+use App\Support\TenantContext;
 use Illuminate\Console\Command;
 
 class FinalizeAttendance extends Command
@@ -24,10 +25,20 @@ class FinalizeAttendance extends Command
         $total = ['finalized' => 0, 'absent' => 0];
 
         $query->chunkById(100, function ($tenants) use ($finalization, &$total) {
+            $context = app(TenantContext::class);
+
             foreach ($tenants as $tenant) {
-                $counts = $finalization->runForTenant($tenant);
-                $total['finalized'] += $counts['finalized'];
-                $total['absent'] += $counts['absent'];
+                // Job sistem berjalan tanpa sesi; set konteks per tenant agar
+                // scope tenant tetap aktif di dalam service, lalu bersihkan.
+                $context->set($tenant);
+
+                try {
+                    $counts = $finalization->runForTenant($tenant);
+                    $total['finalized'] += $counts['finalized'];
+                    $total['absent'] += $counts['absent'];
+                } finally {
+                    $context->clear();
+                }
             }
         });
 

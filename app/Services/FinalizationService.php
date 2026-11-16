@@ -87,6 +87,8 @@ class FinalizationService
             $timestamp = now();
 
             foreach ($noCheckout as $item) {
+                // Tanpa scope tabel: id berasal dari query AttendanceDay yang
+                // sudah ter-scope tenant; lihat AGENTS.md.
                 DB::table('attendance_days')
                     ->where('id', $item['id'])
                     ->update([
@@ -97,6 +99,7 @@ class FinalizationService
             }
 
             foreach (array_chunk($withCheckout, 500) as $chunk) {
+                // Tanpa scope tabel: id berasal dari query ter-scope di atas.
                 DB::table('attendance_days')
                     ->whereIn('id', $chunk)
                     ->update(['finalized_at' => $timestamp, 'updated_at' => $timestamp]);
@@ -197,8 +200,9 @@ class FinalizationService
         $created = 0;
 
         foreach (array_chunk($rows, 500) as $chunk) {
-            // insertOrIgnore menahan tabrakan dengan hari yang dibuat bersamaan
-            // pada SQLite maupun PostgreSQL.
+            // Tanpa scope tabel: setiap baris memuat tenant_id eksplisit dari
+            // $tenant; lihat AGENTS.md. insertOrIgnore menahan tabrakan dengan
+            // hari yang dibuat bersamaan pada SQLite maupun PostgreSQL.
             $created += DB::table('attendance_days')->insertOrIgnore($chunk);
         }
 

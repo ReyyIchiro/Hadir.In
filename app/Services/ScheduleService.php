@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Holiday;
 use App\Models\Schedule;
 use App\Models\Tenant;
 use App\Models\User;
@@ -127,7 +126,8 @@ class ScheduleService
             }
 
             // Keunikan (tenant, anggota, tanggal) menahan tabrakan dengan
-            // penerapan yang berjalan bersamaan.
+            // penerapan yang berjalan bersamaan. Tanpa scope tabel: setiap
+            // baris memuat tenant_id eksplisit dari $tenant; lihat AGENTS.md.
             foreach (array_chunk($rows, 500) as $chunk) {
                 DB::table('schedules')->insertOrIgnore($chunk);
             }
@@ -192,11 +192,6 @@ class ScheduleService
             ->where('user_id', $user->id)
             ->where('work_date', $date)
             ->delete();
-    }
-
-    public function holidayExists(string $date): bool
-    {
-        return Holiday::where('date', $date)->exists();
     }
 
     protected function normalize(array $data): array

@@ -18,6 +18,7 @@ class Reasons
         'belum_absen_masuk' => 'Belum absen masuk',
         'melewati_batas_pulang' => 'Melewati batas absen pulang',
         'di_luar_radius' => 'Di luar radius lokasi kerja',
+        'akurasi_tidak_dapat_dipercaya' => 'Akurasi GPS tidak dapat dipercaya',
         'lokasi_tidak_tersedia' => 'Lokasi tidak tersedia',
         'selfie_wajib' => 'Selfie wajib diambil',
         'selfie_tidak_valid' => 'Selfie tidak dapat diproses',

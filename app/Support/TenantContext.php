@@ -11,7 +11,7 @@ class TenantContext
 
     protected ?Membership $membership = null;
 
-    public function set(Tenant $tenant, Membership $membership): void
+    public function set(Tenant $tenant, ?Membership $membership = null): void
     {
         $this->tenant = $tenant;
         $this->membership = $membership;
@@ -40,6 +40,8 @@ class TenantContext
 
     public function hasTenant(): bool
     {
-        return $this->tenant !== null && $this->membership !== null;
+        // Membership boleh null pada job konsol: scope tetap aktif asalkan
+        // tenant diset, jadi query job tidak pernah kelepasan filter tenant.
+        return $this->tenant !== null;
     }
 }
