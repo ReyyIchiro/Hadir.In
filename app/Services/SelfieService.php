@@ -31,6 +31,12 @@ class SelfieService
             throw ValidationException::withMessages(['selfie' => 'Berkas selfie bukan gambar yang sah.']);
         }
 
+        // Tolak gambar raksasa sebelum dekode: dekompresi bom piksel dapat
+        // menghabiskan memori worker. 24 MP sekitar 96 MB RGB saat terurai.
+        if ($info[0] * $info[1] > 24_000_000) {
+            throw ValidationException::withMessages(['selfie' => 'Ukuran gambar selfie terlalu besar. Ambil ulang dengan resolusi lebih rendah.']);
+        }
+
         $source = @imagecreatefromstring($contents);
 
         if ($source === false) {

@@ -11,6 +11,9 @@ class GeofenceService
 {
     public const EARTH_RADIUS_METERS = 6371000;
 
+    /** Batas akurasi absolut: di atas ini koordinat dianggap tidak dapat dipercaya. */
+    public const MAKS_AKURASI_METER = 500.0;
+
     public function distance(float $lat1, float $lng1, float $lat2, float $lng2): int
     {
         $latFrom = deg2rad($lat1);
@@ -81,6 +84,18 @@ class GeofenceService
 
         if ($accuracy !== null && $accuracy > $settings->low_accuracy_meters) {
             $flags[] = Flags::AKURASI_RENDAH;
+        }
+
+        // Gerbang keras sebelum cek lain: koordinat yang tidak dapat dipercaya
+        // tidak boleh lolos walau kebetulan masuk radius.
+        if ($accuracy !== null && $accuracy > self::MAKS_AKURASI_METER) {
+            return [
+                'accepted' => false,
+                'flags' => $flags,
+                'reason' => 'akurasi_tidak_dapat_dipercaya',
+                'location' => null,
+                'distance' => null,
+            ];
         }
 
         if ($locations->isEmpty()) {

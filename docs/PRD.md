@@ -443,6 +443,10 @@ bot, di samping pembatasan laju lima percobaan per menit per email dan IP.
 - BR-86. Organisasi tidak dapat menghapus dirinya sendiri. Platform admin hanya
   dapat menangguhkan atau mengaktifkan.
 - BR-87. Data presensi tidak dihapus. Retensi hanya menghapus berkas selfie.
+- BR-88. Akurasi GPS perangkat lebih dari 500 meter menolak presensi karena
+  koordinat tidak dapat dipercaya. Percobaan tetap dicatat dengan alasan yang
+  jelas. Di bawah 500 meter, akurasi lebih dari 100 meter tetap diterima dengan
+  tanda sesuai BR-24.
 
 ## 9. Kebutuhan fungsional
 
@@ -670,7 +674,7 @@ kata kerja. Tidak ada tanda seru. Tidak ada emoji. Tidak ada em dash.
 
 | Risiko | Dampak | Mitigasi |
 | --- | --- | --- |
-| GPS tidak akurat di dalam gedung | Absen ditolak atau ditandai | Buffer 50 m, tanda akurasi rendah, tinjauan |
+| GPS tidak akurat di dalam gedung | Absen ditolak atau ditandai | Buffer 50 m, tanda akurasi rendah, batas 500 m, tinjauan |
 | Kamera perangkat tidak tersedia | Anggota tidak dapat absen | Pesan jelas, selfie dapat dimatikan admin |
 | Email belum dikonfigurasi | Undangan tidak terkirim | Tautan undangan ditampilkan untuk disalin |
 | Zona waktu salah | Tanggal kerja bergeser | Zona waktu eksplisit saat daftar dan di pengaturan |

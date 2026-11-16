@@ -572,6 +572,7 @@ class AttendanceService
             'terlalu_awal' => 'Belum masuk jendela absen. Coba lagi '.$this->minutesUntilWindow($scheduledStart, $tenant).' menit lagi.',
             'jadwal_berakhir' => 'Jadwal kerja hari ini sudah berakhir.',
             'di_luar_radius' => 'Anda berada di luar radius lokasi kerja.',
+            'akurasi_tidak_dapat_dipercaya' => 'Akurasi lokasi melebihi 500 meter. Dekati jendela atau tempat terbuka, lalu coba lagi.',
             'lokasi_tidak_tersedia' => 'Lokasi tidak tersedia. Aktifkan GPS lalu coba lagi.',
             'selfie_wajib' => 'Selfie wajib diambil sebelum absen.',
             'selfie_tidak_valid' => 'Selfie tidak dapat diproses. Ambil ulang.',

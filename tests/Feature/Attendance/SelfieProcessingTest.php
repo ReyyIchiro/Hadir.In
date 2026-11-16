@@ -77,3 +77,20 @@ it('menolak berkas yang bukan gambar', function () {
         UploadedFile::fake()->createWithContent('selfie.jpg', 'bukan gambar'),
     ))->toThrow(ValidationException::class);
 });
+
+it('menolak gambar di atas batas megapiksel sebelum dekode', function () {
+    Storage::fake('local');
+    $tenant = makeTenant();
+
+    // JPEG 6000x5000 (30 MP) berdimensi sah tetapi melewati batas 24 MP.
+    $canvas = imagecreatetruecolor(6000, 5000);
+    ob_start();
+    imagejpeg($canvas, null, 40);
+    $bytes = ob_get_clean();
+    imagedestroy($canvas);
+
+    expect(fn () => app(SelfieService::class)->store(
+        $tenant,
+        UploadedFile::fake()->createWithContent('selfie.jpg', $bytes),
+    ))->toThrow(ValidationException::class);
+});

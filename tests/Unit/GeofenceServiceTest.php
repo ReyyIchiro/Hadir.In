@@ -164,6 +164,21 @@ it('menandai akurasi di atas ambang dan melewati akurasi tepat di ambang', funct
         ->and($weak['accepted'])->toBeTrue();
 });
 
+it('menolak akurasi di atas 500 meter walau di dalam radius', function () {
+    $tenant = makeTenant(['settings' => ['low_accuracy_meters' => 100]]);
+    $location = makeLocation($tenant);
+
+    $result = $this->service->validate($tenant, -6.2, 106.8166667, 600);
+
+    expect($result['accepted'])->toBeFalse()
+        ->and($result['reason'])->toBe('akurasi_tidak_dapat_dipercaya')
+        ->and($result['flags'])->toContain('akurasi_rendah')
+        ->and($result['location'])->toBeNull();
+
+    $boundary = $this->service->validate($tenant, -6.2, 106.8166667, 500);
+    expect($boundary['accepted'])->toBeTrue();
+});
+
 it('menolak presensi jauh dari semua lokasi', function () {
     $tenant = makeTenant();
     makeLocation($tenant, ['radius_meters' => 50]);
