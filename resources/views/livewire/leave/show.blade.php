@@ -74,7 +74,7 @@
             <x-panel title="Batalkan pengajuan">
                 <div class="panel-pad">
                     <p class="text-[13px] leading-6 text-muted">Pengajuan yang dibatalkan tidak lagi dihitung sebagai izin.</p>
-                    <button type="button" wire:click="cancel" data-confirm="Batalkan pengajuan ini?" data-confirm-detail="Pengajuan tidak lagi dihitung sebagai izin. Anda dapat mengajukan ulang kapan saja." data-confirm-action="Batalkan pengajuan" class="btn btn-secondary btn-sm mt-3 w-full">Batalkan</button>
+                    <button type="button" wire:click="cancel" wire:loading.attr="disabled" wire:target="cancel" data-confirm="Batalkan pengajuan ini?" data-confirm-detail="Pengajuan tidak lagi dihitung sebagai izin. Anda dapat mengajukan ulang kapan saja." data-confirm-action="Batalkan pengajuan" class="btn btn-secondary btn-sm mt-3 w-full">Batalkan</button>
                 </div>
             </x-panel>
         @endif

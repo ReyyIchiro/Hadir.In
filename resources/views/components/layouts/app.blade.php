@@ -190,6 +190,11 @@
 
     <x-confirm-dialog />
 
+    <div id="banner-galat-jaringan" role="alert" class="net-banner" hidden>
+        <p>Koneksi ke server terputus. Periksa jaringan Anda, lalu coba lagi.</p>
+        <button type="button" class="btn btn-secondary btn-sm" data-net-reload>Muat ulang</button>
+    </div>
+
     @livewireScripts(['nonce' => config('csp_nonce', '')])
 </body>
 </html>

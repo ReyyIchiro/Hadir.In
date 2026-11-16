@@ -17,6 +17,7 @@
             <x-select name="month" label="Bulan" wire:model.live.debounce.150ms="month" :options="$monthOptions" />
             <x-select name="divisionId" label="Divisi" wire:model.live.debounce.150ms="divisionId" placeholder="Semua divisi" :options="$divisions->pluck('name', 'id')->all()" />
             <x-select name="locationId" label="Lokasi utama" wire:model.live.debounce.150ms="locationId" placeholder="Semua lokasi" :options="$locations->pluck('name', 'id')->all()" />
+            <p class="col-span-full text-[12px] text-muted" style="display: none" wire:loading wire:target="month, divisionId, locationId, previousPage, nextPage">Memperbarui...</p>
         </div>
 
         <div class="grid grid-cols-2 border-b border-divider sm:grid-cols-3 lg:grid-cols-6">
@@ -50,6 +51,7 @@
         @if(empty($rows))
             <x-empty-state title="Belum ada data" description="Tidak ada jadwal pada periode dan filter ini. Coba bulan lain atau ubah filter." />
         @else
+            <p class="table-scroll-hint">Geser untuk melihat kolom lain.</p>
             <div class="table-scroll">
                 <table class="ledger">
                     <caption>Laporan presensi {{ $monthLabel }}</caption>
@@ -104,10 +106,10 @@
                 <div class="flex items-center justify-between gap-3 border-t border-divider px-4 py-3 md:px-6">
                     <p class="text-[12px] text-muted">Halaman {{ $page }} dari {{ $totalPages }}</p>
                     <div class="flex gap-2">
-                        <button type="button" class="btn btn-secondary btn-sm" wire:click="previousPage" @disabled($page <= 1)>
+                        <button type="button" class="btn btn-secondary btn-sm" wire:click="previousPage" wire:loading.attr="disabled" wire:target="previousPage, nextPage" @disabled($page <= 1)>
                             Halaman sebelumnya
                         </button>
-                        <button type="button" class="btn btn-secondary btn-sm" wire:click="nextPage" @disabled($page >= $totalPages)>
+                        <button type="button" class="btn btn-secondary btn-sm" wire:click="nextPage" wire:loading.attr="disabled" wire:target="previousPage, nextPage" @disabled($page >= $totalPages)>
                             Halaman berikutnya
                         </button>
                     </div>

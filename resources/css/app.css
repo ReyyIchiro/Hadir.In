@@ -1516,7 +1516,10 @@
         .page-title {
             font-size: 1.5rem;
         }
+    }
 
+    /* Layar kecil maupun perangkat sentuh memperoleh target sentuh 44 px. */
+    @media (max-width: 640px), (pointer: coarse) {
         .btn,
         .btn-sm {
             min-height: 44px;
@@ -1535,6 +1538,30 @@
         padding: 0.75rem 1rem;
         font-size: 0.875rem;
         box-shadow: none;
+    }
+
+    /* Banner galat jaringan: satu strip di bawah layar yang hanya muncul saat
+       permintaan Livewire gagal, mengikuti gaya strip status .wire-status. */
+    .net-banner {
+        position: fixed;
+        right: 1rem;
+        bottom: calc(1rem + env(safe-area-inset-bottom));
+        left: 1rem;
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        background: var(--color-surface);
+        border: 1px solid var(--color-absent);
+        color: var(--color-text);
+        padding: 0.75rem 1rem;
+        font-size: 0.8125rem;
+        border-radius: 2px;
+    }
+
+    .net-banner[hidden] {
+        display: none;
     }
 
     .modal-backdrop {

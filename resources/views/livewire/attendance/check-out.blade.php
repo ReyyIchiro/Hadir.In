@@ -138,7 +138,7 @@
 
         <x-panel title="Selfie pulang" :description="$settings->require_selfie ? 'Selfie wajib diambil.' : 'Selfie tidak diwajibkan organisasi ini.'">
             <div class="panel-pad">
-                <input type="file" accept="image/*" capture="user" wire:model="selfie" id="selfie-out" class="sr-only">
+                <input type="file" accept="image/*" capture="user" wire:model="selfie" id="selfie-out" class="sr-only" @if($errors->has('selfie')) aria-invalid="true" aria-describedby="selfie-out-error" @endif>
                 <label for="selfie-out" class="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-[4px] border border-dashed border-divider bg-tint px-4 py-8 text-center hover:border-stamp">
                     @if($selfie)
                         <img src="{{ $selfie->temporaryUrl() }}" alt="Pratinjau selfie" class="h-40 w-40 rounded-[4px] object-cover">
@@ -150,7 +150,7 @@
                     @endif
                 </label>
                 @error('selfie')
-                    <p class="field-error mt-2">{{ $message }}</p>
+                    <p id="selfie-out-error" class="field-error mt-2">{{ $message }}</p>
                 @enderror
                 <div wire:loading wire:target="selfie" class="mt-2 text-[12px] text-muted">Memproses gambar...</div>
             </div>

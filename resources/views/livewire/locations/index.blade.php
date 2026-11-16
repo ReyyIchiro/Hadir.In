@@ -59,7 +59,7 @@
                                         </span>
                                     </td>
                                     <td class="cell-action">
-                                        <button type="button" wire:click="toggle({{ $location->id }})" @if($location->is_active) data-confirm="Nonaktifkan lokasi ini?" data-confirm-detail="Anggota tidak dapat lagi absen di lokasi ini. Presensi yang sudah tercatat tetap tersimpan." data-confirm-action="Nonaktifkan" @endif class="link text-[12px]">
+                                        <button type="button" wire:click="toggle({{ $location->id }})" wire:loading.attr="disabled" wire:target="toggle" @if($location->is_active) data-confirm="Nonaktifkan lokasi ini?" data-confirm-detail="Anggota tidak dapat lagi absen di lokasi ini. Presensi yang sudah tercatat tetap tersimpan." data-confirm-action="Nonaktifkan" @endif class="link text-[12px]">
                                             {{ $location->is_active ? 'Nonaktifkan' : 'Aktifkan' }}
                                         </button>
                                     </td>

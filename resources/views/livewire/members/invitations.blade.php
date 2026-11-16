@@ -53,7 +53,7 @@
                                 </td>
                                 <td class="cell-action">
                                     @if($invitation->isPending())
-                                        <button type="button" wire:click="revoke({{ $invitation->id }})" data-confirm="Cabut undangan ini?" data-confirm-detail="Tautan undangan langsung tidak berlaku. Orang yang dituju tidak dapat lagi memakainya untuk bergabung." data-confirm-action="Cabut undangan" class="link text-[12px]">Cabut</button>
+                                        <button type="button" wire:click="revoke({{ $invitation->id }})" wire:loading.attr="disabled" wire:target="revoke" data-confirm="Cabut undangan ini?" data-confirm-detail="Tautan undangan langsung tidak berlaku. Orang yang dituju tidak dapat lagi memakainya untuk bergabung." data-confirm-action="Cabut undangan" class="link text-[12px]">Cabut</button>
                                     @endif
                                 </td>
                             </tr>

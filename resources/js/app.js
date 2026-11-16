@@ -135,13 +135,22 @@ function syncTableHints() {
     document.querySelectorAll('.table-scroll').forEach((scroller) => {
         let entry = tableHints.get(scroller);
 
+        const previous = scroller.previousElementSibling;
+
         if (!entry || !entry.hint.isConnected) {
             entry?.observer.disconnect();
 
-            const hint = document.createElement('p');
-            hint.className = 'table-scroll-hint';
-            hint.textContent = 'Geser untuk melihat kolom lain.';
-            scroller.before(hint);
+            // Hint bisa sudah ada statis di Blade (mis. tabel tim presensi dan
+            // laporan); pakai yang ada, jangan menambah duplikat.
+            const hint = previous instanceof Element && previous.classList.contains('table-scroll-hint')
+                ? previous
+                : (() => {
+                    const created = document.createElement('p');
+                    created.className = 'table-scroll-hint';
+                    created.textContent = 'Geser untuk melihat kolom lain.';
+                    scroller.before(created);
+                    return created;
+                })();
 
             const update = () => {
                 hint.classList.toggle('is-visible', scroller.scrollWidth > scroller.clientWidth + 1);

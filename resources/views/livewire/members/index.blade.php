@@ -23,6 +23,7 @@
             <x-select name="roleFilter" label="Peran" wire:model.live.debounce.150ms="roleFilter" placeholder="Semua peran" :options="$roles" />
             <x-select name="locationFilter" label="Lokasi utama" wire:model.live.debounce.150ms="locationFilter" placeholder="Semua lokasi" :options="$locations->pluck('name', 'id')->all()" />
             <x-select name="divisionFilter" label="Divisi" wire:model.live.debounce.150ms="divisionFilter" placeholder="Semua divisi" :options="$divisions->pluck('name', 'id')->all()" />
+            <p class="col-span-full text-[12px] text-muted" style="display: none" wire:loading wire:target="search, roleFilter, locationFilter, divisionFilter">Memperbarui...</p>
         </div>
 
         @if($members->isEmpty())

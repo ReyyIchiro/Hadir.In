@@ -24,12 +24,14 @@
             <x-select name="locationFilter" label="Lokasi" wire:model.live.debounce.150ms="locationFilter" placeholder="Semua lokasi" :options="$locations->pluck('name', 'id')->all()" />
             <x-select name="divisionFilter" label="Divisi" wire:model.live.debounce.150ms="divisionFilter" placeholder="Semua divisi" :options="$divisions->pluck('name', 'id')->all()" />
             <x-select name="statusFilter" label="Status" wire:model.live.debounce.150ms="statusFilter" placeholder="Semua status" :options="$statuses" />
+            <p class="col-span-full text-[12px] text-muted" style="display: none" wire:loading wire:target="date, locationFilter, divisionFilter, statusFilter, previousPage, nextPage">Memperbarui...</p>
         </div>
 
         <x-panel class="mt-4">
             @if($rows->isEmpty())
                 <x-empty-state title="Tidak ada anggota pada filter ini" description="Ubah tanggal atau filter untuk melihat anggota lain." />
             @else
+                <p class="table-scroll-hint">Geser untuk melihat kolom lain.</p>
                 <div class="table-scroll">
                     <table class="ledger">
                         <caption>Daftar presensi anggota</caption>
@@ -76,10 +78,10 @@
                     @if($totalPages > 1)
                         <div class="flex items-center gap-2">
                             <span class="text-[12px] text-muted">Halaman {{ $currentPage }} dari {{ $totalPages }}</span>
-                            <button type="button" class="btn btn-secondary btn-sm" wire:click="previousPage" @disabled($currentPage <= 1)>
+                            <button type="button" class="btn btn-secondary btn-sm" wire:click="previousPage" wire:loading.attr="disabled" wire:target="previousPage, nextPage" @disabled($currentPage <= 1)>
                                 Sebelumnya
                             </button>
-                            <button type="button" class="btn btn-secondary btn-sm" wire:click="nextPage" @disabled($currentPage >= $totalPages)>
+                            <button type="button" class="btn btn-secondary btn-sm" wire:click="nextPage" wire:loading.attr="disabled" wire:target="previousPage, nextPage" @disabled($currentPage >= $totalPages)>
                                 Berikutnya
                             </button>
                         </div>
@@ -89,14 +91,14 @@
         </x-panel>
     @else
         <div class="mt-5 flex items-center justify-between gap-3 border-y border-divider py-3">
-            <button type="button" wire:click="previousMonth" class="btn btn-ghost btn-sm">
+            <button type="button" wire:click="previousMonth" wire:loading.attr="disabled" wire:target="previousMonth, nextMonth" class="btn btn-ghost btn-sm">
                 <x-icon name="chevron-left" :size="16" />
                 <span>Sebelumnya</span>
             </button>
             <p class="font-mono text-[13px] font-medium">
                 {{ \App\Support\Waktu::monthLabel((int) substr($month, 5, 2)) }} {{ substr($month, 0, 4) }}
             </p>
-            <button type="button" wire:click="nextMonth" class="btn btn-ghost btn-sm">
+            <button type="button" wire:click="nextMonth" wire:loading.attr="disabled" wire:target="previousMonth, nextMonth" class="btn btn-ghost btn-sm">
                 <span>Berikutnya</span>
                 <x-icon name="chevron-right" :size="16" />
             </button>

@@ -31,7 +31,7 @@
                                     <td class="cell-fit text-muted">{{ \App\Support\Waktu::dayName($holiday->date) }}</td>
                                     <td class="cell-grow">{{ $holiday->name }}</td>
                                     <td class="cell-action">
-                                        <button type="button" wire:click="delete({{ $holiday->id }})" data-confirm="Hapus hari libur ini?" data-confirm-detail="Tanggal ini kembali dihitung sebagai hari kerja. Presensi yang sudah tercatat tidak berubah." data-confirm-action="Hapus" class="link text-[12px]">Hapus</button>
+                                        <button type="button" wire:click="delete({{ $holiday->id }})" wire:loading.attr="disabled" wire:target="delete" data-confirm="Hapus hari libur ini?" data-confirm-detail="Tanggal ini kembali dihitung sebagai hari kerja. Presensi yang sudah tercatat tidak berubah." data-confirm-action="Hapus" class="link text-[12px]">Hapus</button>
                                     </td>
                                 </tr>
                             @endforeach

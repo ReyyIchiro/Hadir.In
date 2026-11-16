@@ -9,6 +9,8 @@
             <button
                 type="button"
                 wire:click="setTab('{{ $key }}')"
+                wire:loading.attr="disabled"
+                wire:target="setTab"
                 aria-pressed="{{ $tab === $key ? 'true' : 'false' }}"
                 class="relative -mb-px border-b-2 px-3 py-2 text-[13px] {{ $tab === $key ? 'border-stamp font-medium text-text' : 'border-transparent text-muted hover:text-text' }}"
             >
