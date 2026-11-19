@@ -14,7 +14,7 @@ anggota di beberapa organisasi tanpa mencampur data.
 
 ## Status
 
-- Alur v1 lengkap dan 257 pengujian Pest lulus dengan 885 asersi.
+- Alur v1 lengkap dan 262 pengujian Pest lulus dengan 903 asersi.
 - Sebelum go-live masih ada dua uji di luar mesin pengembangan: kamera dan GPS
   di perangkat nyata (`docs/TESTING.md` bagian 9), serta migrasi dan pengujian
   di staging PostgreSQL.
@@ -34,7 +34,7 @@ Semua tangkapan layar memakai data seeder demo.
 | Tinjauan | Laporan |
 | :---: | :---: |
 | [![Antrean tinjauan](docs/media/readme/review.png)](docs/media/readme/review.png) | [![Laporan bulanan](docs/media/readme/reports.png)](docs/media/readme/reports.png) |
-| Absen di luar radius dan koreksi jam, dengan nilai asli tetap tersimpan. | Ringkasan bulanan, rincian harian, filter divisi dan lokasi, ekspor CSV. |
+| Absen di luar radius dan koreksi jam, dengan nilai asli tetap tersimpan. | Ringkasan bulanan, rincian harian, filter divisi dan lokasi, ekspor CSV dan PDF. |
 
 | Jadwal | Tampilan ponsel |
 | :---: | :---: |
@@ -83,7 +83,7 @@ Semua tangkapan layar memakai data seeder demo.
 - Koreksi menyimpan nilai asli, nilai yang diminta, dan catatan keputusan.
   Data presensi tidak pernah dihapus (BR-87).
 - Laporan bulanan dengan filter divisi dan lokasi, rincian per anggota, dan
-  ekspor CSV.
+  ekspor CSV serta PDF A4 lanskap sebagai bukti kehadiran untuk stakeholder.
 
 ## Cara kerja
 
@@ -104,7 +104,7 @@ flowchart LR
     D --> E[Ajukan tinjauan]
     E --> F[Peninjau memutuskan]
     F --> G[Finalisasi per jam]
-    G --> H[Laporan bulanan dan CSV]
+    G --> H[Laporan bulanan, CSV, dan PDF]
 ```
 
 ## Arsitektur

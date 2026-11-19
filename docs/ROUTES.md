@@ -120,10 +120,15 @@ Middleware tambahan: `can:review-attendance` pada grup tinjauan.
 | --- | --- | --- | --- | --- |
 | GET | `/app/laporan` | `app.reports.index` | `Reports\Index` | Laporan bulanan |
 | GET | `/app/laporan/ekspor` | `app.reports.export` | `ReportExportController@csv` | Unduh CSV |
+| GET | `/app/laporan/ekspor-pdf` | `app.reports.export-pdf` | `ReportExportController@pdf` | Unduh PDF |
 
 Parameter ekspor: `month` (`YYYY-MM`), `division_id`, `location_id`. Validasi:
 bulan wajib format benar dan dalam 24 bulan terakhir, filter opsional dan harus
 milik tenant.
+
+Ekspor PDF memakai hak akses `view-reports` yang sama dengan halaman laporan.
+Berkas dibatasi 3.000 baris, tidak memuat selfie atau koordinat, dan tidak
+memuat aset dari luar (`isRemoteEnabled` false).
 
 ### 3.6 Anggota dan undangan
 
@@ -306,6 +311,9 @@ Route::middleware(['auth', 'platform'])
 - Untuk laporan, parameter `month` memakai format `YYYY-MM`. Bila tidak valid,
   kembalikan 422 atau redirect dengan pesan galat. Jangan diam-diam memakai bulan
   berjalan.
+- Ekspor CSV dan PDF memakai validasi yang sama: `month` wajib, filter
+  `division_id` dan `location_id` opsional dan harus milik tenant aktif, bulan
+  dalam 24 bulan terakhir dan bukan masa depan.
 - Semua rute GET yang menampilkan data sensitif memakai `no-store` pada header
   respons bila memuat selfie atau detail pribadi.
 
@@ -317,7 +325,6 @@ Route::middleware(['auth', 'platform'])
 - Tidak ada rute API publik.
 - Tidak ada rute unggah massal anggota.
 - Tidak ada rute impor CSV.
-- Tidak ada rute ekspor PDF.
 - Tidak ada rute notifikasi push.
 - Tidak ada rute multi-bahasa.
 - Tidak ada rute ubah email undangan.

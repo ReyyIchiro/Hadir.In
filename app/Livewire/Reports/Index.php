@@ -102,6 +102,11 @@ class Index extends Component
                 'division_id' => $this->divisionId !== '' ? $this->divisionId : null,
                 'location_id' => $this->locationId !== '' ? $this->locationId : null,
             ])),
+            'pdfExportUrl' => route('app.reports.export-pdf', array_filter([
+                'month' => $this->month,
+                'division_id' => $this->divisionId !== '' ? $this->divisionId : null,
+                'location_id' => $this->locationId !== '' ? $this->locationId : null,
+            ])),
         ])->layoutData(['heading' => 'Laporan'])->title('Laporan');
     }
 

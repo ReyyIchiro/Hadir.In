@@ -65,8 +65,8 @@ tests/
       LeaveSubmissionTest.php
       LeaveApprovalTest.php
     Reports/
-      MonthlyReportTest.php
-      CsvExportTest.php
+      ReportTest.php
+      ReportPdfTest.php
     Platform/
       TenantStatusTest.php
       PlatformAccessTest.php
@@ -269,6 +269,12 @@ Setiap tes memeriksa:
 | Nama berkas | `laporan-presensi-2026-10.csv` |
 | Sel berisi titik koma | Di-escape dengan kutip |
 | Angka ringkasan | Sama dengan jumlah baris rincian |
+| PDF | A4 lanskap, judul, ringkasan, rekap, rincian, tanda tangan |
+| PDF kaki halaman | Nomor halaman absolut setelah bagian disatukan |
+| PDF filter divisi dan lokasi | Hanya baris pada lingkup itu |
+| PDF oleh anggota | 403 |
+| PDF bulan masa depan | 422 |
+| PDF tanpa format bulan sah | Galat validasi `month` |
 
 ### 5.10 Selfie
 
@@ -366,12 +372,17 @@ Skenario manual:
 8. Gunakan keyboard saja untuk mengisi form izin.
 9. Buka laporan satu bulan dengan 100 anggota. Periksa waktu muat.
 10. Unduh CSV dan buka di Excel. Pastikan kolom dan encoding benar.
+11. Unduh PDF bulan berjalan. Periksa judul, identitas, ringkasan, rekap per
+    anggota, rincian harian, kolom tanda tangan, dan nomor halaman di kaki.
+    Pastikan tidak ada tabel yang terpotong atau baris pecah di tengah.
 
 ## 10. Pengujian performa
 
 - Buat 100 anggota, 22 hari kerja, dan 2.200 hari presensi.
 - Ukur laporan bulanan. Target p95 di bawah 2 detik di lingkungan staging.
 - Ukur ekspor CSV. Target di bawah 5 detik untuk 2.200 baris.
+- Ukur ekspor PDF. Bagian dirender per 300 baris supaya memori PHP tetap
+  terbatas, lalu disatukan. Target di bawah 30 detik untuk 3.000 baris.
 - Ukur finalisasi 1.000 hari. Target di bawah 60 detik.
 - Periksa jumlah query pada halaman daftar presensi. Target di bawah 15 query
   untuk 25 baris.

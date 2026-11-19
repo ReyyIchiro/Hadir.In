@@ -20,7 +20,7 @@
             'Data dan laporan' => [
                 ['Siapa yang dapat melihat selfie?', 'Anggota pemilik, admin, pemilik organisasi, dan peninjau dalam cakupan lokasi. Tautan selfie berlaku 5 menit dan tidak dapat diakses tanpa masuk.'],
                 ['Berapa lama selfie disimpan?', 'Bawaan 90 hari. Setelah itu berkas dihapus, tetapi catatan presensi tetap ada tanpa foto.'],
-                ['Format laporan apa yang tersedia?', 'CSV dengan pemisah titik koma dan BOM UTF-8, siap dibuka di Excel Indonesia. Tidak ada ekspor PDF di versi ini.'],
+                ['Format laporan apa yang tersedia?', 'CSV dengan pemisah titik koma dan BOM UTF-8, siap dibuka di Excel Indonesia, serta PDF A4 lanskap sebagai bukti kehadiran.'],
                 ['Apakah platform admin dapat melihat data presensi?', 'Tidak. Platform admin hanya melihat data administratif organisasi: nama, status, zona waktu, jumlah anggota aktif, dan jumlah undangan tertunda.'],
             ],
         ];

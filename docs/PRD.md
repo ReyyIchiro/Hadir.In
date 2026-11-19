@@ -129,6 +129,9 @@ anggota lain.
 - Ringkasan bulanan per anggota.
 - Rincian harian.
 - Ekspor CSV dengan format yang konsisten untuk Excel Indonesia.
+- Ekspor PDF A4 lanskap sebagai bukti kehadiran: judul, identitas organisasi,
+  ringkasan, rekap per anggota, rincian harian, kolom tanda tangan, dan nomor
+  halaman di kaki.
 - Filter divisi dan lokasi sesuai peran.
 
 ### 5.6 Halaman publik
@@ -532,6 +535,12 @@ bot, di samping pembatasan laju lima percobaan per menit per email dan IP.
 - FR-49. Sistem menampilkan ringkasan dan rincian harian.
 - FR-50. Sistem mengekspor CSV sesuai filter dan lingkup.
 - FR-51. Laporan menampilkan tanda untuk data yang perlu ditinjau.
+- FR-57. Sistem mengekspor laporan PDF sesuai filter dan lingkup. Berkas memuat
+  judul, identitas organisasi, ringkasan, rekap per anggota, rincian harian,
+  kolom tanda tangan, dan nomor halaman. Hak akses, filter divisi dan lokasi,
+  batas 24 bulan, serta lingkup peninjau sama dengan CSV. Bulan di masa depan
+  dan anggota biasa ditolak. Maksimal 3.000 baris per berkas. Selfie dan
+  koordinat tidak dicetak, dan tidak ada aset dari luar.
 
 ### 9.8 Pengaturan dan tampilan
 

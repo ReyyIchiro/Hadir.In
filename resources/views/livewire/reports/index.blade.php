@@ -6,10 +6,16 @@
                 Rekap kehadiran per anggota per hari kerja. Hari libur dan hari tanpa jadwal tidak dihitung.
             </p>
         </div>
-        <a href="{{ $exportUrl }}" class="btn btn-secondary btn-sm">
-            <x-icon name="download" :size="15" />
-            <span>Unduh CSV</span>
-        </a>
+        <div class="flex flex-wrap items-center gap-2">
+            <a href="{{ $exportUrl }}" class="btn btn-secondary btn-sm">
+                <x-icon name="download" :size="15" />
+                <span>Unduh CSV</span>
+            </a>
+            <a href="{{ $pdfExportUrl }}" class="btn btn-secondary btn-sm">
+                <x-icon name="download" :size="15" />
+                <span>Unduh PDF</span>
+            </a>
+        </div>
     </div>
 
     <x-panel class="mt-5">

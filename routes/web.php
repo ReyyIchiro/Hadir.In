@@ -111,6 +111,7 @@ Route::middleware(['auth', 'tenant', 'tenant.active'])
 
         Route::get('/laporan', Reports\Index::class)->name('reports.index');
         Route::get('/laporan/ekspor', [ReportExportController::class, 'csv'])->name('reports.export');
+        Route::get('/laporan/ekspor-pdf', [ReportExportController::class, 'pdf'])->name('reports.export-pdf');
 
         Route::middleware('can:manage-members')->group(function () {
             Route::get('/anggota', Members\Index::class)->name('members.index');
