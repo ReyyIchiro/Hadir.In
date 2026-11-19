@@ -188,25 +188,25 @@
                 </tbody>
             </table>
         </div>
+    @endif
 
-        @if($last)
-            <table class="sign">
-                <tr>
-                    <td>
-                        <p class="muted">Mengetahui,</p>
-                        <div class="line"><strong>{{ $tenant->owner()?->user?->name ?? '..............' }}</strong><br>Pemilik</div>
-                    </td>
-                    <td>
-                        <p class="muted">Disusun oleh,</p>
-                        <div class="line"><strong>{{ $membership->user?->name }}</strong><br>{{ ucfirst($membership->role->value) }}</div>
-                    </td>
-                    <td>
-                        <p class="muted">Diterima oleh,</p>
-                        <div class="line"><strong>..............</strong><br>Pimpinan</div>
-                    </td>
-                </tr>
-            </table>
-        @endif
+    @if($section === 'sign')
+        <table class="sign">
+            <tr>
+                <td>
+                    <p class="muted">Mengetahui,</p>
+                    <div class="line"><strong>{{ $tenant->owner()?->user?->name ?? '..............' }}</strong><br>Pemilik</div>
+                </td>
+                <td>
+                    <p class="muted">Disusun oleh,</p>
+                    <div class="line"><strong>{{ $membership->user?->name }}</strong><br>{{ ucfirst($membership->role->value) }}</div>
+                </td>
+                <td>
+                    <p class="muted">Diterima oleh,</p>
+                    <div class="line"><strong>..............</strong><br>Pimpinan</div>
+                </td>
+            </tr>
+        </table>
     @endif
 </body>
 </html>

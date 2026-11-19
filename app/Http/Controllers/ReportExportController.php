@@ -176,6 +176,8 @@ class ReportExportController extends Controller
         // harian dan kolom tanda tangan.
         $parts = [];
 
+        ini_set('memory_limit', '256M');
+
         $rekapChunks = array_chunk($rekap, 100);
         $lastRekapIndex = max(0, count($rekapChunks) - 1);
 
@@ -194,24 +196,25 @@ class ReportExportController extends Controller
             ]);
         }
 
-        $detailChunks = array_chunk($rows, 300);
+        $detailChunks = array_chunk($rows, 200);
 
         if ($detailChunks === []) {
             $detailChunks = [[]];
         }
 
-        $lastDetailIndex = count($detailChunks) - 1;
-
         foreach ($detailChunks as $index => $chunk) {
             $parts[] = $this->renderPdfPart($base + [
                 'section' => 'detail',
                 'rows' => $chunk,
-                'rowFrom' => $index * 300 + 1,
-                'rowTo' => $index * 300 + count($chunk),
+                'rowFrom' => $index * 200 + 1,
+                'rowTo' => $index * 200 + count($chunk),
                 'first' => $index === 0,
-                'last' => $index === $lastDetailIndex,
             ]);
         }
+
+        // Tanda tangan berdiri sendiri supaya tidak terpotong di halaman
+        // penuh saat tabel detail mengisi seluruh halaman terakhirnya.
+        $parts[] = $this->renderPdfPart($base + ['section' => 'sign', 'rows' => []]);
 
         return response($this->mergePdfParts($parts, $monthLabel), 200, [
             'Content-Type' => 'application/pdf',
