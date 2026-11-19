@@ -466,6 +466,8 @@ semua rute termasuk halaman galat mendapat
 Konsekuensi:
 - Semua halaman menolak pembingkaian dan penebakan tipe konten.
 - CSP masih memuat `'unsafe-inline'` selama skrip tema dan Livewire
-  membutuhkannya. `'unsafe-eval'` tidak diizinkan karena Livewire 3 tidak
-  membutuhkannya.
+  membutuhkannya. `'unsafe-eval'` tidak diizinkan: Livewire 3 berjalan
+  tanpanya, sedangkan ekspresi Alpine membutuhkannya. Karena itu interaksi
+  kecil di shell aplikasi, seperti laci navigasi, ditulis sebagai JavaScript
+  biasa di `resources/js/app.js`.
 - Peta OpenStreetMap harus tetap ada di `img-src` dan `connect-src`.

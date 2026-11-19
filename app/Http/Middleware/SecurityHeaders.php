@@ -17,7 +17,8 @@ use Symfony\Component\HttpFoundation\Response;
  * menerima nonce lewat csp_script_nonce() dan Vite/Livewire menerimanya lewat
  * konfigurasi csp_nonce. Style tetap 'unsafe-inline' karena Livewire/Alpine
  * menyisipkan atribut style. 'unsafe-eval' sengaja tidak diizinkan: Livewire 3
- * tidak membutuhkannya.
+ * berjalan tanpanya, sedangkan ekspresi Alpine membutuhkannya. Interaksi kecil
+ * di shell aplikasi karena itu ditulis sebagai JavaScript biasa.
  */
 class SecurityHeaders
 {

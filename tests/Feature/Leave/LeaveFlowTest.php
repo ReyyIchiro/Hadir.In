@@ -2,6 +2,7 @@
 
 use App\Mail\SendLeaveStatusEmail;
 use App\Models\AttendanceDay;
+use App\Models\Holiday;
 use App\Services\AttendanceService;
 use App\Services\LeaveService;
 use Illuminate\Support\Facades\Mail;
@@ -209,7 +210,7 @@ it('tidak membuat hari presensi izin pada tanggal tanpa jadwal', function () {
 
 it('tidak membuat hari presensi izin pada hari libur', function () {
     makeSchedule($this->tenant, $this->member, '2026-11-02');
-    \App\Models\Holiday::create([
+    Holiday::create([
         'tenant_id' => $this->tenant->id,
         'date' => '2026-11-02',
         'name' => 'Hari Uji',
@@ -243,7 +244,7 @@ it('mengirim email status izin lewat antrean saat disetujui dan ditolak', functi
 
     Mail::assertQueued(SendLeaveStatusEmail::class, 1);
 
-    Mail::assertQueued(SendLeaveStatusEmail::class, function (SendLeaveStatusEmail $mail) use ($leave) {
+    Mail::assertQueued(SendLeaveStatusEmail::class, function (SendLeaveStatusEmail $mail) {
         return $mail->hasTo($this->member->email)
             && $mail->statusLabel === 'Disetujui'
             && $mail->typeName === 'Izin'

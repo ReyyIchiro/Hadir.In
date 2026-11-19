@@ -61,7 +61,7 @@ ditampilkan di layar.
 | Bahasa | PHP 8.3+ | Tersedia luas di VPS Indonesia, ekosistem matang |
 | Framework | Laravel 12 | Otentikasi, ORM, antrean, penjadwalan, validasi bawaan |
 | Interaksi | Livewire 3 | Form dan tabel reaktif tanpa membangun API |
-| Skrip kecil | Alpine.js | Bawaan Livewire, cukup untuk menu dan peta |
+| Skrip kecil | JavaScript di `resources/js/app.js` | Tanpa dependensi; tema, laci navigasi, dialog konfirmasi |
 | CSS | Tailwind CSS 4 | Token di CSS, build cepat, tanpa runtime |
 | Build | Vite 7 | Bawaan Laravel |
 | Database | PostgreSQL 16 | Ketahanan, tipe data jelas, indeks baik |

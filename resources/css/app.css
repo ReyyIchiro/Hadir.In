@@ -959,7 +959,7 @@
 
     /* Laci navigasi mobile. Atribut data-nav-closed dipasang statis sehingga
        laci tetap tertutup tanpa JavaScript; rule di bawah 1024px mengabaikannya
-       di desktop. */
+       di desktop. app.js yang membuka dan menutup laci. */
     [data-nav-closed] {
         transform: translateX(-100%);
     }
@@ -968,6 +968,23 @@
         [data-nav-closed] {
             transform: none;
         }
+    }
+
+    [data-nav-overlay] {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 150ms ease-out;
+    }
+
+    [data-nav-overlay].is-open {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    /* Saat laci terbuka di layar kecil, halaman di belakangnya tidak ikut
+       bergulir. */
+    html.nav-open {
+        overflow: hidden;
     }
 
     .nav-link {

@@ -80,7 +80,6 @@
 
             <div class="flex flex-wrap items-center justify-between gap-3 border-t border-divider pt-4 md:col-span-12">
                 <p class="folio">HADIR.IN / V2.0</p>
-                <p class="text-[12px] text-muted">Dibuat dan dirawat di Indonesia.</p>
             </div>
         </div>
     </footer>

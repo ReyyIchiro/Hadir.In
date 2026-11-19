@@ -913,8 +913,7 @@ Item yang tidak relevan dengan peran disembunyikan, bukan dinonaktifkan.
   tombol "Masuk" dan "Daftar".
 - Header memakai garis bawah 1 px. Jangan memakai latar transparan atau sticky
   blur.
-- Footer: nama produk, tautan "Masuk", "Daftar", "Privasi", "Ketentuan",
-  dan satu kalimat "Dibuat untuk operasi harian di Indonesia."
+- Footer: nama produk, tautan "Masuk", "Daftar", "Privasi", "Ketentuan".
 - Tidak ada cookie banner karena tidak ada pelacakan pihak ketiga.
 - Tidak ada angka pengguna, logo pelanggan, atau testimoni karangan.
 

@@ -332,3 +332,99 @@ document.addEventListener('keydown', (event) => {
         }
     }
 });
+
+// ---------------------------------------------------------------------------
+// Banner galat jaringan
+// ---------------------------------------------------------------------------
+
+// Permintaan Livewire yang gagal (jaringan putus, server mati) memunculkan
+// banner; permintaan pertama yang berhasil menyembunyikannya kembali.
+document.addEventListener('livewire:init', () => {
+    const banner = document.getElementById('banner-galat-jaringan');
+
+    if (!banner) return;
+
+    Livewire.hook('request', ({ succeed, fail }) => {
+        succeed(() => {
+            banner.hidden = true;
+        });
+        fail(() => {
+            banner.hidden = false;
+        });
+    });
+});
+
+document.addEventListener('click', (event) => {
+    if (event.target.closest('[data-net-reload]')) {
+        location.reload();
+    }
+});
+
+// ---------------------------------------------------------------------------
+// Laci navigasi
+// ---------------------------------------------------------------------------
+//
+// Tombol menu ditangani di sini, bukan dengan Alpine: ekspresi Alpine memakai
+// eval, sedangkan CSP aplikasi tidak mengizinkan 'unsafe-eval'. Atribut
+// data-nav-closed dipasang statis di Blade supaya laci tetap tertutup walau
+// JavaScript tidak jalan.
+
+const navDrawer = document.querySelector('[data-nav]');
+const navOverlay = document.querySelector('[data-nav-overlay]');
+const navOpeners = document.querySelectorAll('[data-nav-open]');
+const navClosers = document.querySelectorAll('[data-nav-close]');
+const navMobile = window.matchMedia('(max-width: 1023px)');
+let navReturnFocus = null;
+
+function navIsOpen() {
+    return navDrawer ? !navDrawer.hasAttribute('data-nav-closed') : false;
+}
+
+function syncNav(open, { restoreFocus = false } = {}) {
+    if (!navDrawer) return;
+
+    const mobile = navMobile.matches;
+
+    navDrawer.toggleAttribute('data-nav-closed', !open);
+    navDrawer.inert = mobile && !open;
+    navOverlay?.classList.toggle('is-open', mobile && open);
+    document.documentElement.classList.toggle('nav-open', mobile && open);
+    navOpeners.forEach((button) => {
+        button.setAttribute('aria-expanded', mobile && open ? 'true' : 'false');
+    });
+
+    if (mobile && open) {
+        navDrawer.querySelector('[data-nav-close]')?.focus();
+
+        return;
+    }
+
+    if (restoreFocus && navReturnFocus?.isConnected) {
+        navReturnFocus.focus();
+    }
+
+    navReturnFocus = null;
+}
+
+navOpeners.forEach((button) => {
+    button.addEventListener('click', () => {
+        navReturnFocus = document.activeElement;
+        syncNav(true);
+    });
+});
+
+navClosers.forEach((button) => {
+    button.addEventListener('click', () => syncNav(false, { restoreFocus: true }));
+});
+
+navOverlay?.addEventListener('click', () => syncNav(false, { restoreFocus: true }));
+
+navMobile.addEventListener('change', () => syncNav(false));
+
+document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape' || !navIsOpen() || !navMobile.matches) return;
+
+    syncNav(false, { restoreFocus: true });
+});
+
+syncNav(false);
