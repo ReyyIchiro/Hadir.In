@@ -16,9 +16,9 @@ use Symfony\Component\HttpFoundation\Response;
  * dan skrip yang dimuat oleh skrip tepercaya yang berjalan. Blok tema inline
  * menerima nonce lewat csp_script_nonce() dan Vite/Livewire menerimanya lewat
  * konfigurasi csp_nonce. Style tetap 'unsafe-inline' karena Livewire/Alpine
- * menyisipkan atribut style. 'unsafe-eval' sengaja tidak diizinkan: Livewire 3
- * berjalan tanpanya, sedangkan ekspresi Alpine membutuhkannya. Interaksi kecil
- * di shell aplikasi karena itu ditulis sebagai JavaScript biasa.
+ * menyisipkan atribut style. 'unsafe-eval' diizinkan karena ekspresi Alpine
+ * (x-data, @click) dikompilasi dengan new Function di halaman presensi dan
+ * form lokasi. Shell aplikasi tetap memakai JavaScript biasa.
  */
 class SecurityHeaders
 {
@@ -43,7 +43,7 @@ class SecurityHeaders
 
         $response->headers->set('Content-Security-Policy', implode('; ', [
             "default-src 'self'",
-            "script-src {$nonce} 'strict-dynamic' 'unsafe-inline' https:",
+            "script-src {$nonce} 'strict-dynamic' 'unsafe-inline' 'unsafe-eval' https:",
             "style-src 'self' 'unsafe-inline'",
             "img-src 'self' data: blob: https://tile.openstreetmap.org https://*.tile.openstreetmap.org",
             "font-src 'self' data:",
