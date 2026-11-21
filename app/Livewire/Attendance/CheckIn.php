@@ -62,10 +62,10 @@ class CheckIn extends Component
     public function updatedSelfie(): void
     {
         $this->validate([
-            'selfie' => ['nullable', 'image', 'max:5120'],
+            'selfie' => ['nullable', 'image', 'max:12288'],
         ], [
             'selfie.image' => 'Berkas harus berupa gambar.',
-            'selfie.max' => 'Ukuran gambar maksimal 5 MB.',
+            'selfie.max' => 'Ukuran gambar maksimal 12 MB.',
         ]);
     }
 
@@ -83,11 +83,11 @@ class CheckIn extends Component
                 'latitude' => ['nullable', 'numeric', 'between:-90,90'],
                 'longitude' => ['nullable', 'numeric', 'between:-180,180'],
                 'accuracy' => ['nullable', 'numeric', 'min:0'],
-                'selfie' => [$settings->require_selfie ? 'required' : 'nullable', 'image', 'max:5120'],
+                'selfie' => [$settings->require_selfie ? 'required' : 'nullable', 'image', 'max:12288'],
             ], [
                 'selfie.required' => 'Selfie wajib diambil sebelum absen.',
                 'selfie.image' => 'Berkas harus berupa gambar.',
-                'selfie.max' => 'Ukuran gambar maksimal 5 MB.',
+                'selfie.max' => 'Ukuran gambar maksimal 12 MB.',
             ]);
 
             $result = $attendance->checkIn(
